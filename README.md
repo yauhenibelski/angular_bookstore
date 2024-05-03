@@ -23,7 +23,7 @@ The purpose of this project is to:
 
 In the project directory, you can run:
 
-### `npm start`
+### `npm run start`
 
 Runs the app in the development mode.\
 Open [http://localhost:4200](http://localhost:4200) to view it in the browser. The page will reload if you make edits.
@@ -36,15 +36,11 @@ Builds the app for production to the `dist/` folder.
 
 Launches the test runner in the interactive watch mode using Jest. See the section about [running tests](https://jestjs.io/docs/en/getting-started) for more information.
 
-### `npm run e2e`
-
-Executes the end-to-end tests using Jasmine.
-
 ### `npm run lint`
 
 Runs ESLint to check for code quality issues.
 
-### `npm run format`
+### `npm run prettier:fix:all`
 
 Runs Prettier to automatically format your code according to specified rules.
 
