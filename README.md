@@ -7,16 +7,17 @@ This project is an e-commerce platform designed to provide a seamless shopping e
 ## Purpose
 
 The purpose of this project is to:
-- Provide a comprehensive online shopping solution.
-- Enhance the shopping experience with fast, intuitive navigation and checkout processes.
-- Offer a robust, scalable platform for a variety of products.
-- Integrate with various payment gateways for secure and flexible transactions.
+
+-   Provide a comprehensive online shopping solution.
+-   Enhance the shopping experience with fast, intuitive navigation and checkout processes.
+-   Offer a robust, scalable platform for a variety of products.
+-   Integrate with various payment gateways for secure and flexible transactions.
 
 ## Technology Stack
 
-- **Frontend:** Angular 17.0.1
-- **Testing:** Karma for unit tests, Jasmine for end-to-end testing
-- **Other Tools:** Angular CLI for project management and scaffolding
+-   **Frontend:** Angular 17.0.1
+-   **Testing:** Karma for unit tests, Jasmine for end-to-end testing
+-   **Other Tools:** Angular CLI for project management and scaffolding
 
 ## Available Scripts
 
@@ -55,3 +56,31 @@ Ensure you have Node.js and Angular CLI installed. For Angular CLI, use the foll
 
 ```bash
 npm install -g @angular/cli
+```
+
+### 1. Clone the repository:
+
+```bash
+git clone git@github.com:yauhenibelski/final-task.git
+```
+
+### 2. Install Dependencies:
+
+```bash
+cd final-task
+npm install
+```
+
+### 3. Run the development server:
+
+```bash
+ng serve
+```
+Navigate to http://localhost:4200/ to view the application in your browser.
+
+## Further Help
+To get more help on the Angular CLI, use:
+```bash
+ng help
+```
+or visit the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
