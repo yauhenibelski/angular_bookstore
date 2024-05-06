@@ -72,15 +72,11 @@ npm install
 ```bash
 ng serve
 ```
-
 Navigate to http://localhost:4200/ to view the application in your browser.
 
 ## Further Help
-
 To get more help on the Angular CLI, use:
-
 ```bash
 ng help
 ```
-
 or visit the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.

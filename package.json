@@ -20,7 +20,7 @@
         }
     },
     "validate-branch-name": {
-        "pattern": "^(main|develop|(release/(login-registration-main|catalog-product-profile))){1}$|^(RSS-ECOMM-[0-9]+_[0-9]+(--[a-zA-Z0-9_]+)*)$",
+        "pattern": "^(main|develop){1}$|^(RSS-ECOMM-[0-9]+_[0-9]+)$",
         "errorMsg": "Invalid branch name"
     },
     "private": true,
