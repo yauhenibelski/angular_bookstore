@@ -11,14 +11,6 @@ import { Router } from '@angular/router';
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HeaderComponent {
-    login(): void {
-        this.router.navigate(['login']);
-    }
-
-    registration() {
-        this.router.navigate(['registration']);
-    }
-
     constructor(private readonly router: Router) {
         this.router = router;
     }
