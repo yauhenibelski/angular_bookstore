@@ -1,11 +1,11 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
+import { MatAnchor } from '@angular/material/button';
 import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-header',
     standalone: true,
-    imports: [MatButtonModule],
+    imports: [MatAnchor],
     templateUrl: './header.component.html',
     styleUrl: './header.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
