@@ -157,6 +157,7 @@ module.exports = {
                 curly: ['error', 'all'],
                 'prefer-destructuring': 'off',
                 'no-useless-constructor': 'off',
+                'dot-notation': 'off',
                 '@typescript-eslint/no-useless-constructor': ['error'],
                 '@typescript-eslint/no-inferrable-types': ['error', { ignoreParameters: true }],
                 '@typescript-eslint/prefer-readonly': ['error'],
@@ -250,7 +251,7 @@ module.exports = {
                     },
                     {
                         selector: 'property',
-                        format: ['camelCase', 'PascalCase'],
+                        format: ['camelCase', 'PascalCase', 'snake_case'],
                     },
                     {
                         selector: [
