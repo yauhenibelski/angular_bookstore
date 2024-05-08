@@ -23,7 +23,7 @@ export class AuthApiService {
             'grant_type=client_credentials',
             {
                 headers: {
-                    Authorization: `Basic ${environment.getAccessToken()}`,
+                    Authorization: `Basic ${window.btoa(`${environment.clientId}:${environment.clientSecret}`)}`,
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
             },

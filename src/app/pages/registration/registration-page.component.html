@@ -23,6 +23,7 @@
                 (change)="
                     useEmailForShipping.checked && controls.shippingAddress.setValue(email.value)
                 "
+                (click)="$event.stopPropagation()"
             >
                 use this address for shipping
             </mat-checkbox>
@@ -50,7 +51,7 @@
                 matSuffix
                 [attr.aria-label]="'Hide password'"
                 [attr.aria-pressed]="isPasswordHide"
-                (click)="isPasswordHide = !isPasswordHide"
+                (click)="isPasswordHide = !isPasswordHide; $event.preventDefault()"
             >
                 <mat-icon>{{ isPasswordHide ? 'visibility_off' : 'visibility' }}</mat-icon>
             </button>

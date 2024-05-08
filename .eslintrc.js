@@ -141,6 +141,7 @@ module.exports = {
                 'no-param-reassign': 'off',
                 'no-case-declarations': 'error',
                 'no-console': ['error', { allow: ['info', 'assert', 'warn', 'error'] }],
+                'no-empty-function': ['error', { allow: ['constructors'] }],
                 'no-implicit-coercion': ['error', { allow: ['!!'] }],
                 'no-return-assign': ['error', 'always'],
                 'no-useless-rename': [

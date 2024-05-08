@@ -14,7 +14,7 @@ export const isDate: ValidatorFn = (control: AbstractControl) => {
         Date.parse(currentDate.toString()) > Date.parse(dateNow.toString());
 
     if (isCurrentDateBiggerThenDateNow) {
-        return { isDate: 'invalid date' };
+        return err;
     }
 
     const isCurrentDateBiggerThenMaxLiveAge =
@@ -22,7 +22,7 @@ export const isDate: ValidatorFn = (control: AbstractControl) => {
         Date.parse(currentDate.toString())) < Date.parse(dateNow.toString());
 
     if (isCurrentDateBiggerThenMaxLiveAge) {
-        return { isDate: 'invalid' };
+        return err;
     }
 
     return null;

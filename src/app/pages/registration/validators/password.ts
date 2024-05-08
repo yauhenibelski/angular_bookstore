@@ -12,7 +12,7 @@ export const passwordValidators: { [key: string]: ValidatorFn } = {
     },
     hasLowerCaseLetter(control: AbstractControl) {
         return !control.value.match(/[a-z]/)
-            ? { hasUppercaseLetter: 'minimum one uppercase letter' }
+            ? { hasUppercaseLetter: 'minimum one lowercase letter' }
             : null;
     },
     hasOneNumber(control: AbstractControl) {
