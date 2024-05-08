@@ -10,7 +10,7 @@ import { MatButton } from '@angular/material/button';
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NotFoundPageComponent {
-    returnWindowHistoryBack() {
+    returnWindowHistoryBack(): void {
         window.history.back();
     }
 }
