@@ -1,10 +1,11 @@
 import { Routes } from '@angular/router';
+import { BooksPageComponent } from './pages/books/books-page.component';
 
 export const routes: Routes = [
     {
         path: '',
-        loadComponent: () =>
-            import('./pages/books/books-page.component').then(mod => mod.BooksPageComponent),
+        pathMatch: 'full',
+        component: BooksPageComponent,
     },
     {
         path: 'registration',
