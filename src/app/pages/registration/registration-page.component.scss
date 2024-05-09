@@ -6,11 +6,17 @@
 
 mat-card {
     width: 100%;
-    max-width: 500px;
+    max-width: 600px;
 
     form {
         display: flex;
         flex-direction: column;
         padding: 20px;
     }
+}
+
+.field-wrap {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    grid-gap: 2%;
 }

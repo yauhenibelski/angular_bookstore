@@ -12,7 +12,9 @@ import { ProjectSettingsService } from 'src/app/shared/services/project-settings
 import { AsyncPipe } from '@angular/common';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { filter, map } from 'rxjs';
-// import { HostApiService } from 'src/app/shared/services/host-api/host-api.service';
+import { HostApiService } from 'src/app/shared/services/host-api/host-api.service';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { isEmail } from './validators/email';
 import { passwordValidators } from './validators/password';
 import { GetErrorMassagePipe } from './pipes/get-error-massage.pipe';
@@ -22,6 +24,8 @@ import { isDate } from './validators/date';
 import { isCountryExists } from './validators/is-country-exists';
 import { isPostalCodeValid } from './validators/is-postalcode-valid';
 import { getCountryCodes } from './utils/get-country-codes';
+import { getCountryKey } from './utils/get-country-key';
+import { SuccessfulAccountCreationMessageComponent } from './successful-account-creation-message/successful-account-creation-message.component';
 
 @Component({
     selector: 'app-registration-page',
@@ -39,6 +43,8 @@ import { getCountryCodes } from './utils/get-country-codes';
         MatAutocompleteModule,
         MatCheckboxModule,
         AsyncPipe,
+        MatButtonModule,
+        MatDialogModule,
     ],
     templateUrl: './registration-page.component.html',
     styleUrl: './registration-page.component.scss',
@@ -46,30 +52,51 @@ import { getCountryCodes } from './utils/get-country-codes';
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RegistrationPageComponent implements OnInit {
-    // private readonly hostApiService = inject(HostApiService);
+    readonly hostApiService = inject(HostApiService);
+    readonly router = inject(Router);
+    readonly dialog = inject(MatDialog);
     readonly countryCodes = getCountryCodes();
     isPasswordHide = true;
+
+    openDialog() {
+        const dialogRef = this.dialog.open(SuccessfulAccountCreationMessageComponent);
+
+        dialogRef.afterClosed().subscribe(() => {
+            this.router.navigateByUrl('/books');
+        });
+    }
 
     readonly availableCountries$ = inject(ProjectSettingsService).projectSettings$.pipe(
         filter(projectSettings => Boolean(projectSettings)),
         map(projectSettings => projectSettings?.countries),
     );
 
-    private readonly countryControl = new FormControl('', {
+    private readonly shippingAddressCountryControl = new FormControl('', {
+        validators: [hasOneCharacter, isCountryExists(this.countryCodes)],
+    });
+
+    private readonly billingAddressCountryControl = new FormControl('', {
         validators: [hasOneCharacter, isCountryExists(this.countryCodes)],
     });
 
     readonly registrationForm = new FormGroup({
-        country: this.countryControl,
         email: new FormControl('', [isEmail]),
-        shippingAddress: new FormControl('', [isEmail]),
         password: new FormControl('', [...Object.values(passwordValidators)]),
         firstName: new FormControl('', [hasOneCharacter, hasSpace]),
         lastName: new FormControl('', [hasOneCharacter, hasSpace]),
-        city: new FormControl('', [hasOneCharacter, hasSpace]),
-        street: new FormControl('', [hasOneCharacter, hasSpace]),
-        postalCode: new FormControl('', [
-            isPostalCodeValid(this.countryControl, this.countryCodes),
+
+        shippingAddressCountry: this.shippingAddressCountryControl,
+        shippingAddressCity: new FormControl('', [hasOneCharacter, hasSpace]),
+        shippingAddressStreet: new FormControl('', [hasOneCharacter, hasSpace]),
+        shippingAddressPostalCode: new FormControl('', [
+            isPostalCodeValid(this.shippingAddressCountryControl, this.countryCodes),
+        ]),
+
+        billingAddressCountry: this.billingAddressCountryControl,
+        billingAddressCity: new FormControl('', [hasOneCharacter, hasSpace]),
+        billingAddressStreet: new FormControl('', [hasOneCharacter, hasSpace]),
+        billingAddressPostalCode: new FormControl('', [
+            isPostalCodeValid(this.billingAddressCountryControl, this.countryCodes),
         ]),
         date: new FormControl('', [isDate]),
     });
@@ -80,5 +107,37 @@ export class RegistrationPageComponent implements OnInit {
         // ----- commented until crosscheck -----
         // this.hostApiService.setProjectSettings();
         console.info();
+    }
+
+    signUpCustomer(useAddressForBilling: boolean): void {
+        this.hostApiService
+            .signUpCustomer$({
+                email: this.registrationForm.value.email!,
+                password: this.registrationForm.value.password!,
+                lastName: this.registrationForm.value.lastName!,
+                firstName: this.registrationForm.value.firstName!,
+                defaultShippingAddress: 1,
+                defaultBillingAddress: Number(useAddressForBilling),
+                dateOfBirth: new Date(this.registrationForm.value.date!).toJSON().slice(0, 10),
+                addresses: [
+                    {
+                        city: this.registrationForm.value.billingAddressCity!,
+                        country: getCountryKey(this.registrationForm.value.billingAddressCountry!)!,
+                        streetName: this.registrationForm.value.billingAddressStreet!,
+                        postalCode: this.registrationForm.value.billingAddressPostalCode!,
+                    },
+                    {
+                        city: this.registrationForm.value.shippingAddressCity!,
+                        country: getCountryKey(
+                            this.registrationForm.value.shippingAddressCountry!,
+                        )!,
+                        streetName: this.registrationForm.value.shippingAddressStreet!,
+                        postalCode: this.registrationForm.value.shippingAddressPostalCode!,
+                    },
+                ],
+            })
+            .subscribe(() => {
+                this.openDialog();
+            });
     }
 }

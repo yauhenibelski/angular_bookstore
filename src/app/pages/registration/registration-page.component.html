@@ -2,148 +2,249 @@
     <form [formGroup]="registrationForm">
         <h2>Registration</h2>
 
-        <mat-form-field>
-            <mat-label>Enter your email</mat-label>
-            <input
-                #email
-                matInput
-                placeholder="pat@example.com"
-                formControlName="email"
-                (change)="
-                    useEmailForShipping.checked && controls.shippingAddress.setValue(email.value)
-                "
-            />
-            @if (controls.email.errors) {
-                <mat-error>{{ controls.email.errors | getErrorMassage }}</mat-error>
-            }
-            <mat-checkbox
-                #useEmailForShipping
-                color="primary"
-                class="example-margin"
-                (change)="
-                    useEmailForShipping.checked && controls.shippingAddress.setValue(email.value)
-                "
-                (click)="$event.stopPropagation()"
-            >
-                use this address for shipping
-            </mat-checkbox>
-        </mat-form-field>
-
-        @if (!useEmailForShipping.checked) {
-            <mat-form-field [style.hidden]="true">
-                <mat-label>Enter your email for shipping</mat-label>
-                <input matInput placeholder="pat@example.com" formControlName="shippingAddress" />
+        <div class="field-wrap">
+            <mat-form-field>
+                <mat-label>Enter your email</mat-label>
+                <input #email matInput placeholder="pat@example.com" formControlName="email" />
                 @if (controls.email.errors) {
                     <mat-error>{{ controls.email.errors | getErrorMassage }}</mat-error>
                 }
             </mat-form-field>
+
+            <mat-form-field>
+                <mat-label>Enter your password</mat-label>
+                <input
+                    matInput
+                    formControlName="password"
+                    [type]="isPasswordHide ? 'password' : 'text'"
+                />
+                <button
+                    mat-icon-button
+                    matSuffix
+                    [attr.aria-label]="'Hide password'"
+                    [attr.aria-pressed]="isPasswordHide"
+                    (click)="isPasswordHide = !isPasswordHide; $event.preventDefault()"
+                >
+                    <mat-icon>{{ isPasswordHide ? 'visibility_off' : 'visibility' }}</mat-icon>
+                </button>
+                @if (controls.password.errors) {
+                    <mat-error>{{ controls.password.errors | getErrorMassage }}</mat-error>
+                }
+            </mat-form-field>
+        </div>
+
+        <div class="field-wrap">
+            <mat-form-field>
+                <mat-label>First name</mat-label>
+                <input matInput placeholder="First name" formControlName="firstName" />
+                @if (controls.firstName.errors) {
+                    <mat-error>{{ controls.firstName.errors | getErrorMassage }}</mat-error>
+                }
+            </mat-form-field>
+
+            <mat-form-field>
+                <mat-label>Last name</mat-label>
+                <input matInput placeholder="Last name" formControlName="lastName" />
+                @if (controls.lastName.errors) {
+                    <mat-error>{{ controls.lastName.errors | getErrorMassage }}</mat-error>
+                }
+            </mat-form-field>
+        </div>
+
+        <p class="title">Shipping address</p>
+        <div class="field-wrap">
+            <mat-form-field>
+                <mat-label>Country</mat-label>
+                <input
+                    #shippingAddressCountry
+                    placeholder="Available countries for delivery"
+                    formControlName="shippingAddressCountry"
+                    matInput
+                    [matAutocomplete]="autoShipping"
+                    (change)="
+                        controls.shippingAddressPostalCode.setValue('');
+                        useAddressForBilling.checked &&
+                            controls.billingAddressCountry.setValue(shippingAddressCountry.value)
+                    "
+                />
+
+                <mat-autocomplete #autoShipping="matAutocomplete">
+                    @for (countryKey of availableCountries$ | async; track countryKey) {
+                        <mat-option
+                            [value]="countryCodes[countryKey]"
+                            (click)="controls.shippingAddressPostalCode.setValue('')"
+                        >
+                            {{ countryCodes[countryKey] }}
+                        </mat-option>
+                    }
+                </mat-autocomplete>
+                @if (controls.shippingAddressCountry.errors) {
+                    <mat-error>
+                        {{ controls.shippingAddressCountry.errors | getErrorMassage }}
+                    </mat-error>
+                }
+            </mat-form-field>
+
+            <mat-form-field>
+                <mat-label>City</mat-label>
+                <input
+                    #shippingAddressCity
+                    matInput
+                    placeholder="City"
+                    formControlName="shippingAddressCity"
+                    (change)="
+                        useAddressForBilling.checked &&
+                            controls.billingAddressCity.setValue(shippingAddressCity.value)
+                    "
+                />
+                @if (controls.shippingAddressCity.errors) {
+                    <mat-error>
+                        {{ controls.shippingAddressCity.errors | getErrorMassage }}
+                    </mat-error>
+                }
+            </mat-form-field>
+
+            <mat-form-field>
+                <mat-label>Street</mat-label>
+                <input
+                    #shippingAddressStreet
+                    matInput
+                    placeholder="Street"
+                    formControlName="shippingAddressStreet"
+                    (change)="
+                        useAddressForBilling.checked &&
+                            controls.billingAddressStreet.setValue(shippingAddressStreet.value)
+                    "
+                />
+                @if (controls.shippingAddressStreet.errors) {
+                    <mat-error>
+                        {{ controls.shippingAddressStreet.errors | getErrorMassage }}
+                    </mat-error>
+                }
+            </mat-form-field>
+
+            <mat-form-field>
+                <mat-label>Postal code</mat-label>
+                <input
+                    #shippingAddressPostalCode
+                    matInput
+                    placeholder="Postal code"
+                    formControlName="shippingAddressPostalCode"
+                    required
+                    (change)="
+                        useAddressForBilling.checked &&
+                            controls.billingAddressPostalCode.setValue(
+                                shippingAddressPostalCode.value
+                            )
+                    "
+                />
+                @if (controls.shippingAddressPostalCode.errors) {
+                    <mat-error>
+                        {{ controls.shippingAddressPostalCode.errors | getErrorMassage }}
+                    </mat-error>
+                }
+            </mat-form-field>
+        </div>
+
+        <mat-checkbox
+            #useAddressForBilling
+            checked="true"
+            color="primary"
+            [style.marginBottom.px]="10"
+        >
+            use this address for billing
+        </mat-checkbox>
+
+        @if (!useAddressForBilling.checked) {
+            <p class="title">Billing address</p>
+
+            <div class="field-wrap">
+                <mat-form-field>
+                    <mat-label>Country</mat-label>
+                    <input
+                        placeholder="Available countries for delivery"
+                        formControlName="billingAddressCountry"
+                        matInput
+                        [matAutocomplete]="billingAddressAuto"
+                        (change)="controls.billingAddressPostalCode.setValue('')"
+                    />
+
+                    <mat-autocomplete #billingAddressAuto="matAutocomplete">
+                        @for (countryKey of availableCountries$ | async; track countryKey) {
+                            <mat-option
+                                [value]="countryCodes[countryKey]"
+                                (click)="controls.billingAddressPostalCode.setValue('')"
+                            >
+                                {{ countryCodes[countryKey] }}
+                            </mat-option>
+                        }
+                    </mat-autocomplete>
+                    @if (controls.billingAddressCountry.errors) {
+                        <mat-error>
+                            {{ controls.billingAddressCountry.errors | getErrorMassage }}
+                        </mat-error>
+                    }
+                </mat-form-field>
+
+                <mat-form-field>
+                    <mat-label>City</mat-label>
+                    <input matInput placeholder="City" formControlName="billingAddressCity" />
+                    @if (controls.billingAddressCity.errors) {
+                        <mat-error>
+                            {{ controls.billingAddressCity.errors | getErrorMassage }}
+                        </mat-error>
+                    }
+                </mat-form-field>
+
+                <mat-form-field>
+                    <mat-label>Street</mat-label>
+                    <input matInput placeholder="Street" formControlName="billingAddressStreet" />
+                    @if (controls.billingAddressStreet.errors) {
+                        <mat-error>
+                            {{ controls.billingAddressStreet.errors | getErrorMassage }}
+                        </mat-error>
+                    }
+                </mat-form-field>
+
+                <mat-form-field>
+                    <mat-label>Postal code</mat-label>
+                    <input
+                        matInput
+                        placeholder="Postal code"
+                        formControlName="billingAddressPostalCode"
+                        required
+                    />
+                    @if (controls.billingAddressPostalCode.errors) {
+                        <mat-error>
+                            {{ controls.billingAddressPostalCode.errors | getErrorMassage }}
+                        </mat-error>
+                    }
+                </mat-form-field>
+            </div>
         }
 
-        <mat-form-field>
-            <mat-label>Enter your password</mat-label>
-            <input
-                matInput
-                formControlName="password"
-                [type]="isPasswordHide ? 'password' : 'text'"
-            />
-            <button
-                mat-icon-button
-                matSuffix
-                [attr.aria-label]="'Hide password'"
-                [attr.aria-pressed]="isPasswordHide"
-                (click)="isPasswordHide = !isPasswordHide; $event.preventDefault()"
-            >
-                <mat-icon>{{ isPasswordHide ? 'visibility_off' : 'visibility' }}</mat-icon>
-            </button>
-            @if (controls.password.errors) {
-                <mat-error>{{ controls.password.errors | getErrorMassage }}</mat-error>
-            }
-        </mat-form-field>
+        <p class="title">Date of birth</p>
+        <div class="field-wrap">
+            <mat-form-field>
+                <mat-label>Date</mat-label>
+                <input matInput formControlName="date" [matDatepicker]="picker" />
+                <mat-hint>MM/DD/YYYY</mat-hint>
+                <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
 
-        <mat-form-field>
-            <mat-label>First name</mat-label>
-            <input matInput placeholder="First name" formControlName="firstName" />
-            @if (controls.firstName.errors) {
-                <mat-error>{{ controls.firstName.errors | getErrorMassage }}</mat-error>
-            }
-        </mat-form-field>
-
-        <mat-form-field>
-            <mat-label>Last name</mat-label>
-            <input matInput placeholder="Last name" formControlName="lastName" />
-            @if (controls.lastName.errors) {
-                <mat-error>{{ controls.lastName.errors | getErrorMassage }}</mat-error>
-            }
-        </mat-form-field>
-
-        <mat-form-field>
-            <mat-label>Date of birth</mat-label>
-            <input matInput formControlName="date" [matDatepicker]="picker" />
-            <mat-hint>MM/DD/YYYY</mat-hint>
-            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-            <mat-datepicker #picker></mat-datepicker>
-
-            @if (controls.date.errors) {
-                <mat-error>{{ controls.date.errors | getErrorMassage }}</mat-error>
-            }
-        </mat-form-field>
-
-        <mat-form-field [style.marginTop.px]="10">
-            <mat-label>Country</mat-label>
-            <input
-                #country
-                placeholder="Available countries for delivery"
-                formControlName="country"
-                matInput
-                [matAutocomplete]="auto"
-                (change)="controls.postalCode.setValue('')"
-            />
-
-            <mat-autocomplete #auto="matAutocomplete">
-                @for (countryKey of availableCountries$ | async; track countryKey) {
-                    <mat-option
-                        [value]="countryCodes[countryKey]"
-                        (click)="controls.postalCode.setValue('')"
-                    >
-                        {{ countryCodes[countryKey] }}
-                    </mat-option>
+                @if (controls.date.errors) {
+                    <mat-error>{{ controls.date.errors | getErrorMassage }}</mat-error>
                 }
-            </mat-autocomplete>
-            @if (controls.country.errors) {
-                <mat-error>{{ controls.country.errors | getErrorMassage }}</mat-error>
-            }
-        </mat-form-field>
+            </mat-form-field>
+        </div>
 
-        <mat-form-field>
-            <mat-label>City</mat-label>
-            <input matInput placeholder="City" formControlName="city" />
-            @if (controls.city.errors) {
-                <mat-error>{{ controls.city.errors | getErrorMassage }}</mat-error>
-            }
-        </mat-form-field>
-
-        <mat-form-field>
-            <mat-label>Street</mat-label>
-            <input matInput placeholder="Street" formControlName="street" />
-            @if (controls.street.errors) {
-                <mat-error>{{ controls.street.errors | getErrorMassage }}</mat-error>
-            }
-        </mat-form-field>
-
-        <mat-form-field>
-            <mat-label>Postal code</mat-label>
-            <input
-                #postalCode
-                matInput
-                placeholder="Postal code"
-                formControlName="postalCode"
-                required
-            />
-            @if (controls.postalCode.errors) {
-                <mat-error>{{ controls.postalCode.errors | getErrorMassage }}</mat-error>
-            }
-        </mat-form-field>
-
-        <button mat-raised-button [disabled]="registrationForm.invalid">Sign up</button>
+        <button
+            mat-raised-button
+            [style.marginTop.px]="10"
+            [disabled]="registrationForm.invalid"
+            (click)="signUpCustomer(useAddressForBilling.checked)"
+        >
+            Sign up
+        </button>
     </form>
 </mat-card>
