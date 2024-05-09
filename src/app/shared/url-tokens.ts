@@ -1,10 +1,11 @@
 import { InjectionToken } from '@angular/core';
+import { environment } from '../environment/environment';
 
-export const BASE_URL = new InjectionToken('Base url for application', {
+export const HOST_URL = new InjectionToken('Host url for application', {
     providedIn: 'root',
     factory: () => ({
         key: 'host',
-        url: 'https://api.europe-west1.gcp.commercetools.com',
+        url: `https://api.europe-west1.gcp.commercetools.com/${environment.projectKey}`,
     }),
 });
 
