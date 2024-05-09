@@ -6,24 +6,27 @@ import { HostApiService } from 'src/app/shared/services/host-api/host-api.servic
 export function getAccessToken(authApiService: AuthApiService, hostApiService: HostApiService) {
     return () =>
         authApiService.accessToken$.pipe(
-            tap(accessToken => {
+            tap(response => {
                 const documentCookie = cookieHandler.parse(document.cookie);
 
                 if (!('accessToken' in documentCookie)) {
                     const cookies = [
-                        cookieHandler.serialize('accessToken', accessToken.access_token, {
+                        cookieHandler.serialize('accessToken', response.access_token, {
                             secure: true,
-                            expires: new Date(Date.now() + accessToken.expires_in),
+                            expires: new Date(Date.now() + response.expires_in),
                         }),
-                        cookieHandler.serialize('accessTokenType', accessToken.token_type, {
+                        cookieHandler.serialize('accessTokenType', response.token_type, {
                             secure: true,
-                            expires: new Date(Date.now() + accessToken.expires_in),
+                            expires: new Date(Date.now() + response.expires_in),
                         }),
                     ];
 
                     cookies.forEach(newCookie => {
                         document.cookie = newCookie;
                     });
+
+                    authApiService.setAccessToken(response.access_token);
+                    hostApiService.setAccessToken(response.access_token);
                 }
 
                 if ('accessToken' in documentCookie) {
