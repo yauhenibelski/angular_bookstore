@@ -1,3 +1,16 @@
 :host {
-    display: block;
+    display: flex;
+    justify-content: center;
+    padding: 40px;
+}
+
+mat-card {
+    width: 100%;
+    max-width: 500px;
+
+    form {
+        display: flex;
+        flex-direction: column;
+        padding: 20px;
+    }
 }

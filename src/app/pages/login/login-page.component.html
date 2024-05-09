@@ -1,1 +1,33 @@
-<p>login-page works!</p>
+<mat-card>
+    <form [formGroup]="loginForm">
+        <h2>Log in</h2>
+        <mat-form-field>
+            <mat-label>Enter your email</mat-label>
+            <input #email matInput placeholder="pat@example.com" formControlName="email" />
+            @if (controls.email.errors) {
+                <mat-error>{{ controls.email.errors | getErrorMassage }}</mat-error>
+            }
+        </mat-form-field>
+        <mat-form-field>
+            <mat-label>Enter your password</mat-label>
+            <input
+                matInput
+                formControlName="password"
+                [type]="isPasswordHide ? 'password' : 'text'"
+            />
+            <button
+                mat-icon-button
+                matSuffix
+                [attr.aria-label]="'Hide password'"
+                [attr.aria-pressed]="isPasswordHide"
+                (click)="isPasswordHide = !isPasswordHide; $event.preventDefault()"
+            >
+                <mat-icon>{{ isPasswordHide ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </button>
+            @if (controls.password.errors) {
+                <mat-error>{{ controls.password.errors | getErrorMassage }}</mat-error>
+            }
+        </mat-form-field>
+        <button mat-raised-button [disabled]="loginForm.invalid">Log in</button>
+    </form>
+</mat-card>
