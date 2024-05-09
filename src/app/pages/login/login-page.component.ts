@@ -4,9 +4,9 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { FormControl, FormGroup, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
-import { isEmail } from './validators/email';
-import { GetErrorMassagePipe } from './pipes/get-error-massage.pipe';
-import { passwordValidators } from './validators/password';
+import { isEmail } from '../../shared/form-validators/email';
+import { GetErrorMassagePipe } from '../../shared/pipes/get-error-massage/get-error-massage.pipe';
+import { passwordValidators } from '../../shared/form-validators/password';
 
 @Component({
     selector: 'app-login-page',
