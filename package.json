@@ -36,6 +36,8 @@
         "@angular/platform-browser-dynamic": "^17.0.0",
         "@angular/router": "^17.0.0",
         "cookie": "^0.6.0",
+        "country-codes-list": "^1.6.11",
+        "postal-codes-js": "^2.5.2",
         "rxjs": "~7.8.0",
         "tslib": "^2.3.0",
         "zone.js": "~0.14.2"

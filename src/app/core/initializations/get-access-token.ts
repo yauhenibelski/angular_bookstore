@@ -1,13 +1,11 @@
-import { Observable, tap } from 'rxjs';
-import { AccessTokenResponseDto } from 'src/app/interfaces/access-token-response';
-import { AuthApiService } from 'src/app/shared/auth-api-service/auth-api.service';
+import { tap } from 'rxjs';
+import { AuthApiService } from 'src/app/shared/services/auth-api/auth-api.service';
 import * as cookieHandler from 'cookie';
+import { HostApiService } from 'src/app/shared/services/host-api/host-api.service';
 
-export function getAccessToken(
-    authService: AuthApiService,
-): () => Observable<AccessTokenResponseDto> {
+export function getAccessToken(authApiService: AuthApiService, hostApiService: HostApiService) {
     return () =>
-        authService.accessToken$.pipe(
+        authApiService.accessToken$.pipe(
             tap(accessToken => {
                 const documentCookie = cookieHandler.parse(document.cookie);
 
@@ -29,7 +27,8 @@ export function getAccessToken(
                 }
 
                 if ('accessToken' in documentCookie) {
-                    authService.accessToken = documentCookie['accessToken'];
+                    authApiService.setAccessToken(documentCookie['accessToken']);
+                    hostApiService.setAccessToken(documentCookie['accessToken']);
                 }
             }),
         );
