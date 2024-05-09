@@ -101,7 +101,10 @@
 
             <mat-autocomplete #auto="matAutocomplete">
                 @for (countryKey of availableCountries$ | async; track countryKey) {
-                    <mat-option [value]="countryCodes[countryKey]">
+                    <mat-option
+                        [value]="countryCodes[countryKey]"
+                        (click)="controls.postalCode.setValue('')"
+                    >
                         {{ countryCodes[countryKey] }}
                     </mat-option>
                 }
