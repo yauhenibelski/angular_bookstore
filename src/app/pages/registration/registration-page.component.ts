@@ -11,19 +11,17 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { ProjectSettingsService } from 'src/app/shared/services/project-settings/project-settings.service';
 import { AsyncPipe } from '@angular/common';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import * as countryCodes from 'country-codes-list';
 import { filter, map } from 'rxjs';
 // import { HostApiService } from 'src/app/shared/services/host-api/host-api.service';
-// import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { isEmail } from './validators/email';
 import { passwordValidators } from './validators/password';
 import { GetErrorMassagePipe } from './pipes/get-error-massage.pipe';
 import { hasOneCharacter } from './validators/has-one-character';
 import { hasSpace } from './validators/has-space';
 import { isDate } from './validators/date';
-import { formatString } from './utils/format-string';
 import { isCountryExists } from './validators/is-country-exists';
 import { isPostalCodeValid } from './validators/is-postalcode-valid';
+import { getCountryCodes } from './utils/get-country-codes';
 
 @Component({
     selector: 'app-registration-page',
@@ -49,22 +47,12 @@ import { isPostalCodeValid } from './validators/is-postalcode-valid';
 })
 export class RegistrationPageComponent implements OnInit {
     // private readonly hostApiService = inject(HostApiService);
-    // private readonly destroyRef = inject(DestroyRef);
+    readonly countryCodes = getCountryCodes();
+    isPasswordHide = true;
 
     readonly availableCountries$ = inject(ProjectSettingsService).projectSettings$.pipe(
         filter(projectSettings => Boolean(projectSettings)),
         map(projectSettings => projectSettings?.countries),
-    );
-
-    readonly countryCodes = Object.entries(countryCodes.customList()).reduce(
-        (acc: { [key: string]: string }, country) => {
-            const [code, countryName] = country;
-
-            acc[code] = formatString(countryName);
-
-            return acc;
-        },
-        {},
     );
 
     private readonly countryControl = new FormControl('', {
@@ -88,18 +76,9 @@ export class RegistrationPageComponent implements OnInit {
 
     readonly controls = this.registrationForm.controls;
 
-    isPasswordHide = true;
-
     ngOnInit(): void {
         // ----- commented until crosscheck -----
-        // this.hostApiService
-        //     .getProjectSettings$()
-        //     .pipe(takeUntilDestroyed(this.destroyRef))
-        //     .subscribe({
-        //         error() {
-        //             console.error('RegistrationPage getProjectSetting');
-        //         },
-        //     });
-        console.info('');
+        // this.hostApiService.setProjectSettings();
+        console.info();
     }
 }

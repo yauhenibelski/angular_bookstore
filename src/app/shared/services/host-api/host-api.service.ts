@@ -1,7 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ProjectSettings } from 'src/app/interfaces/project-settings';
-import { Observable, tap } from 'rxjs';
 import { HOST_URL } from '../../url-tokens';
 import { ProjectSettingsService } from '../project-settings/project-settings.service';
 
@@ -14,23 +13,21 @@ export class HostApiService {
     private readonly hostUrl = inject(HOST_URL);
     private readonly projectSettingsService = inject(ProjectSettingsService);
 
-    setAccessToken(token: string) {
+    setAccessToken(token: string): void {
         this.accessToken = token;
     }
 
-    getProjectSettings$(): Observable<ProjectSettings> {
-        return this.httpClient
+    setProjectSettings(): void {
+        this.httpClient
             .get<ProjectSettings>(this.hostUrl.url, {
                 headers: {
                     Authorization: `Bearer ${this.accessToken}`,
                 },
             })
-            .pipe(
-                tap(settings => {
-                    const { envProjectSettings$ } = this.projectSettingsService;
+            .subscribe(settings => {
+                const { envProjectSettings$ } = this.projectSettingsService;
 
-                    envProjectSettings$.next(settings);
-                }),
-            );
+                envProjectSettings$.next(settings);
+            });
     }
 }
