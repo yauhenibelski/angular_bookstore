@@ -12,7 +12,9 @@ import { ProjectSettingsService } from 'src/app/shared/services/project-settings
 import { AsyncPipe } from '@angular/common';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { filter, map } from 'rxjs';
-// import { HostApiService } from 'src/app/shared/services/host-api/host-api.service';
+import { HostApiService } from 'src/app/shared/services/host-api/host-api.service';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { isEmail } from 'src/app/shared/form-validators/email';
 import { passwordValidators } from 'src/app/shared/form-validators/password';
 import { hasSpace } from 'src/app/shared/form-validators/has-space';
