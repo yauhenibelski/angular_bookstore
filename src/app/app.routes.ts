@@ -3,8 +3,7 @@ import { BooksPageComponent } from './pages/books/books-page.component';
 
 export const routes: Routes = [
     {
-        path: '',
-        pathMatch: 'full',
+        path: 'books',
         component: BooksPageComponent,
     },
     {
@@ -18,6 +17,11 @@ export const routes: Routes = [
         path: 'login',
         loadComponent: () =>
             import('./pages/login/login-page.component').then(mod => mod.LoginPageComponent),
+    },
+    {
+        path: '',
+        pathMatch: 'full',
+        redirectTo: 'books',
     },
     {
         path: '**',
