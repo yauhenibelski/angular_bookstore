@@ -3,8 +3,21 @@
 html,
 body {
     height: 100%;
+    scrollbar-width: thin;
 }
+
 body {
-    margin: 0;
+    margin: 0 auto;
     font-family: Roboto, 'Helvetica Neue', sans-serif;
+    max-width: 1300px;
+    width: 95%;
+}
+
+app-root {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background: no-repeat url('./assets/img/translucent-image.png');
+    background-size: 25%;
+    background-position: 95% 80%;
 }

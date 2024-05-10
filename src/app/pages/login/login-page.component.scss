@@ -14,3 +14,14 @@ mat-card {
         padding: 20px;
     }
 }
+a {
+    text-align: center;
+    padding-top: 10px;
+    color: gray;
+    text-decoration: none;
+    transition: 0.5s;
+
+    &:hover {
+        text-decoration: underline;
+    }
+}
