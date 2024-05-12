@@ -28,7 +28,12 @@
                 <mat-error>{{ controls.password.errors | getErrorMassage }}</mat-error>
             }
         </mat-form-field>
-        <button mat-raised-button [disabled]="loginForm.invalid">Log in</button>
+        <button
+            mat-raised-button
+            [disabled]="!loginForm.controls.email.pending && loginForm.invalid"
+        >
+            Log in
+        </button>
         <a routerLink="/registration">Don't have an account yet?</a>
     </form>
 </mat-card>

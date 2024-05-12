@@ -46,4 +46,15 @@ export class HostApiService {
                 envProjectSettings$.next(settings);
             });
     }
+
+    checkUserByEmail(email: string) {
+        return this.httpClient.head(
+            `${this.hostUrl.url}/customers?where=${encodeURIComponent(`email="${email}"`)}`,
+            {
+                headers: {
+                    Authorization: `Bearer ${this.accessToken}`,
+                },
+            },
+        );
+    }
 }
