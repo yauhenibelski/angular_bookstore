@@ -1,5 +1,11 @@
 import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
-import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {
+    FormBuilder,
+    FormControl,
+    FormGroup,
+    FormsModule,
+    ReactiveFormsModule,
+} from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatCardModule } from '@angular/material/card';
@@ -26,6 +32,7 @@ import { isPostalCodeValid } from './validators/is-postalcode-valid';
 import { getCountryCodes } from './utils/get-country-codes';
 import { getCountryKey } from './utils/get-country-key';
 import { SuccessfulAccountCreationMessageComponent } from './successful-account-creation-message/successful-account-creation-message.component';
+import { Address } from './interface/address';
 
 @Component({
     selector: 'app-registration-page',
@@ -53,6 +60,7 @@ import { SuccessfulAccountCreationMessageComponent } from './successful-account-
 })
 export class RegistrationPageComponent implements OnInit {
     readonly hostApiService = inject(HostApiService);
+    readonly formBuilder = inject(FormBuilder);
     readonly router = inject(Router);
     readonly dialog = inject(MatDialog);
     readonly countryCodes = getCountryCodes();
@@ -73,68 +81,127 @@ export class RegistrationPageComponent implements OnInit {
 
     private readonly shippingAddressCountryControl = new FormControl('', {
         validators: [hasOneCharacter, isCountryExists(this.countryCodes)],
+        nonNullable: true,
     });
 
     private readonly billingAddressCountryControl = new FormControl('', {
         validators: [hasOneCharacter, isCountryExists(this.countryCodes)],
+        nonNullable: true,
     });
 
-    readonly registrationForm = new FormGroup({
-        email: new FormControl('', [isEmail]),
-        password: new FormControl('', [...Object.values(passwordValidators)]),
-        firstName: new FormControl('', [hasOneCharacter, hasSpace]),
-        lastName: new FormControl('', [hasOneCharacter, hasSpace]),
+    readonly registrationForm = this.formBuilder.nonNullable.group({
+        email: ['', [isEmail]],
+        password: ['', [...Object.values(passwordValidators)]],
+        firstName: ['', [hasOneCharacter, hasSpace]],
+        lastName: ['', [hasOneCharacter, hasSpace]],
 
-        shippingAddressCountry: this.shippingAddressCountryControl,
-        shippingAddressCity: new FormControl('', [hasOneCharacter, hasSpace]),
-        shippingAddressStreet: new FormControl('', [hasOneCharacter, hasSpace]),
-        shippingAddressPostalCode: new FormControl('', [
-            isPostalCodeValid(this.shippingAddressCountryControl, this.countryCodes),
+        addresses: this.formBuilder.nonNullable.array<FormGroup<Address>>([
+            this.formBuilder.nonNullable.group({
+                country: this.shippingAddressCountryControl,
+                city: new FormControl('', {
+                    nonNullable: true,
+                    validators: [hasOneCharacter, hasSpace],
+                }),
+                streetName: new FormControl('', {
+                    nonNullable: true,
+                    validators: [hasOneCharacter, hasSpace],
+                }),
+                postalCode: new FormControl('', {
+                    validators: [
+                        isPostalCodeValid(this.shippingAddressCountryControl, this.countryCodes),
+                    ],
+                    nonNullable: true,
+                }),
+            }),
+            this.formBuilder.nonNullable.group({
+                country: this.billingAddressCountryControl,
+                city: new FormControl('', {
+                    nonNullable: true,
+                    validators: [hasOneCharacter, hasSpace],
+                }),
+                streetName: new FormControl('', {
+                    nonNullable: true,
+                    validators: [hasOneCharacter, hasSpace],
+                }),
+                postalCode: new FormControl('', {
+                    validators: [
+                        isPostalCodeValid(this.billingAddressCountryControl, this.countryCodes),
+                    ],
+                    nonNullable: true,
+                }),
+            }),
         ]),
 
-        billingAddressCountry: this.billingAddressCountryControl,
-        billingAddressCity: new FormControl('', [hasOneCharacter, hasSpace]),
-        billingAddressStreet: new FormControl('', [hasOneCharacter, hasSpace]),
-        billingAddressPostalCode: new FormControl('', [
-            isPostalCodeValid(this.billingAddressCountryControl, this.countryCodes),
-        ]),
-        date: new FormControl('', [isDate]),
+        dateOfBirth: ['', [isDate]],
     });
 
-    readonly controls = this.registrationForm.controls;
+    get controls() {
+        const [shippingAddress, billingAddress] = this.registrationForm.controls.addresses.controls;
+
+        return {
+            ...this.registrationForm.controls,
+            shipping: { ...shippingAddress.controls },
+            billingAddress: { ...billingAddress.controls },
+        };
+    }
 
     ngOnInit(): void {
-        // ----- commented until crosscheck -----
-        // this.hostApiService.setProjectSettings();
-        console.info();
+        this.hostApiService.setProjectSettings();
+    }
+
+    setDefaultBillingAddress(): void {
+        const [shippingAddress, billingAddress] = this.registrationForm.controls.addresses.controls;
+        const {
+            country: shippingAddressCountry,
+            city: shippingAddressCity,
+            streetName: shippingAddressStreet,
+            postalCode: shippingAddressPostalCode,
+        } = shippingAddress.controls;
+        const {
+            country: billingAddressCountry,
+            city: billingAddressCity,
+            streetName: billingAddressStreet,
+            postalCode: billingAddressPostalCode,
+        } = billingAddress.controls;
+
+        billingAddressCountry.setValue(shippingAddressCountry.value);
+        billingAddressCity.setValue(shippingAddressCity.value);
+        billingAddressStreet.setValue(shippingAddressStreet.value);
+        billingAddressPostalCode.setValue(shippingAddressPostalCode.value);
+    }
+
+    clearBillingAddress(useAddressForBilling: boolean): void {
+        if (useAddressForBilling) {
+            this.setDefaultBillingAddress();
+        }
+
+        if (!useAddressForBilling) {
+            const [, billingAddress] = this.registrationForm.controls.addresses.controls;
+
+            Object.values(billingAddress.controls).forEach((formControl: FormControl) => {
+                formControl.setValue('');
+            });
+        }
     }
 
     signUpCustomer(useAddressForBilling: boolean): void {
+        const formValue = this.registrationForm.getRawValue();
+        const addresses = [...formValue.addresses].map(address => ({
+            ...address,
+            ...{ country: getCountryKey(address.country) },
+        }));
+
+        const mapValue = {
+            defaultShippingAddress: 0,
+            defaultBillingAddress: Number(!useAddressForBilling),
+            dateOfBirth: new Date(formValue.dateOfBirth).toJSON().slice(0, 10),
+            addresses,
+        };
+
         this.hostApiService
             .signUpCustomer$({
-                email: this.registrationForm.value.email!,
-                password: this.registrationForm.value.password!,
-                lastName: this.registrationForm.value.lastName!,
-                firstName: this.registrationForm.value.firstName!,
-                defaultShippingAddress: 1,
-                defaultBillingAddress: Number(useAddressForBilling),
-                dateOfBirth: new Date(this.registrationForm.value.date!).toJSON().slice(0, 10),
-                addresses: [
-                    {
-                        city: this.registrationForm.value.billingAddressCity!,
-                        country: getCountryKey(this.registrationForm.value.billingAddressCountry!)!,
-                        streetName: this.registrationForm.value.billingAddressStreet!,
-                        postalCode: this.registrationForm.value.billingAddressPostalCode!,
-                    },
-                    {
-                        city: this.registrationForm.value.shippingAddressCity!,
-                        country: getCountryKey(
-                            this.registrationForm.value.shippingAddressCountry!,
-                        )!,
-                        streetName: this.registrationForm.value.shippingAddressStreet!,
-                        postalCode: this.registrationForm.value.shippingAddressPostalCode!,
-                    },
-                ],
+                ...formValue,
+                ...mapValue,
             })
             .subscribe(() => {
                 this.openDialog();
