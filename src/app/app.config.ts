@@ -5,8 +5,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { provideHttpClient } from '@angular/common/http';
 import { routes } from './app.routes';
 import { getAccessToken } from './core/initializations/get-access-token';
-import { AuthApiService } from './shared/services/auth-api/auth-api.service';
-import { HostApiService } from './shared/services/host-api/host-api.service';
+import { ApiService } from './shared/services/api/api.service';
 
 export const appConfig: ApplicationConfig = {
     providers: [
@@ -16,7 +15,7 @@ export const appConfig: ApplicationConfig = {
         {
             provide: APP_INITIALIZER,
             useFactory: getAccessToken,
-            deps: [AuthApiService, HostApiService],
+            deps: [ApiService],
             multi: true,
         },
     ],

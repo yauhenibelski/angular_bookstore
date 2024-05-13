@@ -245,7 +245,7 @@
         <button
             mat-raised-button
             [style.marginTop.px]="10"
-            [disabled]="!controls.email.pending && registrationForm.invalid"
+            [disabled]="!registrationForm.valid"
             (click)="signUpCustomer(useAddressForBilling.checked)"
         >
             Sign up

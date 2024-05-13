@@ -6,6 +6,10 @@ import { FormControl, FormGroup, ReactiveFormsModule, FormsModule } from '@angul
 import { MatIconModule } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
 import { CheckUniqueEmail } from 'src/app/shared/form-validators/async-email-check';
+import { ApiService } from 'src/app/shared/services/api/api.service';
+import { CartService } from 'src/app/shared/services/cart/cart.service';
+import { CustomerService } from 'src/app/shared/services/customer/customer.service';
+import { switchMap, tap } from 'rxjs';
 import { isEmail } from '../../shared/form-validators/email';
 import { GetErrorMassagePipe } from '../../shared/pipes/get-error-massage/get-error-massage.pipe';
 import { passwordValidators } from '../../shared/form-validators/password';
@@ -29,16 +33,42 @@ import { passwordValidators } from '../../shared/form-validators/password';
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LoginPageComponent {
-    private readonly checkUniqueEmail = inject(CheckUniqueEmail);
+    private readonly apiService = inject(ApiService);
+    private readonly cartService = inject(CartService);
+    private readonly customerService = inject(CustomerService);
+
     isPasswordHide = true;
 
     readonly loginForm = new FormGroup({
         email: new FormControl('', {
             validators: [isEmail],
-            asyncValidators: [this.checkUniqueEmail.validate.bind(this.checkUniqueEmail)],
+            nonNullable: true,
         }),
-        password: new FormControl('', [...Object.values(passwordValidators)]),
+        password: new FormControl('', {
+            validators: [...Object.values(passwordValidators)],
+            nonNullable: true,
+        }),
     });
 
     readonly controls = this.loginForm.controls;
+
+    signIn(): void {
+        const formValue = this.loginForm.getRawValue();
+
+        this.apiService
+            .signInCustomer(formValue)
+            .pipe(
+                tap(response => {
+                    this.customerService.customer = response.customer;
+                    this.cartService.card = response.cart;
+                }),
+                switchMap(() => {
+                    return this.apiService.getPasswordFlowToken(formValue);
+                }),
+            )
+            .subscribe(passwordFlowToken => {
+                // eslint-disable-next-line no-console
+                console.log(passwordFlowToken);
+            });
+    }
 }
