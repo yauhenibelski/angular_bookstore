@@ -25,6 +25,7 @@ import { isEmail } from 'src/app/shared/form-validators/email';
 import { passwordValidators } from 'src/app/shared/form-validators/password';
 import { hasSpace } from 'src/app/shared/form-validators/has-space';
 import { GetErrorMassagePipe } from 'src/app/shared/pipes/get-error-massage/get-error-massage.pipe';
+import { CheckUniqueEmail } from 'src/app/shared/form-validators/async-email-check';
 import { hasOneCharacter } from './validators/has-one-character';
 import { isDate } from './validators/date';
 import { isCountryExists } from './validators/is-country-exists';
@@ -55,10 +56,11 @@ import { Address } from './interface/address';
     ],
     templateUrl: './registration-page.component.html',
     styleUrl: './registration-page.component.scss',
-    providers: [provideNativeDateAdapter()],
+    providers: [provideNativeDateAdapter(), CheckUniqueEmail],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RegistrationPageComponent implements OnInit {
+    private readonly checkUniqueEmail = inject(CheckUniqueEmail);
     readonly hostApiService = inject(HostApiService);
     readonly formBuilder = inject(FormBuilder);
     readonly router = inject(Router);
@@ -90,7 +92,11 @@ export class RegistrationPageComponent implements OnInit {
     });
 
     readonly registrationForm = this.formBuilder.nonNullable.group({
-        email: ['', [isEmail]],
+        email: new FormControl('', {
+            validators: [isEmail],
+            asyncValidators: [this.checkUniqueEmail.validate.bind(this.checkUniqueEmail)],
+            nonNullable: true,
+        }),
         password: ['', [...Object.values(passwordValidators)]],
         firstName: ['', [hasOneCharacter, hasSpace]],
         lastName: ['', [hasOneCharacter, hasSpace]],
