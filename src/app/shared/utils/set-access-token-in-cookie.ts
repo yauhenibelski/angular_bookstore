@@ -13,11 +13,11 @@ export const setAccessTokenInCookie = (
     const cookies = [
         cookieHandler.serialize('accessToken', token, {
             secure: true,
-            expires: new Date(Date.now() + response.expires_in),
+            maxAge: response.expires_in,
         }),
         cookieHandler.serialize('refreshToken', response.refresh_token, {
             secure: true,
-            expires: new Date(Date.now() + response.expires_in),
+            maxAge: response.expires_in,
         }),
     ];
 
