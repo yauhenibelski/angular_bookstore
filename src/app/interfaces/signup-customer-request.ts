@@ -15,4 +15,3 @@ export interface SignupCustomer {
     defaultBillingAddress: number;
     dateOfBirth: string;
 }
-// '"2018-10-12T14:00:00.000Z"'

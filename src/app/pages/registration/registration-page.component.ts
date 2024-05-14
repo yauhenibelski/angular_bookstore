@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import {
     FormBuilder,
     FormControl,
@@ -18,7 +18,7 @@ import { ProjectSettingsService } from 'src/app/shared/services/project-settings
 import { AsyncPipe } from '@angular/common';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { filter, map } from 'rxjs';
-import { HostApiService } from 'src/app/shared/services/host-api/host-api.service';
+import { ApiService } from 'src/app/shared/services/api/api.service';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { isEmail } from 'src/app/shared/form-validators/email';
@@ -26,6 +26,7 @@ import { passwordValidators } from 'src/app/shared/form-validators/password';
 import { hasSpace } from 'src/app/shared/form-validators/has-space';
 import { GetErrorMassagePipe } from 'src/app/shared/pipes/get-error-massage/get-error-massage.pipe';
 import { CheckUniqueEmail } from 'src/app/shared/form-validators/async-email-check';
+import { CustomerService } from 'src/app/shared/services/customer/customer.service';
 import { hasOneCharacter } from './validators/has-one-character';
 import { isDate } from './validators/date';
 import { isCountryExists } from './validators/is-country-exists';
@@ -59,24 +60,27 @@ import { Address } from './interface/address';
     providers: [provideNativeDateAdapter(), CheckUniqueEmail],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class RegistrationPageComponent implements OnInit {
+export class RegistrationPageComponent {
     private readonly checkUniqueEmail = inject(CheckUniqueEmail);
-    readonly hostApiService = inject(HostApiService);
-    readonly formBuilder = inject(FormBuilder);
-    readonly router = inject(Router);
-    readonly dialog = inject(MatDialog);
+    private readonly customerService = inject(CustomerService);
+    private readonly formBuilder = inject(FormBuilder);
+    private readonly apiService = inject(ApiService);
+    private readonly router = inject(Router);
+    private readonly dialog = inject(MatDialog);
+
     readonly countryCodes = getCountryCodes();
+
     isPasswordHide = true;
 
-    openDialog() {
+    openDialog(): void {
         const dialogRef = this.dialog.open(SuccessfulAccountCreationMessageComponent);
 
         dialogRef.afterClosed().subscribe(() => {
-            this.router.navigateByUrl('/books');
+            this.router.navigateByUrl('/');
         });
     }
 
-    readonly availableCountries$ = inject(ProjectSettingsService).projectSettings$.pipe(
+    readonly availableCountries$ = inject(ProjectSettingsService).projectSettings.pipe(
         filter(projectSettings => Boolean(projectSettings)),
         map(projectSettings => projectSettings?.countries),
     );
@@ -151,10 +155,6 @@ export class RegistrationPageComponent implements OnInit {
         };
     }
 
-    ngOnInit(): void {
-        this.hostApiService.setProjectSettings();
-    }
-
     setDefaultBillingAddress(): void {
         const [shippingAddress, billingAddress] = this.registrationForm.controls.addresses.controls;
         const {
@@ -204,13 +204,14 @@ export class RegistrationPageComponent implements OnInit {
             addresses,
         };
 
-        this.hostApiService
-            .signUpCustomer$({
+        this.apiService
+            .signUpCustomer({
                 ...formValue,
                 ...mapValue,
             })
-            .subscribe(() => {
+            .subscribe(response => {
                 this.openDialog();
+                this.customerService.customer = response.customer;
             });
     }
 }
