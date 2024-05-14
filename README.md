@@ -16,7 +16,14 @@ The purpose of this project is to:
 ## Technology Stack
 
 -   **Frontend:** Angular 17.0.1
--   **Testing:** Karma for unit tests, Jasmine for end-to-end testing
+-   **Testing:**
+
+    _Karma_: Karma is a test runner developed by the Angular team to facilitate the testing process in web development.
+
+    _Jasmine_: Jasmine is an open-source testing framework for JavaScript.
+
+    These tools are integrated into our project to ensure that all components and services function as expected and meet our quality standards.
+
 -   **Other Tools:** Angular CLI for project management and scaffolding
 
 ## Available Scripts
