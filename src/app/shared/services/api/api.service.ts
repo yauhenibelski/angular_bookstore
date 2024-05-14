@@ -3,14 +3,15 @@ import { HttpClient } from '@angular/common/http';
 import { ProjectSettings } from 'src/app/shared/services/project-settings/project-settings.interface';
 import { Customer, CustomerResponseDto } from 'src/app/interfaces/customer-response-dto';
 import { SignupCustomer } from 'src/app/interfaces/signup-customer-request';
-import { EMPTY, Observable } from 'rxjs';
+import { EMPTY, Observable, tap } from 'rxjs';
 import { environment } from 'src/app/environment/environment';
 import { AccessTokenResponseDto } from 'src/app/interfaces/access-token-response';
 import { v4 as uuidv4 } from 'uuid';
-import { AUTH_URL, HOST_URL } from '../../url-tokens';
+import { AUTH_URL, HOST_URL } from '../../di-token/url-tokens';
 import { ProjectSettingsService } from '../project-settings/project-settings.service';
 import { CartService } from '../cart/cart.service';
 import { Cart } from '../cart/cart.interface';
+import { CustomerService } from '../customer/customer.service';
 
 @Injectable({
     providedIn: 'root',
@@ -20,6 +21,7 @@ export class ApiService {
 
     private readonly projectSettingsService = inject(ProjectSettingsService);
     private readonly cardService = inject(CartService);
+    private readonly customerService = inject(CustomerService);
     private readonly hostUrl = inject(HOST_URL);
     private readonly authUrl = inject(AUTH_URL);
     readonly httpClient = inject(HttpClient);
@@ -111,8 +113,11 @@ export class ApiService {
             });
     }
 
-    getPasswordFlowToken({ email, password }: Pick<Customer, 'email' | 'password'>) {
-        return this.httpClient.post(
+    getPasswordFlowToken({
+        email,
+        password,
+    }: Pick<Customer, 'email' | 'password'>): Observable<AccessTokenResponseDto> {
+        return this.httpClient.post<AccessTokenResponseDto>(
             `${this.authUrl.url}/oauth/${environment.projectKey}/customers/token`,
             `grant_type=password`,
             {
@@ -129,10 +134,25 @@ export class ApiService {
         );
     }
 
-    getCustomerByPasswordFlowToken() {
-        return this.httpClient.get(`${this.hostUrl.url}/me`, {
+    getCustomerByPasswordFlowToken(): Observable<CustomerResponseDto> {
+        return this.httpClient
+            .get<CustomerResponseDto>(`${this.hostUrl.url}/me`, {
+                headers: {
+                    Authorization: `Bearer ${this.accessToken}`,
+                    'Content-Type': 'application/json',
+                },
+            })
+            .pipe(
+                tap(response => {
+                    this.customerService.customer = response.customer;
+                }),
+            );
+    }
+
+    getCartByPasswordFlowToken(): Observable<Cart> {
+        return this.httpClient.get<Cart>(`${this.hostUrl.url}/me/carts`, {
             headers: {
-                Authorization: `Bearer Qu7ihNZyOM0tTE7oUp-l7tC0ouenelXd`, // todo replace
+                Authorization: `Bearer ${this.accessToken}`,
                 'Content-Type': 'application/json',
             },
         });

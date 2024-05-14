@@ -1,5 +1,5 @@
 import { InjectionToken } from '@angular/core';
-import { environment } from '../environment/environment';
+import { environment } from '../../environment/environment';
 
 export const HOST_URL = new InjectionToken('Host url for application', {
     providedIn: 'root',

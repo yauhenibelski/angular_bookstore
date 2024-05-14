@@ -14,9 +14,13 @@ export const routes: Routes = [
         component: LoginPageComponent,
     },
     {
+        path: 'main',
+        component: BooksPageComponent,
+    },
+    {
         path: '',
         pathMatch: 'full',
-        component: BooksPageComponent,
+        redirectTo: 'main', // technical requirements RSS-ECOMM-2_05
     },
     {
         path: '**',

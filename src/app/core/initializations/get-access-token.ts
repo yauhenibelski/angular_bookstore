@@ -1,33 +1,35 @@
 import { ApiService } from 'src/app/shared/services/api/api.service';
 import * as cookieHandler from 'cookie';
+import { ANONYMOUS_TOKEN_SHORT_NAME } from 'src/app/shared/constants/anonymous-token-short-name';
+import { setAccessTokenInCookie } from 'src/app/shared/utils/set-access-token-in-cookie';
 
 export function getAccessToken(apiService: ApiService) {
     return () => {
         const documentCookie = cookieHandler.parse(document.cookie);
 
         if ('accessToken' in documentCookie) {
-            apiService.setAccessToken(documentCookie['accessToken']);
+            const accessToken = documentCookie['accessToken'];
+            const isAnonymousToken = accessToken.startsWith(ANONYMOUS_TOKEN_SHORT_NAME);
+
+            if (isAnonymousToken) {
+                apiService.setAccessToken(accessToken.replace(ANONYMOUS_TOKEN_SHORT_NAME, ''));
+                apiService.createAnonymousCart();
+            }
+
+            if (!isAnonymousToken) {
+                apiService.setAccessToken(accessToken);
+                apiService.getCustomerByPasswordFlowToken().subscribe();
+                /* TODO: add carts 
+                    apiService.getCartByPasswordFlowToken().subscribe(console.log)
+                */
+            }
 
             apiService.setProjectSettings();
-            apiService.createAnonymousCart();
         }
 
         if (!('accessToken' in documentCookie)) {
             apiService.getAccessToken().subscribe(response => {
-                const cookies = [
-                    cookieHandler.serialize('accessToken', response.access_token, {
-                        secure: true,
-                        expires: new Date(Date.now() + response.expires_in),
-                    }),
-                    cookieHandler.serialize('refreshToken', response.refresh_token, {
-                        secure: true,
-                        expires: new Date(Date.now() + response.expires_in),
-                    }),
-                ];
-
-                cookies.forEach(newCookie => {
-                    document.cookie = newCookie;
-                });
+                setAccessTokenInCookie(response, true);
 
                 apiService.setAccessToken(response.access_token);
 
