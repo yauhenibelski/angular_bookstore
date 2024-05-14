@@ -1,3 +1,7 @@
 <app-header></app-header>
+<mat-progress-bar
+    mode="indeterminate"
+    [class.mat-progress-bar-active]="isLoading$ | async"
+></mat-progress-bar>
 <router-outlet />
 <app-footer></app-footer>
