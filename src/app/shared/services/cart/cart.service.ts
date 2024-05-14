@@ -6,17 +6,17 @@ import { Cart } from './cart.interface';
     providedIn: 'root',
 })
 export class CartService {
-    private readonly Card$ = new BehaviorSubject<Cart | null>(null);
+    private readonly cart$ = new BehaviorSubject<Cart | null>(null);
 
-    get card(): Observable<Cart | null> {
-        return this.Card$.asObservable();
+    get cart(): Observable<Cart | null> {
+        return this.cart$.asObservable();
     }
 
-    set card(card: Cart | null) {
-        this.Card$.next(card);
+    set cart(cart: Cart | null) {
+        this.cart$.next(cart);
     }
 
     get value(): Cart | null {
-        return this.Card$.value;
+        return this.cart$.value;
     }
 }

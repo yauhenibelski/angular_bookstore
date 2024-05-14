@@ -10,7 +10,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { AUTH_URL, HOST_URL } from '../../di-token/url-tokens';
 import { ProjectSettingsService } from '../project-settings/project-settings.service';
 import { CartService } from '../cart/cart.service';
-import { Cart } from '../cart/cart.interface';
+import { Cart, CartResponseDto } from '../cart/cart.interface';
 import { CustomerService } from '../customer/customer.service';
 
 @Injectable({
@@ -93,8 +93,8 @@ export class ApiService {
                     },
                 },
             )
-            .subscribe(card => {
-                this.cardService.card = card;
+            .subscribe(cart => {
+                this.cardService.cart = cart;
             });
     }
 
@@ -149,8 +149,8 @@ export class ApiService {
             );
     }
 
-    getCartByPasswordFlowToken(): Observable<Cart> {
-        return this.httpClient.get<Cart>(`${this.hostUrl.url}/me/carts`, {
+    getCartByPasswordFlowToken(): Observable<CartResponseDto> {
+        return this.httpClient.get<CartResponseDto>(`${this.hostUrl.url}/me/carts`, {
             headers: {
                 Authorization: `Bearer ${this.accessToken}`,
                 'Content-Type': 'application/json',

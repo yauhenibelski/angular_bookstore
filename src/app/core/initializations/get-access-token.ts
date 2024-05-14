@@ -2,8 +2,15 @@ import { ApiService } from 'src/app/shared/services/api/api.service';
 import * as cookieHandler from 'cookie';
 import { ANONYMOUS_TOKEN_SHORT_NAME } from 'src/app/shared/constants/anonymous-token-short-name';
 import { setAccessTokenInCookie } from 'src/app/shared/utils/set-access-token-in-cookie';
+import { switchMap, tap } from 'rxjs';
+import { AuthService } from 'src/app/shared/services/auth/auth.service';
+import { CartService } from 'src/app/shared/services/cart/cart.service';
 
-export function getAccessToken(apiService: ApiService) {
+export function getAccessToken(
+    apiService: ApiService,
+    authService: AuthService,
+    cartService: CartService,
+) {
     return () => {
         const documentCookie = cookieHandler.parse(document.cookie);
 
@@ -18,10 +25,19 @@ export function getAccessToken(apiService: ApiService) {
 
             if (!isAnonymousToken) {
                 apiService.setAccessToken(accessToken);
-                apiService.getCustomerByPasswordFlowToken().subscribe();
-                /* TODO: add carts 
-                    apiService.getCartByPasswordFlowToken().subscribe(console.log)
-                */
+                apiService
+                    .getCustomerByPasswordFlowToken()
+                    .pipe(
+                        tap(() => {
+                            authService.isLogined = true;
+                        }),
+                        switchMap(() => apiService.getCartByPasswordFlowToken()),
+                    )
+                    .subscribe(cartRes => {
+                        const cart = cartRes.results.reverse()[0] ?? null;
+
+                        cartService.cart = cart;
+                    });
             }
 
             apiService.setProjectSettings();
