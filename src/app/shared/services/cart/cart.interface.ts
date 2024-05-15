@@ -27,3 +27,10 @@ export interface Cart {
     origin: string;
     itemShippingAddresses: unknown[];
 }
+export interface CartResponseDto {
+    count: number;
+    limit: number;
+    offset: number;
+    results: Cart[];
+    total: number;
+}

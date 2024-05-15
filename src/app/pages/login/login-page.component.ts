@@ -12,11 +12,14 @@ import { CustomerService } from 'src/app/shared/services/customer/customer.servi
 import { switchMap, tap } from 'rxjs';
 import { MatBottomSheet, MatBottomSheetModule } from '@angular/material/bottom-sheet';
 import { setAccessTokenInCookie } from 'src/app/shared/utils/set-access-token-in-cookie';
+import { AuthService } from 'src/app/shared/services/auth/auth.service';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { isEmail } from '../../shared/form-validators/email';
 import { GetErrorMassagePipe } from '../../shared/pipes/get-error-massage/get-error-massage.pipe';
 import { passwordValidators } from '../../shared/form-validators/password';
 import { ErrorMessageComponent } from './error-message/error-message.component';
 
+@UntilDestroy({ checkProperties: true })
 @Component({
     selector: 'app-login-page',
     standalone: true,
@@ -38,6 +41,7 @@ import { ErrorMessageComponent } from './error-message/error-message.component';
 })
 export class LoginPageComponent {
     private readonly apiService = inject(ApiService);
+    private readonly authService = inject(AuthService);
     private readonly cartService = inject(CartService);
     private readonly customerService = inject(CustomerService);
     private readonly bottomSheet = inject(MatBottomSheet);
@@ -48,6 +52,13 @@ export class LoginPageComponent {
     openBottomSheet(): void {
         this.bottomSheet.open(ErrorMessageComponent);
     }
+
+    // --------- task requirement: redirect to main ---------
+    subscription = this.authService.isLogined.subscribe(boolean => {
+        if (boolean) {
+            this.router.navigateByUrl('/main');
+        }
+    });
 
     readonly loginForm = new FormGroup({
         email: new FormControl('', {
@@ -70,7 +81,7 @@ export class LoginPageComponent {
             .pipe(
                 tap(response => {
                     this.customerService.customer = response.customer;
-                    this.cartService.card = response.cart;
+                    this.cartService.cart = response.cart;
                 }),
                 switchMap(() => {
                     return this.apiService.getPasswordFlowToken(formValue);
@@ -78,8 +89,9 @@ export class LoginPageComponent {
             )
             .subscribe({
                 next: passwordFlowToken => {
-                    this.router.navigateByUrl('/main');
                     setAccessTokenInCookie(passwordFlowToken, false);
+                    this.router.navigateByUrl('/main');
+                    this.authService.isLogined = true;
                 },
                 error: () => {
                     this.openBottomSheet();
