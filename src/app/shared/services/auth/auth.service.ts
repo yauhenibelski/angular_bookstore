@@ -5,13 +5,17 @@ import { BehaviorSubject, Observable } from 'rxjs';
     providedIn: 'root',
 })
 export class AuthService {
-    private readonly isLogined$ = new BehaviorSubject<boolean>(false);
+    private readonly isLoginedSubject = new BehaviorSubject<boolean>(false);
 
-    get isLogined(): Observable<boolean> {
-        return this.isLogined$.asObservable();
+    get isLogined() {
+        return this.isLoginedSubject.value;
     }
 
-    set isLogined(value: boolean) {
-        this.isLogined$.next(value);
+    get isLogined$(): Observable<boolean> {
+        return this.isLoginedSubject.asObservable();
+    }
+
+    setLoginStatus(value: boolean) {
+        this.isLoginedSubject.next(value);
     }
 }

@@ -34,7 +34,7 @@ export class ApiService {
         email,
         password,
     }: Pick<Customer, 'email' | 'password'>): Observable<CustomerResponseDto & { cart: Cart }> {
-        if (!this.cardService.value) {
+        if (!this.cardService.cart) {
             return EMPTY;
         }
 
@@ -44,7 +44,7 @@ export class ApiService {
                 email,
                 password,
                 anonymousCart: {
-                    id: this.cardService.value.id,
+                    id: this.cardService.cart.id,
                     typeId: 'cart',
                 },
             },
@@ -94,7 +94,7 @@ export class ApiService {
                 },
             )
             .subscribe(cart => {
-                this.cardService.cart = cart;
+                this.cardService.setCart(cart);
             });
     }
 

@@ -54,7 +54,7 @@ export class LoginPageComponent {
     }
 
     // --------- task requirement: redirect to main ---------
-    subscription = this.authService.isLogined.subscribe(boolean => {
+    subscription = this.authService.isLogined$.subscribe(boolean => {
         if (boolean) {
             this.router.navigateByUrl('/main');
         }
@@ -81,7 +81,7 @@ export class LoginPageComponent {
             .pipe(
                 tap(response => {
                     this.customerService.customer = response.customer;
-                    this.cartService.cart = response.cart;
+                    this.cartService.setCart(response.cart);
                 }),
                 switchMap(() => {
                     return this.apiService.getPasswordFlowToken(formValue);
@@ -91,7 +91,7 @@ export class LoginPageComponent {
                 next: passwordFlowToken => {
                     setAccessTokenInCookie(passwordFlowToken, false);
                     this.router.navigateByUrl('/main');
-                    this.authService.isLogined = true;
+                    this.authService.setLoginStatus(true);
                 },
                 error: () => {
                     this.openBottomSheet();

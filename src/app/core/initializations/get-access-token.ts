@@ -29,14 +29,14 @@ export function getAccessToken(
                     .getCustomerByPasswordFlowToken()
                     .pipe(
                         tap(() => {
-                            authService.isLogined = true;
+                            authService.setLoginStatus(true);
                         }),
                         switchMap(() => apiService.getCartByPasswordFlowToken()),
                     )
                     .subscribe(cartRes => {
                         const cart = cartRes.results.reverse()[0] ?? null;
 
-                        cartService.cart = cart;
+                        cartService.setCart(cart);
                     });
             }
 
