@@ -18,7 +18,6 @@ import { ProjectSettingsService } from 'src/app/shared/services/project-settings
 import { AsyncPipe } from '@angular/common';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { filter, map } from 'rxjs';
-import { ApiService } from 'src/app/shared/services/api/api.service';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { isEmail } from 'src/app/shared/form-validators/email';
@@ -27,6 +26,9 @@ import { hasSpace } from 'src/app/shared/form-validators/has-space';
 import { GetErrorMassagePipe } from 'src/app/shared/pipes/get-error-massage/get-error-massage.pipe';
 import { CheckUniqueEmail } from 'src/app/shared/form-validators/async-email-check';
 import { CustomerService } from 'src/app/shared/services/customer/customer.service';
+import { AuthService } from 'src/app/shared/services/auth/auth.service';
+import { UntilDestroy } from '@ngneat/until-destroy';
+import { ApiService } from 'src/app/shared/services/api/api.service';
 import { hasOneCharacter } from './validators/has-one-character';
 import { isDate } from './validators/date';
 import { isCountryExists } from './validators/is-country-exists';
@@ -36,6 +38,7 @@ import { getCountryKey } from './utils/get-country-key';
 import { SuccessfulAccountCreationMessageComponent } from './successful-account-creation-message/successful-account-creation-message.component';
 import { Address } from './interface/address';
 
+@UntilDestroy({ checkProperties: true })
 @Component({
     selector: 'app-registration-page',
     standalone: true,
@@ -64,9 +67,16 @@ export class RegistrationPageComponent {
     private readonly checkUniqueEmail = inject(CheckUniqueEmail);
     private readonly customerService = inject(CustomerService);
     private readonly formBuilder = inject(FormBuilder);
+    private readonly authService = inject(AuthService);
     private readonly apiService = inject(ApiService);
     private readonly router = inject(Router);
     private readonly dialog = inject(MatDialog);
+    private readonly projectSettingsService = inject(ProjectSettingsService);
+
+    readonly availableCountries$ = this.projectSettingsService.projectSettings$.pipe(
+        filter(projectSettings => Boolean(projectSettings)),
+        map(projectSettings => projectSettings?.countries),
+    );
 
     readonly countryCodes = getCountryCodes();
 
@@ -79,11 +89,6 @@ export class RegistrationPageComponent {
             this.router.navigateByUrl('/');
         });
     }
-
-    readonly availableCountries$ = inject(ProjectSettingsService).projectSettings.pipe(
-        filter(projectSettings => Boolean(projectSettings)),
-        map(projectSettings => projectSettings?.countries),
-    );
 
     private readonly shippingAddressCountryControl = new FormControl('', {
         validators: [hasOneCharacter, isCountryExists(this.countryCodes)],
@@ -204,7 +209,7 @@ export class RegistrationPageComponent {
             addresses,
         };
 
-        this.apiService
+        this.authService
             .signUpCustomer({
                 ...formValue,
                 ...mapValue,
@@ -213,5 +218,11 @@ export class RegistrationPageComponent {
                 this.openDialog();
                 this.customerService.customer = response.customer;
             });
+    }
+
+    getCountries() {
+        if (!this.projectSettingsService.projectSettings) {
+            this.apiService.setProjectSettings();
+        }
     }
 }

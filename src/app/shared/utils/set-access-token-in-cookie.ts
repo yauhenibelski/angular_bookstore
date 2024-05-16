@@ -1,6 +1,12 @@
 import * as cookieHandler from 'cookie';
-import { AccessTokenResponseDto } from 'src/app/interfaces/access-token-response';
-import { ANONYMOUS_TOKEN_SHORT_NAME } from '../constants/anonymous-token-short-name';
+import { AccessTokenResponseDto } from 'src/app/interfaces/access-token';
+import {
+    ANONYMOUS_TOKEN_SHORT_NAME,
+    accessTokenName,
+    refreshTokenName,
+} from '../constants/short-names';
+
+const TEN_HOURS = 36000;
 
 export const setAccessTokenInCookie = (
     response: AccessTokenResponseDto,
@@ -11,13 +17,13 @@ export const setAccessTokenInCookie = (
         : response.access_token;
 
     const cookies = [
-        cookieHandler.serialize('accessToken', token, {
+        cookieHandler.serialize(accessTokenName, token, {
             secure: true,
             maxAge: response.expires_in,
         }),
-        cookieHandler.serialize('refreshToken', response.refresh_token, {
+        cookieHandler.serialize(refreshTokenName, response.refresh_token, {
             secure: true,
-            maxAge: response.expires_in,
+            maxAge: response.expires_in + TEN_HOURS,
         }),
     ];
 

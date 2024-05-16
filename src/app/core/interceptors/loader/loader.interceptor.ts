@@ -1,4 +1,4 @@
-import { HttpEventType, HttpInterceptorFn } from '@angular/common/http';
+import { HttpErrorResponse, HttpEventType, HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { tap } from 'rxjs';
 import { LoaderService } from 'src/app/shared/services/loader/loader.service';
@@ -28,12 +28,8 @@ export const loaderInterceptor: HttpInterceptorFn = (req, next) => {
                 }
             },
             error: (err: unknown) => {
-                if (!(err instanceof Object)) {
-                    return;
-                }
-
-                if ('url' in err) {
-                    const index = urls.indexOf(err.url as string);
+                if (err instanceof HttpErrorResponse && err.url) {
+                    const index = urls.indexOf(err.url);
 
                     if (index !== -1) {
                         urls.splice(index, 1);

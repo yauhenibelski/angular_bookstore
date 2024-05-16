@@ -53,7 +53,6 @@ export class LoginPageComponent {
         this.bottomSheet.open(ErrorMessageComponent);
     }
 
-    // --------- task requirement: redirect to main ---------
     subscription = this.authService.isLogined$.subscribe(boolean => {
         if (boolean) {
             this.router.navigateByUrl('/main');
@@ -76,7 +75,7 @@ export class LoginPageComponent {
     signIn(): void {
         const formValue = this.loginForm.getRawValue();
 
-        this.apiService
+        this.authService
             .signInCustomer(formValue)
             .pipe(
                 tap(response => {
@@ -84,13 +83,13 @@ export class LoginPageComponent {
                     this.cartService.setCart(response.cart);
                 }),
                 switchMap(() => {
-                    return this.apiService.getPasswordFlowToken(formValue);
+                    return this.authService.getPasswordFlowToken(formValue);
                 }),
             )
             .subscribe({
                 next: passwordFlowToken => {
                     setAccessTokenInCookie(passwordFlowToken, false);
-                    this.router.navigateByUrl('/main');
+
                     this.authService.setLoginStatus(true);
                 },
                 error: () => {
