@@ -20,7 +20,7 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { filter, map } from 'rxjs';
 import { ApiService } from 'src/app/shared/services/api/api.service';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { isEmail } from 'src/app/shared/form-validators/email';
 import { passwordValidators } from 'src/app/shared/form-validators/password';
 import { hasSpace } from 'src/app/shared/form-validators/has-space';
@@ -54,6 +54,7 @@ import { Address } from './interface/address';
         AsyncPipe,
         MatButtonModule,
         MatDialogModule,
+        RouterLink,
     ],
     templateUrl: './registration-page.component.html',
     styleUrl: './registration-page.component.scss',

@@ -20,3 +20,15 @@ mat-card {
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
     grid-gap: 2%;
 }
+
+a {
+    text-align: center;
+    padding-top: 10px;
+    color: gray;
+    text-decoration: none;
+    transition: 0.5s;
+
+    &:hover {
+        text-decoration: underline;
+    }
+}
