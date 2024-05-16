@@ -23,8 +23,6 @@ export class HeaderComponent {
             return;
         }
 
-        this.authService.getAccessAnonymousToken().subscribe(() => {
-            this.apiService.createAnonymousCart();
-        });
+        this.authService.getAccessAnonymousToken().subscribe();
     }
 }
