@@ -15,6 +15,7 @@ import { setAccessTokenInCookie } from '../../utils/set-access-token-in-cookie';
 import { Cart } from '../cart/cart.interface';
 import { CartService } from '../cart/cart.service';
 import { TOKEN_TYPE_CONTEXT } from '../../http-context-token';
+import { ApiService } from '../api/api.service';
 
 @Injectable({
     providedIn: 'root',
@@ -23,6 +24,7 @@ export class AuthService {
     private readonly httpClient = inject(HttpClient);
     private readonly cardService = inject(CartService);
     private readonly baseUrl = inject(BASE_URL);
+    private readonly apiService = inject(ApiService);
 
     private readonly isLoginedSubject = new BehaviorSubject<boolean>(false);
 
@@ -95,6 +97,7 @@ export class AuthService {
                     this.setLoginStatus(false);
 
                     setAccessTokenInCookie(response, true);
+                    this.apiService.createAnonymousCart();
                 }),
             );
     }

@@ -1,7 +1,7 @@
 import { ApiService } from 'src/app/shared/services/api/api.service';
 import * as cookieHandler from 'cookie';
 import { ANONYMOUS_TOKEN_SHORT_NAME } from 'src/app/shared/constants/short-names';
-import { switchMap, tap } from 'rxjs';
+import { switchMap } from 'rxjs';
 import { AuthService } from 'src/app/shared/services/auth/auth.service';
 import { CartService } from 'src/app/shared/services/cart/cart.service';
 
@@ -27,29 +27,25 @@ export function getAccessToken(
 
             if (!isAnonymousToken) {
                 authService.setToken(documentCookie);
-
+                authService.setLoginStatus(true);
                 apiService
                     .getCustomerByPasswordFlowToken()
-                    .pipe(
-                        tap(() => {
-                            authService.setLoginStatus(true);
-                        }),
-                        switchMap(() => apiService.getCartByPasswordFlowToken()),
-                    )
-                    .subscribe(cartRes => {
-                        const cart = cartRes.results.reverse()[0] ?? null;
+                    .pipe(switchMap(() => apiService.getCartByPasswordFlowToken()))
+                    .subscribe({
+                        next: cartRes => {
+                            const cart = cartRes.results.reverse()[0] ?? null;
 
-                        cartService.setCart(cart);
+                            cartService.setCart(cart);
+                        },
+                        error: () => {
+                            authService.setLoginStatus(false);
+                        },
                     });
             }
         }
 
         if (!('accessToken' in documentCookie)) {
-            authService.getAccessAnonymousToken().subscribe({
-                complete: () => {
-                    apiService.createAnonymousCart();
-                },
-            });
+            authService.getAccessAnonymousToken().subscribe();
         }
     };
 }
