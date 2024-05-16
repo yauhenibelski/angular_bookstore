@@ -29,6 +29,8 @@ import { CustomerService } from 'src/app/shared/services/customer/customer.servi
 import { AuthService } from 'src/app/shared/services/auth/auth.service';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { ApiService } from 'src/app/shared/services/api/api.service';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { SignupCustomer } from 'src/app/interfaces/signup-customer-request';
 import { hasOneCharacter } from './validators/has-one-character';
 import { isDate } from './validators/date';
 import { isCountryExists } from './validators/is-country-exists';
@@ -57,6 +59,7 @@ import { Address } from './interface/address';
         AsyncPipe,
         MatButtonModule,
         MatDialogModule,
+        MatSlideToggleModule,
         RouterLink,
     ],
     templateUrl: './registration-page.component.html',
@@ -196,32 +199,34 @@ export class RegistrationPageComponent {
         }
     }
 
-    signUpCustomer(useAddressForBilling: boolean): void {
+    signUpCustomer(useDefaultShippingAddress: boolean, useDefaultBillingAddress: boolean): void {
         const formValue = this.registrationForm.getRawValue();
         const addresses = [...formValue.addresses].map(address => ({
             ...address,
             ...{ country: getCountryKey(address.country) },
         }));
 
-        const mapValue = {
-            defaultShippingAddress: 0,
-            defaultBillingAddress: Number(!useAddressForBilling),
+        const mapFormValue: SignupCustomer = {
+            ...formValue,
             dateOfBirth: new Date(formValue.dateOfBirth).toJSON().slice(0, 10),
             addresses,
         };
 
-        this.authService
-            .signUpCustomer({
-                ...formValue,
-                ...mapValue,
-            })
-            .subscribe(response => {
-                this.openDialog();
-                this.customerService.customer = response.customer;
-            });
+        if (useDefaultShippingAddress) {
+            mapFormValue.defaultShippingAddress = 0; // index from array address
+        }
+
+        if (useDefaultBillingAddress) {
+            mapFormValue.defaultBillingAddress = 1; // index from array address
+        }
+
+        this.authService.signUpCustomer(mapFormValue).subscribe(response => {
+            this.openDialog();
+            this.customerService.customer = response.customer;
+        });
     }
 
-    getCountries() {
+    getCountries(): void {
         if (!this.projectSettingsService.projectSettings) {
             this.apiService.setProjectSettings();
         }
