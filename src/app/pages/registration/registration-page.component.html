@@ -72,6 +72,7 @@
                             formControlName="country"
                             [matAutocomplete]="autoShipping"
                             (change)="useAddressForBilling.checked && setDefaultBillingAddress()"
+                            (focus)="getCountries()"
                         />
 
                         <mat-autocomplete #autoShipping="matAutocomplete">
@@ -164,6 +165,7 @@
                                 formControlName="country"
                                 [matAutocomplete]="autoShipping"
                                 (change)="controls.billingAddress.postalCode.setValue('')"
+                                (focus)="getCountries()"
                             />
 
                             <mat-autocomplete #autoShipping="matAutocomplete">

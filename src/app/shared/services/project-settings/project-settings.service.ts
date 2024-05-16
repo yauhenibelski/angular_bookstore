@@ -1,18 +1,22 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { ProjectSettings } from 'src/app/shared/services/project-settings/project-settings.interface';
 
 @Injectable({
     providedIn: 'root',
 })
 export class ProjectSettingsService {
-    private readonly projectSettings$ = new BehaviorSubject<ProjectSettings | null>(null);
+    private readonly projectSettingsSubject = new BehaviorSubject<ProjectSettings | null>(null);
 
-    get projectSettings(): Observable<ProjectSettings | null> {
-        return this.projectSettings$.asObservable();
+    get projectSettings$() {
+        return this.projectSettingsSubject.asObservable();
     }
 
-    set projectSettings(settings: ProjectSettings | null) {
-        this.projectSettings$.next(settings);
+    get projectSettings() {
+        return this.projectSettingsSubject.value;
+    }
+
+    setProjectSettings(settings: ProjectSettings | null) {
+        this.projectSettingsSubject.next(settings);
     }
 }

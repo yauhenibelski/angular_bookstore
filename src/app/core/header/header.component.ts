@@ -4,7 +4,6 @@ import { MatAnchor } from '@angular/material/button';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { ApiService } from 'src/app/shared/services/api/api.service';
 import { AuthService } from 'src/app/shared/services/auth/auth.service';
-import { setAccessTokenInCookie } from 'src/app/shared/utils/set-access-token-in-cookie';
 
 @Component({
     selector: 'app-header',
@@ -24,13 +23,8 @@ export class HeaderComponent {
             return;
         }
 
-        this.apiService.getAccessToken().subscribe(response => {
-            this.apiService.setAccessToken(response.access_token);
+        this.authService.getAccessAnonymousToken().subscribe(() => {
             this.apiService.createAnonymousCart();
-
-            setAccessTokenInCookie(response, true);
-
-            this.authService.setLoginStatus(false);
         });
     }
 }
