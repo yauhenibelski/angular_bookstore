@@ -2,8 +2,8 @@
     <img src="assets/img/logo.png" alt="logo" />
 </a>
 <div class="buttons-wrap">
-    <a mat-raised-button routerLink="/login" (click)="logOut()">
+    <a mat-raised-button routerLink="/login" routerLinkActive="active" (click)="logOut()">
         {{ (isLogined$ | async) ? 'Log out' : 'Log in' }}
     </a>
-    <a mat-raised-button routerLink="/registration">Sign up</a>
+    <a mat-raised-button routerLink="/registration" routerLinkActive="active">Sign up</a>
 </div>
