@@ -1,4 +1,4 @@
-import { HttpClient, HttpContext } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject, EMPTY, Observable, tap } from 'rxjs';
 import {
@@ -14,7 +14,6 @@ import { accessTokenName, refreshTokenName } from '../../constants/short-names';
 import { setAccessTokenInCookie } from '../../utils/set-access-token-in-cookie';
 import { Cart } from '../cart/cart.interface';
 import { CartService } from '../cart/cart.service';
-import { TOKEN_TYPE_CONTEXT } from '../../http-context-token';
 import { ApiService } from '../api/api.service';
 
 @Injectable({
@@ -34,16 +33,11 @@ export class AuthService {
     };
 
     signUpCustomer(customer: SignupCustomer): Observable<CustomerResponseDto> {
-        return this.httpClient.post<CustomerResponseDto>(
-            `${this.baseUrl.host}/me/signup`,
-            customer,
-            {
-                headers: {
-                    'Content-Type': 'text/plain',
-                },
-                context: new HttpContext().set(TOKEN_TYPE_CONTEXT, 'Bearer'),
+        return this.httpClient.post<CustomerResponseDto>('/me/signup', customer, {
+            headers: {
+                'Content-Type': 'text/plain',
             },
-        );
+        });
     }
 
     signInCustomer({
@@ -55,7 +49,7 @@ export class AuthService {
         }
 
         return this.httpClient.post<CustomerResponseDto & { cart: Cart }>(
-            `${this.baseUrl.host}/login`,
+            '/login',
             {
                 email,
                 password,
@@ -68,7 +62,6 @@ export class AuthService {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                context: new HttpContext().set(TOKEN_TYPE_CONTEXT, 'Bearer'),
             },
         );
     }
@@ -80,13 +73,12 @@ export class AuthService {
     getAccessAnonymousToken(): Observable<AccessTokenResponseDto> {
         return this.httpClient
             .post<AccessTokenResponseDto>(
-                `${this.baseUrl.auth}/oauth/${environment.projectKey}/anonymous/token`,
+                `/oauth/${environment.projectKey}/anonymous/token`,
                 `grant_type=client_credentials&scope=${environment.scopes}`,
                 {
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
                     },
-                    context: new HttpContext().set(TOKEN_TYPE_CONTEXT, 'Basic'),
                 },
             )
             .pipe(
@@ -107,7 +99,7 @@ export class AuthService {
         password,
     }: Pick<Customer, 'email' | 'password'>): Observable<AccessTokenResponseDto> {
         return this.httpClient.post<AccessTokenResponseDto>(
-            `${this.baseUrl.auth}/oauth/${environment.projectKey}/customers/token`,
+            `/oauth/${environment.projectKey}/customers/token`,
             `grant_type=password`,
             {
                 headers: {
@@ -118,26 +110,20 @@ export class AuthService {
                     password,
                     scope: environment.scopes,
                 },
-                context: new HttpContext().set(TOKEN_TYPE_CONTEXT, 'Basic'),
             },
         );
     }
 
     updateToken(): Observable<RefreshTokenResponseDto> {
         return this.httpClient
-            .post<RefreshTokenResponseDto>(
-                `${this.baseUrl.auth}/oauth/token`,
-                'grant_type=refresh_token',
-                {
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    params: {
-                        refresh_token: `${this.token.refresh}`,
-                    },
-                    context: new HttpContext().set(TOKEN_TYPE_CONTEXT, 'Basic'),
+            .post<RefreshTokenResponseDto>('/oauth/token', 'grant_type=refresh_token', {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
                 },
-            )
+                params: {
+                    refresh_token: `${this.token.refresh}`,
+                },
+            })
             .pipe(
                 tap(response => {
                     this.token.access = response.access_token;
