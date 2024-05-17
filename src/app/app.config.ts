@@ -18,10 +18,10 @@ export const appConfig: ApplicationConfig = {
         provideAnimationsAsync(),
         provideHttpClient(
             withInterceptors([
-                loaderInterceptor,
                 setUrlInterceptor,
                 updateTokenInterceptor,
                 handleInvalidRefreshTokenInterceptor,
+                loaderInterceptor,
             ]),
         ),
         {

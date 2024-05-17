@@ -17,6 +17,9 @@ export const loaderInterceptor: HttpInterceptorFn = (req, next) => {
                     loaderService.hideLoader();
                 }
             },
+            complete: () => {
+                loaderService.hideLoader();
+            },
             error: (err: unknown) => {
                 if (err instanceof HttpErrorResponse) {
                     loaderService.hideLoader();

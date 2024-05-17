@@ -27,7 +27,7 @@ import { GetErrorMassagePipe } from 'src/app/shared/pipes/get-error-massage/get-
 import { CheckUniqueEmail } from 'src/app/shared/form-validators/async-email-check';
 import { CustomerService } from 'src/app/shared/services/customer/customer.service';
 import { AuthService } from 'src/app/shared/services/auth/auth.service';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ApiService } from 'src/app/shared/services/api/api.service';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { SignupCustomer } from 'src/app/interfaces/signup-customer-request';
@@ -40,7 +40,7 @@ import { getCountryKey } from './utils/get-country-key';
 import { SuccessfulAccountCreationMessageComponent } from './successful-account-creation-message/successful-account-creation-message.component';
 import { Address } from './interface/address';
 
-@UntilDestroy({ checkProperties: true })
+@UntilDestroy()
 @Component({
     selector: 'app-registration-page',
     standalone: true,
@@ -89,9 +89,12 @@ export class RegistrationPageComponent {
     openDialog(): void {
         const dialogRef = this.dialog.open(SuccessfulAccountCreationMessageComponent);
 
-        dialogRef.afterClosed().subscribe(() => {
-            this.router.navigateByUrl('/');
-        });
+        dialogRef
+            .afterClosed()
+            .pipe(untilDestroyed(this))
+            .subscribe(() => {
+                this.router.navigateByUrl('/');
+            });
     }
 
     private readonly shippingAddressCountryControl = new FormControl('', {
@@ -220,15 +223,18 @@ export class RegistrationPageComponent {
             mapFormValue.defaultBillingAddress = 1; // index from array address
         }
 
-        this.authService.signUpCustomer(mapFormValue).subscribe(response => {
-            this.openDialog();
-            this.customerService.customer = response.customer;
-        });
+        this.authService
+            .signUpCustomer(mapFormValue)
+            .pipe(untilDestroyed(this))
+            .subscribe(response => {
+                this.openDialog();
+                this.customerService.customer = response.customer;
+            });
     }
 
     getCountries(): void {
         if (!this.projectSettingsService.projectSettings) {
-            this.apiService.setProjectSettings();
+            this.apiService.setProjectSettings().pipe(untilDestroyed(this)).subscribe();
         }
     }
 }
