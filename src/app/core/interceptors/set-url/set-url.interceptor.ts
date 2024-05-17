@@ -13,7 +13,7 @@ export const setUrlInterceptor: HttpInterceptorFn = (req, next) => {
     const bearer = `Bearer ${authService.token.access}`;
 
     const newRequest = req.clone({
-        url: isAuthRequest ? baseUrl.auth : baseUrl.host + req.url,
+        url: (isAuthRequest ? baseUrl.auth : baseUrl.host) + req.url,
         setHeaders: {
             Authorization: isAuthRequest ? basic : bearer,
         },
