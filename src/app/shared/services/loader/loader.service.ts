@@ -7,16 +7,23 @@ import { BehaviorSubject } from 'rxjs';
 export class LoaderService {
     private readonly isLoadingSubject = new BehaviorSubject<boolean>(false);
 
-    isLoading$ = this.isLoadingSubject.asObservable();
+    readonly isLoading$ = this.isLoadingSubject.asObservable();
+
+    private urlCount = 0;
 
     showLoader(): void {
+        this.urlCount++;
+
         if (!this.isLoadingSubject.value) {
             this.isLoadingSubject.next(true);
         }
     }
 
     hideLoader(): void {
-        if (this.isLoadingSubject.value) {
+        this.urlCount--;
+
+        if (this.urlCount <= 0) {
+            this.urlCount = 0;
             setTimeout(() => this.isLoadingSubject.next(false), 500);
         }
     }

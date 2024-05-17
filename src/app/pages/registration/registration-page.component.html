@@ -142,15 +142,18 @@
                 </div>
             </ng-container>
 
-            <mat-checkbox
+            <mat-slide-toggle
                 #useAddressForBilling
-                checked="true"
                 color="primary"
-                [style.marginBottom.px]="10"
+                checked="true"
                 (click)="clearBillingAddress(useAddressForBilling.checked)"
             >
-                use this address for billing
-            </mat-checkbox>
+                Use this address for billing
+            </mat-slide-toggle>
+
+            <mat-slide-toggle #useDefaultShippingAddress color="primary">
+                Set as default address
+            </mat-slide-toggle>
 
             @if (!useAddressForBilling.checked) {
                 <ng-container [formGroupName]="1">
@@ -225,6 +228,13 @@
                     </div>
                 </ng-container>
             }
+            <mat-slide-toggle
+                #useDefaultBillingAddress
+                color="primary"
+                [class.hidden]="useAddressForBilling.checked"
+            >
+                Set as default address
+            </mat-slide-toggle>
         </ng-container>
 
         <p class="title">Date of birth</p>
@@ -248,7 +258,9 @@
             mat-raised-button
             [style.marginTop.px]="10"
             [disabled]="!registrationForm.valid"
-            (click)="signUpCustomer(useAddressForBilling.checked)"
+            (click)="
+                signUpCustomer(useDefaultShippingAddress.checked, useDefaultBillingAddress.checked)
+            "
         >
             Sign up
         </button>
