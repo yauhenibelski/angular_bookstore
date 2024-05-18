@@ -6,17 +6,14 @@ import { FormControl, FormGroup, ReactiveFormsModule, FormsModule } from '@angul
 import { MatIconModule } from '@angular/material/icon';
 import { Router, RouterLink } from '@angular/router';
 import { CheckUniqueEmail } from 'src/app/shared/form-validators/async-email-check';
-import { ApiService } from 'src/app/shared/services/api/api.service';
 import { CartService } from 'src/app/shared/services/cart/cart.service';
 import { CustomerService } from 'src/app/shared/services/customer/customer.service';
 import { switchMap, tap } from 'rxjs';
-import { MatBottomSheet, MatBottomSheetModule } from '@angular/material/bottom-sheet';
 import { setAccessTokenInCookie } from 'src/app/shared/utils/set-access-token-in-cookie';
 import { AuthService } from 'src/app/shared/services/auth/auth.service';
 import { isEmail } from '../../shared/form-validators/email';
 import { GetErrorMassagePipe } from '../../shared/pipes/get-error-massage/get-error-massage.pipe';
 import { passwordValidators } from '../../shared/form-validators/password';
-import { ErrorMessageComponent } from './error-message/error-message.component';
 
 @Component({
     selector: 'app-login-page',
@@ -24,7 +21,6 @@ import { ErrorMessageComponent } from './error-message/error-message.component';
     imports: [
         FormsModule,
         ReactiveFormsModule,
-        MatBottomSheetModule,
         MatCardModule,
         MatInputModule,
         MatButtonModule,
@@ -38,18 +34,12 @@ import { ErrorMessageComponent } from './error-message/error-message.component';
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LoginPageComponent {
-    private readonly apiService = inject(ApiService);
     private readonly authService = inject(AuthService);
     private readonly cartService = inject(CartService);
     private readonly customerService = inject(CustomerService);
-    private readonly bottomSheet = inject(MatBottomSheet);
     private readonly router = inject(Router);
 
     isPasswordHide = true;
-
-    openBottomSheet(): void {
-        this.bottomSheet.open(ErrorMessageComponent);
-    }
 
     readonly loginForm = new FormGroup({
         email: new FormControl('', {
@@ -63,6 +53,18 @@ export class LoginPageComponent {
     });
 
     readonly controls = this.loginForm.controls;
+
+    loginErrorOutput(): void {
+        const formValue = this.loginForm.getRawValue();
+        const { email, password } = this.loginForm.controls;
+        const err = { error: 'wrong login or password' };
+
+        email.setValue(formValue.email);
+        password.setValue('');
+
+        email.setErrors(err);
+        password.setErrors(err);
+    }
 
     signIn(): void {
         const formValue = this.loginForm.getRawValue();
@@ -86,7 +88,7 @@ export class LoginPageComponent {
                     this.router.navigateByUrl('/main');
                 },
                 error: () => {
-                    this.openBottomSheet();
+                    this.loginErrorOutput();
                 },
             });
     }

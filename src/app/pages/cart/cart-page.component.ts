@@ -1,11 +1,11 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 @Component({
-    selector: 'app-error-message',
+    selector: 'app-cart-page',
     standalone: true,
     imports: [],
-    templateUrl: './error-message.component.html',
-    styleUrl: './error-message.component.scss',
+    templateUrl: './cart-page.component.html',
+    styleUrl: './cart-page.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ErrorMessageComponent {}
+export class CartPageComponent {}

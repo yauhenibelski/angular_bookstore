@@ -25,3 +25,9 @@ a {
         text-decoration: underline;
     }
 }
+
+@media (max-width: 380px) {
+    :host {
+        padding: 20px 5px;
+    }
+}

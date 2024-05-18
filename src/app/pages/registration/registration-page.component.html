@@ -67,7 +67,7 @@
                         <mat-label>Country</mat-label>
                         <input
                             #shippingAddressCountry
-                            placeholder="Available countries for delivery"
+                            placeholder="Country"
                             matInput
                             formControlName="country"
                             [matAutocomplete]="autoShipping"
@@ -146,6 +146,7 @@
                 #useAddressForBilling
                 color="primary"
                 checked="true"
+                class="slide-toggle"
                 (click)="clearBillingAddress(useAddressForBilling.checked)"
             >
                 Use this address for billing
@@ -163,7 +164,7 @@
                             <mat-label>Country</mat-label>
                             <input
                                 #shippingAddressCountry
-                                placeholder="Available countries for delivery"
+                                placeholder="Country"
                                 matInput
                                 formControlName="country"
                                 [matAutocomplete]="autoShipping"
@@ -231,6 +232,7 @@
             <mat-slide-toggle
                 #useDefaultBillingAddress
                 color="primary"
+                class="slide-toggle"
                 [class.hidden]="useAddressForBilling.checked"
             >
                 Set as default address

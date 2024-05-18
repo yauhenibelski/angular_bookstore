@@ -22,6 +22,22 @@ a {
     margin-right: 20px;
 }
 
-.active {
+.buttons-wrap-menu {
     display: none;
+}
+
+// uncomment for sprint 3
+// .active {
+//     display: none;
+// }
+
+@media (max-width: 568px) {
+    .buttons-wrap-menu {
+        display: block;
+        margin-right: 20px;
+    }
+
+    .buttons-wrap {
+        display: none;
+    }
 }
