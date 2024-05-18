@@ -4,7 +4,7 @@ import { RegistrationPageComponent } from '../pages/registration/registration-pa
 import { LoginPageComponent } from '../pages/login/login-page.component';
 import { NotFoundPageComponent } from '../pages/404/not-found-page.component';
 import { canLoginGuard } from './guards/can-login.guard';
-import { BasketPageComponent } from '../pages/basket/basket-page.component';
+import { CartPageComponent } from '../pages/cart/cart-page.component';
 
 export const routes: Routes = [
     {
@@ -21,8 +21,8 @@ export const routes: Routes = [
         component: BooksPageComponent,
     },
     {
-        path: 'basket',
-        component: BasketPageComponent,
+        path: 'cart',
+        component: CartPageComponent,
     },
     {
         path: '',

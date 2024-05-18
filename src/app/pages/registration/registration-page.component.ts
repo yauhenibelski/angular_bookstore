@@ -18,7 +18,6 @@ import { ProjectSettingsService } from 'src/app/shared/services/project-settings
 import { AsyncPipe } from '@angular/common';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { filter, map } from 'rxjs';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { Router, RouterLink } from '@angular/router';
 import { isEmail } from 'src/app/shared/form-validators/email';
 import { passwordValidators } from 'src/app/shared/form-validators/password';
@@ -31,6 +30,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ApiService } from 'src/app/shared/services/api/api.service';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { SignupCustomer } from 'src/app/interfaces/signup-customer-request';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { hasOneCharacter } from './validators/has-one-character';
 import { isDate } from './validators/date';
 import { isCountryExists } from './validators/is-country-exists';
@@ -58,7 +58,6 @@ import { Address } from './interface/address';
         MatCheckboxModule,
         AsyncPipe,
         MatButtonModule,
-        MatDialogModule,
         MatSlideToggleModule,
         RouterLink,
     ],
@@ -74,7 +73,7 @@ export class RegistrationPageComponent {
     private readonly authService = inject(AuthService);
     private readonly apiService = inject(ApiService);
     private readonly router = inject(Router);
-    private readonly dialog = inject(MatDialog);
+    private readonly snackBar = inject(MatSnackBar);
     private readonly projectSettingsService = inject(ProjectSettingsService);
 
     readonly availableCountries$ = this.projectSettingsService.projectSettings$.pipe(
@@ -87,14 +86,10 @@ export class RegistrationPageComponent {
     isPasswordHide = true;
 
     openDialog(): void {
-        const dialogRef = this.dialog.open(SuccessfulAccountCreationMessageComponent);
-
-        dialogRef
-            .afterClosed()
-            .pipe(untilDestroyed(this))
-            .subscribe(() => {
-                this.router.navigateByUrl('/');
-            });
+        this.snackBar.openFromComponent(SuccessfulAccountCreationMessageComponent, {
+            duration: 3 * 1000,
+        });
+        this.router.navigateByUrl('/');
     }
 
     private readonly shippingAddressCountryControl = new FormControl('', {

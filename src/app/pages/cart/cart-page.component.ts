@@ -1,11 +1,11 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 @Component({
-    selector: 'app-basket-page',
+    selector: 'app-cart-page',
     standalone: true,
     imports: [],
-    templateUrl: './basket-page.component.html',
-    styleUrl: './basket-page.component.scss',
+    templateUrl: './cart-page.component.html',
+    styleUrl: './cart-page.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class BasketPageComponent {}
+export class CartPageComponent {}
