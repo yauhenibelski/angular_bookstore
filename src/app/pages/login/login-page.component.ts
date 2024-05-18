@@ -54,16 +54,16 @@ export class LoginPageComponent {
 
     readonly controls = this.loginForm.controls;
 
-    loginOrPasswordErrorOutput(): void {
+    loginErrorOutput(): void {
         const formValue = this.loginForm.getRawValue();
+        const { email, password } = this.loginForm.controls;
+        const err = { error: 'wrong login or password' };
 
-        this.loginForm.controls.email.setValue(formValue.email);
-        this.loginForm.controls.password.setValue('');
+        email.setValue(formValue.email);
+        password.setValue('');
 
-        this.loginForm.controls.email.setErrors({ error: 'wrong login or password' });
-        this.loginForm.controls.password.setErrors({
-            error: 'wrong login or password',
-        });
+        email.setErrors(err);
+        password.setErrors(err);
     }
 
     signIn(): void {
@@ -88,7 +88,7 @@ export class LoginPageComponent {
                     this.router.navigateByUrl('/main');
                 },
                 error: () => {
-                    this.loginOrPasswordErrorOutput();
+                    this.loginErrorOutput();
                 },
             });
     }

@@ -30,10 +30,8 @@ export class HeaderComponent {
     readonly isLogined$ = this.authService.isLogined$;
 
     logOut(): void {
-        if (!this.authService.isLogined) {
-            return;
+        if (this.authService.isLogined) {
+            this.authService.getAccessAnonymousToken().pipe(untilDestroyed(this)).subscribe();
         }
-
-        this.authService.getAccessAnonymousToken().pipe(untilDestroyed(this)).subscribe();
     }
 }

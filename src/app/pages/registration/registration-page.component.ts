@@ -85,11 +85,13 @@ export class RegistrationPageComponent {
 
     isPasswordHide = true;
 
-    openDialog(): void {
+    openSnackBar(): void {
+        const SECONDS = 3000;
+
         this.snackBar.openFromComponent(SuccessfulAccountCreationMessageComponent, {
-            duration: 3 * 1000,
+            duration: SECONDS,
         });
-        this.router.navigateByUrl('/');
+        this.router.navigateByUrl('/main');
     }
 
     private readonly shippingAddressCountryControl = new FormControl('', {
@@ -222,7 +224,7 @@ export class RegistrationPageComponent {
             .signUpCustomer(mapFormValue)
             .pipe(untilDestroyed(this))
             .subscribe(response => {
-                this.openDialog();
+                this.openSnackBar();
                 this.customerService.customer = response.customer;
             });
     }
