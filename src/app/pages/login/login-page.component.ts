@@ -10,14 +10,12 @@ import { ApiService } from 'src/app/shared/services/api/api.service';
 import { CartService } from 'src/app/shared/services/cart/cart.service';
 import { CustomerService } from 'src/app/shared/services/customer/customer.service';
 import { switchMap, tap } from 'rxjs';
-import { MatBottomSheet, MatBottomSheetModule } from '@angular/material/bottom-sheet';
 import { setAccessTokenInCookie } from 'src/app/shared/utils/set-access-token-in-cookie';
 import { AuthService } from 'src/app/shared/services/auth/auth.service';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { isEmail } from '../../shared/form-validators/email';
 import { GetErrorMassagePipe } from '../../shared/pipes/get-error-massage/get-error-massage.pipe';
 import { passwordValidators } from '../../shared/form-validators/password';
-import { ErrorMessageComponent } from './error-message/error-message.component';
 
 @UntilDestroy({ checkProperties: true })
 @Component({
@@ -26,7 +24,6 @@ import { ErrorMessageComponent } from './error-message/error-message.component';
     imports: [
         FormsModule,
         ReactiveFormsModule,
-        MatBottomSheetModule,
         MatCardModule,
         MatInputModule,
         MatButtonModule,
@@ -44,14 +41,9 @@ export class LoginPageComponent {
     private readonly authService = inject(AuthService);
     private readonly cartService = inject(CartService);
     private readonly customerService = inject(CustomerService);
-    private readonly bottomSheet = inject(MatBottomSheet);
     private readonly router = inject(Router);
 
     isPasswordHide = true;
-
-    openBottomSheet(): void {
-        this.bottomSheet.open(ErrorMessageComponent);
-    }
 
     subscription = this.authService.isLogined$.subscribe(boolean => {
         if (boolean) {
@@ -71,6 +63,18 @@ export class LoginPageComponent {
     });
 
     readonly controls = this.loginForm.controls;
+
+    loginOrPasswordErrorOutput(): void {
+        const formValue = this.loginForm.getRawValue();
+
+        this.loginForm.controls.email.setValue(formValue.email);
+        this.loginForm.controls.password.setValue('');
+
+        this.loginForm.controls.email.setErrors({ error: 'wrong login or password' });
+        this.loginForm.controls.password.setErrors({
+            error: 'wrong login or password',
+        });
+    }
 
     signIn(): void {
         const formValue = this.loginForm.getRawValue();
@@ -93,7 +97,7 @@ export class LoginPageComponent {
                     this.authService.setLoginStatus(true);
                 },
                 error: () => {
-                    this.openBottomSheet();
+                    this.loginOrPasswordErrorOutput();
                 },
             });
     }
