@@ -6,18 +6,15 @@ import { FormControl, FormGroup, ReactiveFormsModule, FormsModule } from '@angul
 import { MatIconModule } from '@angular/material/icon';
 import { Router, RouterLink } from '@angular/router';
 import { CheckUniqueEmail } from 'src/app/shared/form-validators/async-email-check';
-import { ApiService } from 'src/app/shared/services/api/api.service';
 import { CartService } from 'src/app/shared/services/cart/cart.service';
 import { CustomerService } from 'src/app/shared/services/customer/customer.service';
 import { switchMap, tap } from 'rxjs';
 import { setAccessTokenInCookie } from 'src/app/shared/utils/set-access-token-in-cookie';
 import { AuthService } from 'src/app/shared/services/auth/auth.service';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { isEmail } from '../../shared/form-validators/email';
 import { GetErrorMassagePipe } from '../../shared/pipes/get-error-massage/get-error-massage.pipe';
 import { passwordValidators } from '../../shared/form-validators/password';
 
-@UntilDestroy({ checkProperties: true })
 @Component({
     selector: 'app-login-page',
     standalone: true,
@@ -37,19 +34,12 @@ import { passwordValidators } from '../../shared/form-validators/password';
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LoginPageComponent {
-    private readonly apiService = inject(ApiService);
     private readonly authService = inject(AuthService);
     private readonly cartService = inject(CartService);
     private readonly customerService = inject(CustomerService);
     private readonly router = inject(Router);
 
     isPasswordHide = true;
-
-    subscription = this.authService.isLogined$.subscribe(boolean => {
-        if (boolean) {
-            this.router.navigateByUrl('/main');
-        }
-    });
 
     readonly loginForm = new FormGroup({
         email: new FormControl('', {
@@ -95,6 +85,7 @@ export class LoginPageComponent {
                     setAccessTokenInCookie(passwordFlowToken, false);
 
                     this.authService.setLoginStatus(true);
+                    this.router.navigateByUrl('/main');
                 },
                 error: () => {
                     this.loginOrPasswordErrorOutput();

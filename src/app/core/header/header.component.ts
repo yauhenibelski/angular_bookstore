@@ -2,10 +2,11 @@ import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatAnchor } from '@angular/material/button';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-import { ApiService } from 'src/app/shared/services/api/api.service';
 import { AuthService } from 'src/app/shared/services/auth/auth.service';
 import { MatIconModule } from '@angular/material/icon';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
     selector: 'app-header',
     standalone: true,
@@ -16,7 +17,6 @@ import { MatIconModule } from '@angular/material/icon';
 })
 export class HeaderComponent {
     private readonly authService = inject(AuthService);
-    private readonly apiService = inject(ApiService);
     readonly isLogined$ = this.authService.isLogined$;
 
     logOut(): void {
@@ -24,8 +24,6 @@ export class HeaderComponent {
             return;
         }
 
-        this.authService.getAccessAnonymousToken().subscribe(() => {
-            this.apiService.createAnonymousCart();
-        });
+        this.authService.getAccessAnonymousToken().pipe(untilDestroyed(this)).subscribe();
     }
 }

@@ -27,8 +27,10 @@ import { GetErrorMassagePipe } from 'src/app/shared/pipes/get-error-massage/get-
 import { CheckUniqueEmail } from 'src/app/shared/form-validators/async-email-check';
 import { CustomerService } from 'src/app/shared/services/customer/customer.service';
 import { AuthService } from 'src/app/shared/services/auth/auth.service';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ApiService } from 'src/app/shared/services/api/api.service';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { SignupCustomer } from 'src/app/interfaces/signup-customer-request';
 import { hasOneCharacter } from './validators/has-one-character';
 import { isDate } from './validators/date';
 import { isCountryExists } from './validators/is-country-exists';
@@ -38,7 +40,7 @@ import { getCountryKey } from './utils/get-country-key';
 import { SuccessfulAccountCreationMessageComponent } from './successful-account-creation-message/successful-account-creation-message.component';
 import { Address } from './interface/address';
 
-@UntilDestroy({ checkProperties: true })
+@UntilDestroy()
 @Component({
     selector: 'app-registration-page',
     standalone: true,
@@ -57,6 +59,7 @@ import { Address } from './interface/address';
         AsyncPipe,
         MatButtonModule,
         MatDialogModule,
+        MatSlideToggleModule,
         RouterLink,
     ],
     templateUrl: './registration-page.component.html',
@@ -86,9 +89,12 @@ export class RegistrationPageComponent {
     openDialog(): void {
         const dialogRef = this.dialog.open(SuccessfulAccountCreationMessageComponent);
 
-        dialogRef.afterClosed().subscribe(() => {
-            this.router.navigateByUrl('/');
-        });
+        dialogRef
+            .afterClosed()
+            .pipe(untilDestroyed(this))
+            .subscribe(() => {
+                this.router.navigateByUrl('/');
+            });
     }
 
     private readonly shippingAddressCountryControl = new FormControl('', {
@@ -196,34 +202,39 @@ export class RegistrationPageComponent {
         }
     }
 
-    signUpCustomer(useAddressForBilling: boolean): void {
+    signUpCustomer(useDefaultShippingAddress: boolean, useDefaultBillingAddress: boolean): void {
         const formValue = this.registrationForm.getRawValue();
         const addresses = [...formValue.addresses].map(address => ({
             ...address,
             ...{ country: getCountryKey(address.country) },
         }));
 
-        const mapValue = {
-            defaultShippingAddress: 0,
-            defaultBillingAddress: Number(!useAddressForBilling),
+        const mapFormValue: SignupCustomer = {
+            ...formValue,
             dateOfBirth: new Date(formValue.dateOfBirth).toJSON().slice(0, 10),
             addresses,
         };
 
+        if (useDefaultShippingAddress) {
+            mapFormValue.defaultShippingAddress = 0; // index from array address
+        }
+
+        if (useDefaultBillingAddress) {
+            mapFormValue.defaultBillingAddress = 1; // index from array address
+        }
+
         this.authService
-            .signUpCustomer({
-                ...formValue,
-                ...mapValue,
-            })
+            .signUpCustomer(mapFormValue)
+            .pipe(untilDestroyed(this))
             .subscribe(response => {
                 this.openDialog();
                 this.customerService.customer = response.customer;
             });
     }
 
-    getCountries() {
+    getCountries(): void {
         if (!this.projectSettingsService.projectSettings) {
-            this.apiService.setProjectSettings();
+            this.apiService.setProjectSettings().pipe(untilDestroyed(this)).subscribe();
         }
     }
 }

@@ -15,10 +15,18 @@ mat-card {
     }
 }
 
+mat-slide-toggle {
+    margin-bottom: 10px;
+}
+
+.hidden {
+    display: none;
+}
+
 .field-wrap {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    grid-gap: 2%;
+    gap: 2%;
 }
 
 a {
@@ -30,5 +38,15 @@ a {
 
     &:hover {
         text-decoration: underline;
+    }
+}
+
+.slide-toggle {
+    margin-top: 18px;
+}
+
+@media (max-width: 380px) {
+    :host {
+        padding: 20px 5px;
     }
 }

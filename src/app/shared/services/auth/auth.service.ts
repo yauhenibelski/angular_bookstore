@@ -1,4 +1,4 @@
-import { HttpClient, HttpContext } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject, EMPTY, Observable, tap } from 'rxjs';
 import {
@@ -9,12 +9,12 @@ import {
 import { environment } from 'src/app/environment/environment';
 import { SignupCustomer } from 'src/app/interfaces/signup-customer-request';
 import { Customer, CustomerResponseDto } from 'src/app/interfaces/customer-response-dto';
-import { BASE_URL } from '../../di-tokens/url-tokens';
 import { accessTokenName, refreshTokenName } from '../../constants/short-names';
 import { setAccessTokenInCookie } from '../../utils/set-access-token-in-cookie';
 import { Cart } from '../cart/cart.interface';
 import { CartService } from '../cart/cart.service';
-import { TOKEN_TYPE_CONTEXT } from '../../http-context-token';
+import { ApiService } from '../api/api.service';
+import { highOrderCustomTap } from '../../utils/high-order-custom-tap-operator';
 
 @Injectable({
     providedIn: 'root',
@@ -22,7 +22,7 @@ import { TOKEN_TYPE_CONTEXT } from '../../http-context-token';
 export class AuthService {
     private readonly httpClient = inject(HttpClient);
     private readonly cardService = inject(CartService);
-    private readonly baseUrl = inject(BASE_URL);
+    private readonly apiService = inject(ApiService);
 
     private readonly isLoginedSubject = new BehaviorSubject<boolean>(false);
 
@@ -32,16 +32,11 @@ export class AuthService {
     };
 
     signUpCustomer(customer: SignupCustomer): Observable<CustomerResponseDto> {
-        return this.httpClient.post<CustomerResponseDto>(
-            `${this.baseUrl.host}/me/signup`,
-            customer,
-            {
-                headers: {
-                    'Content-Type': 'text/plain',
-                },
-                context: new HttpContext().set(TOKEN_TYPE_CONTEXT, 'Bearer'),
+        return this.httpClient.post<CustomerResponseDto>('/me/signup', customer, {
+            headers: {
+                'Content-Type': 'text/plain',
             },
-        );
+        });
     }
 
     signInCustomer({
@@ -53,7 +48,7 @@ export class AuthService {
         }
 
         return this.httpClient.post<CustomerResponseDto & { cart: Cart }>(
-            `${this.baseUrl.host}/login`,
+            '/login',
             {
                 email,
                 password,
@@ -66,7 +61,6 @@ export class AuthService {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                context: new HttpContext().set(TOKEN_TYPE_CONTEXT, 'Bearer'),
             },
         );
     }
@@ -78,13 +72,12 @@ export class AuthService {
     getAccessAnonymousToken(): Observable<AccessTokenResponseDto> {
         return this.httpClient
             .post<AccessTokenResponseDto>(
-                `${this.baseUrl.auth}/oauth/${environment.projectKey}/anonymous/token`,
+                `/oauth/${environment.projectKey}/anonymous/token`,
                 `grant_type=client_credentials&scope=${environment.scopes}`,
                 {
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
                     },
-                    context: new HttpContext().set(TOKEN_TYPE_CONTEXT, 'Basic'),
                 },
             )
             .pipe(
@@ -96,6 +89,7 @@ export class AuthService {
 
                     setAccessTokenInCookie(response, true);
                 }),
+                highOrderCustomTap(this.apiService.createAnonymousCart()),
             );
     }
 
@@ -104,7 +98,7 @@ export class AuthService {
         password,
     }: Pick<Customer, 'email' | 'password'>): Observable<AccessTokenResponseDto> {
         return this.httpClient.post<AccessTokenResponseDto>(
-            `${this.baseUrl.auth}/oauth/${environment.projectKey}/customers/token`,
+            `/oauth/${environment.projectKey}/customers/token`,
             `grant_type=password`,
             {
                 headers: {
@@ -115,26 +109,20 @@ export class AuthService {
                     password,
                     scope: environment.scopes,
                 },
-                context: new HttpContext().set(TOKEN_TYPE_CONTEXT, 'Basic'),
             },
         );
     }
 
     updateToken(): Observable<RefreshTokenResponseDto> {
         return this.httpClient
-            .post<RefreshTokenResponseDto>(
-                `${this.baseUrl.auth}/oauth/token`,
-                'grant_type=refresh_token',
-                {
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    params: {
-                        refresh_token: `${this.token.refresh}`,
-                    },
-                    context: new HttpContext().set(TOKEN_TYPE_CONTEXT, 'Basic'),
+            .post<RefreshTokenResponseDto>('/oauth/token', 'grant_type=refresh_token', {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
                 },
-            )
+                params: {
+                    refresh_token: `${this.token.refresh}`,
+                },
+            })
             .pipe(
                 tap(response => {
                     this.token.access = response.access_token;
@@ -156,11 +144,11 @@ export class AuthService {
         return this.isLoginedSubject.value;
     }
 
-    get isLogined$(): Observable<boolean> {
+    get isLogined$() {
         return this.isLoginedSubject.asObservable();
     }
 
-    setLoginStatus(value: boolean) {
+    setLoginStatus(value: boolean): void {
         this.isLoginedSubject.next(value);
     }
 }

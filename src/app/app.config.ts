@@ -9,7 +9,7 @@ import { loaderInterceptor } from './core/interceptors/loader/loader.interceptor
 import { AuthService } from './shared/services/auth/auth.service';
 import { CartService } from './shared/services/cart/cart.service';
 import { updateTokenInterceptor } from './core/interceptors/update-token/update-token.interceptor';
-import { setTokenInterceptor } from './core/interceptors/set-token/set-token.interceptor';
+import { setUrlInterceptor } from './core/interceptors/set-url/set-url.interceptor';
 import { handleInvalidRefreshTokenInterceptor } from './core/interceptors/handle-invalid-refresh-token/handle-invalid-refresh-token.interceptor';
 
 export const appConfig: ApplicationConfig = {
@@ -18,10 +18,10 @@ export const appConfig: ApplicationConfig = {
         provideAnimationsAsync(),
         provideHttpClient(
             withInterceptors([
-                setTokenInterceptor,
-                loaderInterceptor,
+                setUrlInterceptor,
                 updateTokenInterceptor,
                 handleInvalidRefreshTokenInterceptor,
+                loaderInterceptor,
             ]),
         ),
         {
