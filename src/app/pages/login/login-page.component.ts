@@ -13,13 +13,11 @@ import { switchMap, tap } from 'rxjs';
 import { MatBottomSheet, MatBottomSheetModule } from '@angular/material/bottom-sheet';
 import { setAccessTokenInCookie } from 'src/app/shared/utils/set-access-token-in-cookie';
 import { AuthService } from 'src/app/shared/services/auth/auth.service';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { isEmail } from '../../shared/form-validators/email';
 import { GetErrorMassagePipe } from '../../shared/pipes/get-error-massage/get-error-massage.pipe';
 import { passwordValidators } from '../../shared/form-validators/password';
 import { ErrorMessageComponent } from './error-message/error-message.component';
 
-@UntilDestroy({ checkProperties: true })
 @Component({
     selector: 'app-login-page',
     standalone: true,
@@ -53,12 +51,6 @@ export class LoginPageComponent {
         this.bottomSheet.open(ErrorMessageComponent);
     }
 
-    subscription = this.authService.isLogined$.subscribe(boolean => {
-        if (boolean) {
-            this.router.navigateByUrl('/main');
-        }
-    });
-
     readonly loginForm = new FormGroup({
         email: new FormControl('', {
             validators: [isEmail],
@@ -91,6 +83,7 @@ export class LoginPageComponent {
                     setAccessTokenInCookie(passwordFlowToken, false);
 
                     this.authService.setLoginStatus(true);
+                    this.router.navigateByUrl('/main');
                 },
                 error: () => {
                     this.openBottomSheet();

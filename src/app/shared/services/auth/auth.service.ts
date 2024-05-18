@@ -9,12 +9,12 @@ import {
 import { environment } from 'src/app/environment/environment';
 import { SignupCustomer } from 'src/app/interfaces/signup-customer-request';
 import { Customer, CustomerResponseDto } from 'src/app/interfaces/customer-response-dto';
-import { BASE_URL } from '../../di-tokens/url-tokens';
 import { accessTokenName, refreshTokenName } from '../../constants/short-names';
 import { setAccessTokenInCookie } from '../../utils/set-access-token-in-cookie';
 import { Cart } from '../cart/cart.interface';
 import { CartService } from '../cart/cart.service';
 import { ApiService } from '../api/api.service';
+import { highOrderCustomTap } from '../../utils/high-order-custom-tap-operator';
 
 @Injectable({
     providedIn: 'root',
@@ -22,7 +22,6 @@ import { ApiService } from '../api/api.service';
 export class AuthService {
     private readonly httpClient = inject(HttpClient);
     private readonly cardService = inject(CartService);
-    private readonly baseUrl = inject(BASE_URL);
     private readonly apiService = inject(ApiService);
 
     private readonly isLoginedSubject = new BehaviorSubject<boolean>(false);
@@ -89,8 +88,8 @@ export class AuthService {
                     this.setLoginStatus(false);
 
                     setAccessTokenInCookie(response, true);
-                    this.apiService.createAnonymousCart();
                 }),
+                highOrderCustomTap(this.apiService.createAnonymousCart()),
             );
     }
 
@@ -145,11 +144,11 @@ export class AuthService {
         return this.isLoginedSubject.value;
     }
 
-    get isLogined$(): Observable<boolean> {
+    get isLogined$() {
         return this.isLoginedSubject.asObservable();
     }
 
-    setLoginStatus(value: boolean) {
+    setLoginStatus(value: boolean): void {
         this.isLoginedSubject.next(value);
     }
 }

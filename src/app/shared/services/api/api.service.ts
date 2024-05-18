@@ -23,8 +23,8 @@ export class ApiService {
         return this.httpClient.head(`/customers?where=${encodeURIComponent(`email="${email}"`)}`);
     }
 
-    createAnonymousCart(): void {
-        this.httpClient
+    createAnonymousCart(): Observable<Cart> {
+        return this.httpClient
             .post<Cart>(
                 '/carts',
                 { currency: 'EUR', anonymousId: uuidv4() },
@@ -34,17 +34,21 @@ export class ApiService {
                     },
                 },
             )
-            .subscribe(cart => {
-                this.cardService.setCart(cart);
-            });
+            .pipe(
+                tap(cart => {
+                    this.cardService.setCart(cart);
+                }),
+            );
     }
 
-    setProjectSettings(): void {
-        this.httpClient
+    setProjectSettings() {
+        return this.httpClient
             .get<ProjectSettings>(`?scope=view_project_settings:${environment.projectKey}`)
-            .subscribe(settings => {
-                this.projectSettingsService.setProjectSettings(settings);
-            });
+            .pipe(
+                tap(settings => {
+                    this.projectSettingsService.setProjectSettings(settings);
+                }),
+            );
     }
 
     getCustomerByPasswordFlowToken(): Observable<CustomerResponseDto> {
