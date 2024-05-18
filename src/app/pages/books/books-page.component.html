@@ -1,4 +1,11 @@
 <h2>Main page</h2>
 <a mat-raised-button routerLink="/login">Log in</a>
 <a mat-raised-button routerLink="/registration">Sign up</a>
-<a mat-raised-button routerLink="/basket">Basket</a>
+<a mat-raised-button routerLink="/cart">Cart</a>
+
+@if (user.customer$ | async; as user) {
+    <span>user email: {{ user.email }}</span>
+    <span>user firstName: {{ user.firstName }}</span>
+    <span>user shippingAddress: {{ user.addresses[0] | json }}</span>
+    <span>user billingAddress: {{ user.addresses[1] | json }}</span>
+}

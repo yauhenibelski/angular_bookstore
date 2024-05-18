@@ -19,7 +19,7 @@
             <mat-icon>{{ (isLogined$ | async) ? 'logout' : 'login' }}</mat-icon>
         </button>
 
-        <button mat-menu-item routerLink="/registration">
+        <button mat-menu-item routerLink="/registration" [disabled]="isLogined$ | async">
             <mat-icon>person_add</mat-icon>
             Sign up
         </button>
@@ -27,29 +27,21 @@
 </div>
 
 <div class="buttons-wrap">
-    <a mat-raised-button routerLink="/cart" routerLinkActive="active">
+    <a mat-raised-button routerLink="/cart">
         <mat-icon class="icon">shopping_cart</mat-icon>
         Cart
     </a>
 
-    <a mat-raised-button routerLink="/login" routerLinkActive="active" (click)="logOut()">
+    <a mat-raised-button routerLink="/login" routerLinkActive="hide" (click)="logOut()">
         {{ (isLogined$ | async) ? 'Log out' : 'Log in' }}
 
         <mat-icon>{{ (isLogined$ | async) ? 'logout' : 'login' }}</mat-icon>
     </a>
 
-    <a mat-raised-button routerLink="/registration" routerLinkActive="active">
-        Sign up
-        <mat-icon>person_add</mat-icon>
-    </a>
-</div>
-
-<!-- uncomment for sprint 3 -->
-<!-- @if (!(isLogined$ | async)) {
-      <a mat-raised-button routerLink="/login" routerLinkActive="active" (click)="logOut()">Log in</a>
-        <a mat-raised-button routerLink="/registration" routerLinkActive="active">Sign up</a>
+    @if (!(isLogined$ | async)) {
+        <a mat-raised-button routerLink="/registration" routerLinkActive="hide">
+            Sign up
+            <mat-icon>person_add</mat-icon>
+        </a>
     }
-    @else{
-      <a mat-raised-button routerLink="/login" routerLinkActive="active" (click)="logOut()">
-       Log out<mat-icon>logout</mat-icon></a>
-    } -->
+</div>

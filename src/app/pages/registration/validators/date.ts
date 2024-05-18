@@ -2,6 +2,8 @@ import { AbstractControl, ValidatorFn } from '@angular/forms';
 
 export const isDate: ValidatorFn = (control: AbstractControl) => {
     const err = { isDate: 'invalid date' };
+    const biggerDateErr = { isDate: 'date too big' };
+    const minEgeDateErr = { isDate: 'must be over 13 years old' };
 
     if (!control.value) {
         return err;
@@ -11,10 +13,11 @@ export const isDate: ValidatorFn = (control: AbstractControl) => {
     const dateNow = new Date(Date.now());
 
     const isCurrentDateBiggerThenDateNow =
-        Date.parse(currentDate.toString()) > Date.parse(dateNow.toString());
+        Date.parse(currentDate.toString()) >
+        (dateNow.setFullYear(dateNow.getFullYear() - 13), Date.parse(dateNow.toString()));
 
     if (isCurrentDateBiggerThenDateNow) {
-        return err;
+        return minEgeDateErr;
     }
 
     const isCurrentDateBiggerThenMaxLiveAge =
@@ -22,7 +25,7 @@ export const isDate: ValidatorFn = (control: AbstractControl) => {
         Date.parse(currentDate.toString())) < Date.parse(dateNow.toString());
 
     if (isCurrentDateBiggerThenMaxLiveAge) {
-        return err;
+        return biggerDateErr;
     }
 
     return null;

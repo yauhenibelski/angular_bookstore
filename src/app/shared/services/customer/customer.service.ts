@@ -6,13 +6,13 @@ import { Customer } from 'src/app/interfaces/customer-response-dto';
     providedIn: 'root',
 })
 export class CustomerService {
-    private readonly customer$ = new BehaviorSubject<Customer | null>(null);
+    private readonly customerSubject = new BehaviorSubject<Customer | null>(null);
 
-    get customer(): Observable<Customer | null> {
-        return this.customer$.asObservable();
+    get customer$(): Observable<Customer | null> {
+        return this.customerSubject.asObservable();
     }
 
-    set customer(customer: Customer | null) {
-        this.customer$.next(customer);
+    setCustomer(customer: Customer | null) {
+        this.customerSubject.next(customer);
     }
 }

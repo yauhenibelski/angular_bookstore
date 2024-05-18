@@ -17,21 +17,20 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { ProjectSettingsService } from 'src/app/shared/services/project-settings/project-settings.service';
 import { AsyncPipe } from '@angular/common';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { filter, map } from 'rxjs';
+import { filter, map, switchMap } from 'rxjs';
 import { Router, RouterLink } from '@angular/router';
 import { isEmail } from 'src/app/shared/form-validators/email';
 import { passwordValidators } from 'src/app/shared/form-validators/password';
 import { hasSpace } from 'src/app/shared/form-validators/has-space';
 import { GetErrorMassagePipe } from 'src/app/shared/pipes/get-error-massage/get-error-massage.pipe';
 import { CheckUniqueEmail } from 'src/app/shared/form-validators/async-email-check';
-import { CustomerService } from 'src/app/shared/services/customer/customer.service';
 import { AuthService } from 'src/app/shared/services/auth/auth.service';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ApiService } from 'src/app/shared/services/api/api.service';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { SignupCustomer } from 'src/app/interfaces/signup-customer-request';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { hasOneCharacter } from './validators/has-one-character';
+import { hasOneLatinCharacter } from './validators/has-one-latin-character';
 import { isDate } from './validators/date';
 import { isCountryExists } from './validators/is-country-exists';
 import { isPostalCodeValid } from './validators/is-postalcode-valid';
@@ -39,6 +38,8 @@ import { getCountryCodes } from './utils/get-country-codes';
 import { getCountryKey } from './utils/get-country-key';
 import { SuccessfulAccountCreationMessageComponent } from './successful-account-creation-message/successful-account-creation-message.component';
 import { Address } from './interface/address';
+import { hasOneCharacter } from './validators/has-least-one-character';
+import { ErrorRegistrationComponent } from './error-registration/error-registration.component';
 
 @UntilDestroy()
 @Component({
@@ -68,7 +69,6 @@ import { Address } from './interface/address';
 })
 export class RegistrationPageComponent {
     private readonly checkUniqueEmail = inject(CheckUniqueEmail);
-    private readonly customerService = inject(CustomerService);
     private readonly formBuilder = inject(FormBuilder);
     private readonly authService = inject(AuthService);
     private readonly apiService = inject(ApiService);
@@ -85,22 +85,24 @@ export class RegistrationPageComponent {
 
     isPasswordHide = true;
 
-    openSnackBar(): void {
+    openSnackBar(hasError: boolean): void {
         const SECONDS = 3000;
+        const massage = hasError
+            ? ErrorRegistrationComponent
+            : SuccessfulAccountCreationMessageComponent;
 
-        this.snackBar.openFromComponent(SuccessfulAccountCreationMessageComponent, {
+        this.snackBar.openFromComponent(massage, {
             duration: SECONDS,
         });
-        this.router.navigateByUrl('/main');
     }
 
     private readonly shippingAddressCountryControl = new FormControl('', {
-        validators: [hasOneCharacter, isCountryExists(this.countryCodes)],
+        validators: [hasOneLatinCharacter, isCountryExists(this.countryCodes)],
         nonNullable: true,
     });
 
     private readonly billingAddressCountryControl = new FormControl('', {
-        validators: [hasOneCharacter, isCountryExists(this.countryCodes)],
+        validators: [hasOneLatinCharacter, isCountryExists(this.countryCodes)],
         nonNullable: true,
     });
 
@@ -111,15 +113,15 @@ export class RegistrationPageComponent {
             nonNullable: true,
         }),
         password: ['', [...Object.values(passwordValidators)]],
-        firstName: ['', [hasOneCharacter, hasSpace]],
-        lastName: ['', [hasOneCharacter, hasSpace]],
+        firstName: ['', [hasOneLatinCharacter, hasSpace]],
+        lastName: ['', [hasOneLatinCharacter, hasSpace]],
 
         addresses: this.formBuilder.nonNullable.array<FormGroup<Address>>([
             this.formBuilder.nonNullable.group({
                 country: this.shippingAddressCountryControl,
                 city: new FormControl('', {
                     nonNullable: true,
-                    validators: [hasOneCharacter, hasSpace],
+                    validators: [hasOneLatinCharacter, hasSpace],
                 }),
                 streetName: new FormControl('', {
                     nonNullable: true,
@@ -136,7 +138,7 @@ export class RegistrationPageComponent {
                 country: this.billingAddressCountryControl,
                 city: new FormControl('', {
                     nonNullable: true,
-                    validators: [hasOneCharacter, hasSpace],
+                    validators: [hasOneLatinCharacter, hasSpace],
                 }),
                 streetName: new FormControl('', {
                     nonNullable: true,
@@ -201,6 +203,7 @@ export class RegistrationPageComponent {
 
     signUpCustomer(useDefaultShippingAddress: boolean, useDefaultBillingAddress: boolean): void {
         const formValue = this.registrationForm.getRawValue();
+        const { email, password } = formValue;
         const addresses = [...formValue.addresses].map(address => ({
             ...address,
             ...{ country: getCountryKey(address.country) },
@@ -222,10 +225,19 @@ export class RegistrationPageComponent {
 
         this.authService
             .signUpCustomer(mapFormValue)
-            .pipe(untilDestroyed(this))
-            .subscribe(response => {
-                this.openSnackBar();
-                this.customerService.customer = response.customer;
+            .pipe(
+                untilDestroyed(this),
+                switchMap(() => this.authService.getPasswordFlowToken({ email, password })),
+            )
+            .subscribe({
+                next: () => {
+                    this.openSnackBar(false);
+                    this.authService.setLoginStatus(true);
+                    this.router.navigateByUrl('/main');
+                },
+                error: () => {
+                    this.openSnackBar(true);
+                },
             });
     }
 
