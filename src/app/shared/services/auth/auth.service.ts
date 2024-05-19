@@ -15,14 +15,16 @@ import { Cart } from '../cart/cart.interface';
 import { CartService } from '../cart/cart.service';
 import { ApiService } from '../api/api.service';
 import { highOrderCustomTap } from '../../utils/high-order-custom-tap-operator';
+import { CustomerService } from '../customer/customer.service';
 
 @Injectable({
     providedIn: 'root',
 })
 export class AuthService {
     private readonly httpClient = inject(HttpClient);
-    private readonly cardService = inject(CartService);
+    private readonly cartService = inject(CartService);
     private readonly apiService = inject(ApiService);
+    private readonly customerService = inject(CustomerService);
 
     private readonly isLoginedSubject = new BehaviorSubject<boolean>(false);
 
@@ -32,37 +34,49 @@ export class AuthService {
     };
 
     signUpCustomer(customer: SignupCustomer): Observable<CustomerResponseDto> {
-        return this.httpClient.post<CustomerResponseDto>('/me/signup', customer, {
-            headers: {
-                'Content-Type': 'text/plain',
-            },
-        });
+        return this.httpClient
+            .post<CustomerResponseDto>('/me/signup', customer, {
+                headers: {
+                    'Content-Type': 'text/plain',
+                },
+            })
+            .pipe(
+                tap(({ customer }) => {
+                    this.customerService.setCustomer(customer);
+                }),
+            );
     }
 
     signInCustomer({
         email,
         password,
     }: Pick<Customer, 'email' | 'password'>): Observable<CustomerResponseDto & { cart: Cart }> {
-        if (!this.cardService.cart) {
+        if (!this.cartService.cart) {
             return EMPTY;
         }
 
-        return this.httpClient.post<CustomerResponseDto & { cart: Cart }>(
-            '/login',
-            {
-                email,
-                password,
-                anonymousCart: {
-                    id: this.cardService.cart.id,
-                    typeId: 'cart',
+        return this.httpClient
+            .post<CustomerResponseDto & { cart: Cart }>(
+                '/login',
+                {
+                    email,
+                    password,
+                    anonymousCart: {
+                        id: this.cartService.cart.id,
+                        typeId: 'cart',
+                    },
                 },
-            },
-            {
-                headers: {
-                    'Content-Type': 'application/json',
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
                 },
-            },
-        );
+            )
+            .pipe(
+                tap(({ customer }) => {
+                    this.customerService.setCustomer(customer);
+                }),
+            );
     }
 
     hasRefreshToken(): boolean {
@@ -86,6 +100,8 @@ export class AuthService {
                     this.token.refresh = response.refresh_token;
 
                     this.setLoginStatus(false);
+                    this.customerService.setCustomer(null);
+                    this.cartService.setCart(null);
 
                     setAccessTokenInCookie(response, true);
                 }),
@@ -97,20 +113,26 @@ export class AuthService {
         email,
         password,
     }: Pick<Customer, 'email' | 'password'>): Observable<AccessTokenResponseDto> {
-        return this.httpClient.post<AccessTokenResponseDto>(
-            `/oauth/${environment.projectKey}/customers/token`,
-            `grant_type=password`,
-            {
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
+        return this.httpClient
+            .post<AccessTokenResponseDto>(
+                `/oauth/${environment.projectKey}/customers/token`,
+                `grant_type=password`,
+                {
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    params: {
+                        username: email,
+                        password,
+                        scope: environment.scopes,
+                    },
                 },
-                params: {
-                    username: email,
-                    password,
-                    scope: environment.scopes,
-                },
-            },
-        );
+            )
+            .pipe(
+                tap(passwordFlowToken => {
+                    setAccessTokenInCookie(passwordFlowToken, false);
+                }),
+            );
     }
 
     updateToken(): Observable<RefreshTokenResponseDto> {

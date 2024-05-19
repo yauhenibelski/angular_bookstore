@@ -26,10 +26,9 @@ a {
     display: none;
 }
 
-// uncomment for sprint 3
-// .active {
-//     display: none;
-// }
+.hide {
+    display: none;
+}
 
 @media (max-width: 568px) {
     .buttons-wrap-menu {

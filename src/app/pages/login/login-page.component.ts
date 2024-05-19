@@ -6,11 +6,11 @@ import { FormControl, FormGroup, ReactiveFormsModule, FormsModule } from '@angul
 import { MatIconModule } from '@angular/material/icon';
 import { Router, RouterLink } from '@angular/router';
 import { CheckUniqueEmail } from 'src/app/shared/form-validators/async-email-check';
-import { CartService } from 'src/app/shared/services/cart/cart.service';
 import { CustomerService } from 'src/app/shared/services/customer/customer.service';
 import { switchMap, tap } from 'rxjs';
 import { setAccessTokenInCookie } from 'src/app/shared/utils/set-access-token-in-cookie';
 import { AuthService } from 'src/app/shared/services/auth/auth.service';
+import { hasSpace } from 'src/app/shared/form-validators/has-space';
 import { isEmail } from '../../shared/form-validators/email';
 import { GetErrorMassagePipe } from '../../shared/pipes/get-error-massage/get-error-massage.pipe';
 import { passwordValidators } from '../../shared/form-validators/password';
@@ -35,7 +35,6 @@ import { passwordValidators } from '../../shared/form-validators/password';
 })
 export class LoginPageComponent {
     private readonly authService = inject(AuthService);
-    private readonly cartService = inject(CartService);
     private readonly customerService = inject(CustomerService);
     private readonly router = inject(Router);
 
@@ -43,7 +42,7 @@ export class LoginPageComponent {
 
     readonly loginForm = new FormGroup({
         email: new FormControl('', {
-            validators: [isEmail],
+            validators: [hasSpace, isEmail],
             nonNullable: true,
         }),
         password: new FormControl('', {
@@ -72,9 +71,8 @@ export class LoginPageComponent {
         this.authService
             .signInCustomer(formValue)
             .pipe(
-                tap(response => {
-                    this.customerService.customer = response.customer;
-                    this.cartService.setCart(response.cart);
+                tap(({ customer }) => {
+                    this.customerService.setCustomer(customer);
                 }),
                 switchMap(() => {
                     return this.authService.getPasswordFlowToken(formValue);

@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ProjectSettings } from 'src/app/shared/services/project-settings/project-settings.interface';
-import { CustomerResponseDto } from 'src/app/interfaces/customer-response-dto';
+import { Customer } from 'src/app/interfaces/customer-response-dto';
 import { Observable, tap } from 'rxjs';
 import { environment } from 'src/app/environment/environment';
 import { v4 as uuidv4 } from 'uuid';
@@ -16,7 +16,7 @@ import { CustomerService } from '../customer/customer.service';
 export class ApiService {
     private readonly projectSettingsService = inject(ProjectSettingsService);
     private readonly customerService = inject(CustomerService);
-    private readonly cardService = inject(CartService);
+    private readonly cartService = inject(CartService);
     private readonly httpClient = inject(HttpClient);
 
     checkUserByEmail(email: string) {
@@ -36,7 +36,7 @@ export class ApiService {
             )
             .pipe(
                 tap(cart => {
-                    this.cardService.setCart(cart);
+                    this.cartService.setCart(cart);
                 }),
             );
     }
@@ -51,25 +51,33 @@ export class ApiService {
             );
     }
 
-    getCustomerByPasswordFlowToken(): Observable<CustomerResponseDto> {
+    getCustomerByPasswordFlowToken(): Observable<Customer> {
         return this.httpClient
-            .get<CustomerResponseDto>('/me', {
+            .get<Customer>('/me', {
                 headers: {
                     'Content-Type': 'application/json',
                 },
             })
             .pipe(
-                tap(response => {
-                    this.customerService.customer = response.customer;
+                tap(customer => {
+                    this.customerService.setCustomer(customer);
                 }),
             );
     }
 
     getCartByPasswordFlowToken(): Observable<CartResponseDto> {
-        return this.httpClient.get<CartResponseDto>('/me/carts', {
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
+        return this.httpClient
+            .get<CartResponseDto>('/me/carts', {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+            .pipe(
+                tap(cartRes => {
+                    const cart = cartRes.results.reverse()[0] ?? null;
+
+                    this.cartService.setCart(cart);
+                }),
+            );
     }
 }

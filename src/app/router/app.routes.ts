@@ -3,18 +3,19 @@ import { BooksPageComponent } from '../pages/books/books-page.component';
 import { RegistrationPageComponent } from '../pages/registration/registration-page.component';
 import { LoginPageComponent } from '../pages/login/login-page.component';
 import { NotFoundPageComponent } from '../pages/404/not-found-page.component';
-import { canLoginGuard } from './guards/can-login.guard';
+import { isLoggedGuard } from './guards/is-logged.guard';
 import { CartPageComponent } from '../pages/cart/cart-page.component';
 
 export const routes: Routes = [
     {
         path: 'registration',
         component: RegistrationPageComponent,
+        canActivate: [isLoggedGuard],
     },
     {
         path: 'login',
         component: LoginPageComponent,
-        canActivate: [canLoginGuard],
+        canActivate: [isLoggedGuard],
     },
     {
         path: 'main',
@@ -27,7 +28,7 @@ export const routes: Routes = [
     {
         path: '',
         pathMatch: 'full',
-        redirectTo: 'main', // technical requirements RSS-ECOMM-2_05
+        redirectTo: 'main',
     },
     {
         path: '**',
