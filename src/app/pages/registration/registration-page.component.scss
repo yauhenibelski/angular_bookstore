@@ -1,0 +1,52 @@
+:host {
+    display: flex;
+    justify-content: center;
+    padding: 40px;
+}
+
+mat-card {
+    width: 100%;
+    max-width: 600px;
+
+    form {
+        display: flex;
+        flex-direction: column;
+        padding: 20px;
+    }
+}
+
+mat-slide-toggle {
+    margin-bottom: 10px;
+}
+
+.hidden {
+    display: none;
+}
+
+.field-wrap {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 2%;
+}
+
+a {
+    text-align: center;
+    padding-top: 10px;
+    color: gray;
+    text-decoration: none;
+    transition: 0.5s;
+
+    &:hover {
+        text-decoration: underline;
+    }
+}
+
+.slide-toggle {
+    margin-top: 18px;
+}
+
+@media (max-width: 380px) {
+    :host {
+        padding: 20px 5px;
+    }
+}

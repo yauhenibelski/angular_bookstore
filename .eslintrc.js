@@ -141,6 +141,7 @@ module.exports = {
                 'no-param-reassign': 'off',
                 'no-case-declarations': 'error',
                 'no-console': ['error', { allow: ['info', 'assert', 'warn', 'error'] }],
+                'no-empty-function': ['error', { allow: ['constructors'] }],
                 'no-implicit-coercion': ['error', { allow: ['!!'] }],
                 'no-return-assign': ['error', 'always'],
                 'no-useless-rename': [
@@ -157,6 +158,7 @@ module.exports = {
                 curly: ['error', 'all'],
                 'prefer-destructuring': 'off',
                 'no-useless-constructor': 'off',
+                'dot-notation': 'off',
                 '@typescript-eslint/no-useless-constructor': ['error'],
                 '@typescript-eslint/no-inferrable-types': ['error', { ignoreParameters: true }],
                 '@typescript-eslint/prefer-readonly': ['error'],
@@ -250,7 +252,7 @@ module.exports = {
                     },
                     {
                         selector: 'property',
-                        format: ['camelCase', 'PascalCase'],
+                        format: ['camelCase', 'PascalCase', 'snake_case'],
                     },
                     {
                         selector: [
