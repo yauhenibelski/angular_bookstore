@@ -58,7 +58,6 @@ import { ErrorRegistrationComponent } from './error-registration/error-registrat
         MatAutocompleteModule,
         MatCheckboxModule,
         AsyncPipe,
-        MatButtonModule,
         MatSlideToggleModule,
         RouterLink,
     ],
