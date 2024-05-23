@@ -9,6 +9,7 @@ import { ProjectSettingsService } from '../project-settings/project-settings.ser
 import { CartService } from '../cart/cart.service';
 import { Cart, CartResponseDto } from '../cart/cart.interface';
 import { CustomerService } from '../customer/customer.service';
+import { Action } from './action.type';
 
 @Injectable({
     providedIn: 'root',
@@ -18,6 +19,18 @@ export class ApiService {
     private readonly customerService = inject(CustomerService);
     private readonly cartService = inject(CartService);
     private readonly httpClient = inject(HttpClient);
+
+    updateCustomer(action: Action, payload: { [key: string]: unknown }): Observable<Customer> {
+        return this.httpClient.post<Customer>('/me', {
+            version: this.customerService.customer?.version,
+            actions: [
+                {
+                    action,
+                    ...payload,
+                },
+            ],
+        });
+    }
 
     checkUserByEmail(email: string) {
         return this.httpClient.head(`/customers?where=${encodeURIComponent(`email="${email}"`)}`);

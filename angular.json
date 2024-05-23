@@ -31,7 +31,12 @@
                             "@angular/material/prebuilt-themes/indigo-pink.css",
                             "src/styles.scss"
                         ],
-                        "scripts": []
+                        "scripts": [],
+                        "allowedCommonJsDependencies": [
+                            "postal-codes-js",
+                            "country-codes-list",
+                            "cookie"
+                        ]
                     },
                     "configurations": {
                         "production": {

@@ -8,6 +8,10 @@ import { Customer } from 'src/app/interfaces/customer-response-dto';
 export class CustomerService {
     private readonly customerSubject = new BehaviorSubject<Customer | null>(null);
 
+    get customer(): Customer | null {
+        return this.customerSubject.value;
+    }
+
     get customer$(): Observable<Customer | null> {
         return this.customerSubject.asObservable();
     }
