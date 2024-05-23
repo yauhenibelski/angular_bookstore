@@ -1,0 +1,104 @@
+<h2>Profile</h2>
+@if (customer$ | async; as customer) {
+    <mat-accordion class="example-headers-align">
+        <mat-expansion-panel #q hideToggle>
+            <mat-expansion-panel-header>
+                <mat-panel-title>First name</mat-panel-title>
+
+                <mat-panel-description>
+                    {{ customer.firstName }}
+                    <mat-icon>account_circle</mat-icon>
+                </mat-panel-description>
+            </mat-expansion-panel-header>
+
+            <mat-form-field>
+                <mat-label>First name</mat-label>
+                <input matInput />
+            </mat-form-field>
+
+            <mat-action-row>
+                <button mat-button color="warn" (click)="q.close()">cancel</button>
+                <button mat-button color="primary" (click)="q.toggle()">edit</button>
+            </mat-action-row>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel hideToggle>
+            <mat-expansion-panel-header>
+                <mat-panel-title>Last name</mat-panel-title>
+                <mat-panel-description>
+                    {{ customer.lastName }}
+                    <mat-icon>account_circle</mat-icon>
+                </mat-panel-description>
+            </mat-expansion-panel-header>
+
+            <mat-form-field>
+                <mat-label>Last Name</mat-label>
+                <input matInput />
+            </mat-form-field>
+
+            <mat-action-row>
+                <button mat-button color="warn" (click)="q.close()">cancel</button>
+                <button mat-button color="primary" (click)="q.toggle()">edit</button>
+            </mat-action-row>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel hideToggle>
+            <mat-expansion-panel-header>
+                <mat-panel-title>Date of Birth</mat-panel-title>
+                <mat-panel-description>
+                    {{ customer.dateOfBirth }}
+                    <mat-icon>date_range</mat-icon>
+                </mat-panel-description>
+            </mat-expansion-panel-header>
+
+            <mat-form-field>
+                <mat-label>Choose a date</mat-label>
+                <input matInput [matDatepicker]="picker" />
+                <mat-hint>MM/DD/YYYY</mat-hint>
+                <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+
+            <mat-action-row>
+                <button mat-button color="warn" (click)="q.close()">cancel</button>
+                <button mat-button color="primary" (click)="q.toggle()">edit</button>
+            </mat-action-row>
+        </mat-expansion-panel>
+    </mat-accordion>
+
+    <h2 [style.marginTop.px]="30">Shipping address</h2>
+    <mat-accordion>
+        @for (
+            item of customer.addresses | addressFilter: customer.shippingAddressIds : 'shipping';
+            track $index
+        ) {
+            <mat-expansion-panel>
+                <mat-expansion-panel-header>
+                    <mat-panel-title>Country: {{ getCountryByCode(item.country) }}</mat-panel-title>
+                    <mat-panel-title>City: {{ item.city }}</mat-panel-title>
+                    <mat-panel-description>Street: {{ item.streetName }}</mat-panel-description>
+                </mat-expansion-panel-header>
+                <p>I'm visible because I am open</p>
+            </mat-expansion-panel>
+        }
+    </mat-accordion>
+
+    <h2 [style.marginTop.px]="30">Billing address</h2>
+    <mat-accordion>
+        @for (
+            item of customer.addresses | addressFilter: customer.shippingAddressIds : 'billing';
+            track $index
+        ) {
+            <mat-expansion-panel>
+                <mat-expansion-panel-header>
+                    <mat-panel-title>Country: {{ getCountryByCode(item.country) }}</mat-panel-title>
+                    <mat-panel-title>City: {{ item.city }}</mat-panel-title>
+                    <mat-panel-description>Street: {{ item.streetName }}</mat-panel-description>
+                </mat-expansion-panel-header>
+                <p>I'm visible because I am open</p>
+            </mat-expansion-panel>
+        }
+    </mat-accordion>
+} @else {
+    <h2>add registration link</h2>
+}
