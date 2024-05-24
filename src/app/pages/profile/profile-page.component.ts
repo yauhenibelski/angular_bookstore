@@ -1,7 +1,7 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject } from '@angular/core';
+import { FormBuilder, FormControl, ReactiveFormsModule } from '@angular/forms';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { CustomerService } from 'src/app/shared/services/customer/customer.service';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatButtonModule } from '@angular/material/button';
@@ -10,8 +10,19 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { provideNativeDateAdapter } from '@angular/material/core';
+import { hasOneLatinCharacter } from 'src/app/shared/validators/has-one-latin-character';
+import { hasSpace } from 'src/app/shared/validators/has-space';
+import { GetErrorMassagePipe } from 'src/app/shared/pipes/get-error-massage/get-error-massage.pipe';
+import { isDate } from 'src/app/shared/validators/date';
+import { isEmail } from 'src/app/shared/validators/email';
+import { CheckUniqueEmail } from 'src/app/shared/validators/async-email-check';
+import { ApiService } from 'src/app/shared/services/api/api.service';
+import { Action } from 'src/app/shared/services/api/action.type';
+import { formatDateOfBirth } from 'src/app/shared/utils/format-date-of-birth';
+import { Address, Addresses } from 'src/app/interfaces/customer-response-dto';
 import { getCountryByCode } from '../registration/utils/get-country-by-code';
-import { AddressFilterPipe } from './pipe/address-filter/address-filter.pipe';
+import { AddressFormComponent } from './address-form/address-form.component';
+import { getCountryKey } from '../registration/utils/get-country-key';
 
 @UntilDestroy()
 @Component({
@@ -26,41 +37,123 @@ import { AddressFilterPipe } from './pipe/address-filter/address-filter.pipe';
         MatInputModule,
         MatButtonModule,
         MatDatepickerModule,
-        AddressFilterPipe,
+        GetErrorMassagePipe,
+        AddressFormComponent,
     ],
-    providers: [provideNativeDateAdapter()],
+    providers: [provideNativeDateAdapter(), CheckUniqueEmail],
     templateUrl: './profile-page.component.html',
     styleUrl: './profile-page.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ProfilePageComponent implements OnInit {
+export class ProfilePageComponent {
+    private readonly apiService = inject(ApiService);
     private readonly formBuilder = inject(FormBuilder);
     private readonly customerService = inject(CustomerService);
+    private readonly checkUniqueEmail = inject(CheckUniqueEmail);
+    private readonly changeDetector = inject(ChangeDetectorRef);
 
     readonly customer$ = this.customerService.customer$;
+
+    get addresses(): Addresses | null {
+        return this.customerService.addresses;
+    }
 
     getCountryByCode = getCountryByCode; // todo: replace to pipe
 
     form = this.formBuilder.nonNullable.group({
-        address: this.formBuilder.array([]),
+        firstName: ['', [hasOneLatinCharacter, hasSpace]],
+        lastName: ['', [hasOneLatinCharacter, hasSpace]],
+        dateOfBirth: ['', [isDate]],
+        email: new FormControl('', {
+            validators: [isEmail],
+            asyncValidators: [this.checkUniqueEmail.validate.bind(this.checkUniqueEmail)],
+            nonNullable: true,
+        }),
     });
 
-    ngOnInit(): void {
-        this.updateAddress();
+    get controls() {
+        return this.form.controls;
     }
 
-    updateAddress(): void {
-        // this.address$.pipe(untilDestroyed(this)).subscribe(addresses => {
-        //     const mapAddresses = [...addresses].map(
-        //         ({ city, country, postalCode, streetName }) => ({
-        //             country: getCountryByCode(country),
-        //             city,
-        //             postalCode,
-        //             streetName,
-        //         }),
-        //     );
-        // const addressesForm = this.formBuilder.array(mapAddresses);
-        // this.form.setControl('address', addressesForm);
-        // });
+    updateCustomer(action: Action): void {
+        const { firstName, lastName, email, dateOfBirth } = this.form.getRawValue();
+
+        let payload: { [key: string]: unknown } | null = null;
+
+        if (action === 'setFirstName') {
+            payload = { firstName };
+
+            this.controls.firstName.reset();
+            this.controls.firstName.markAsUntouched();
+        }
+
+        if (action === 'setLastName') {
+            payload = { lastName };
+
+            this.controls.lastName.reset();
+            this.controls.lastName.markAsUntouched();
+        }
+
+        if (action === 'changeEmail') {
+            payload = { email };
+
+            this.controls.email.reset();
+            this.controls.email.markAsUntouched();
+        }
+
+        if (action === 'setDateOfBirth') {
+            payload = { dateOfBirth: formatDateOfBirth(dateOfBirth) };
+
+            this.controls.dateOfBirth.reset();
+            this.controls.dateOfBirth.markAsUntouched();
+        }
+
+        if (!payload) {
+            return;
+        }
+
+        this.apiService
+            .updateCustomer(action, payload)
+            .pipe(untilDestroyed(this))
+            .subscribe({
+                next: customer => {
+                    this.customerService.setCustomer(customer);
+                    console.info('show ok message');
+                },
+                error: () => {
+                    console.info('show err message');
+                },
+            });
+    }
+
+    updateAddress(address: Address, id: string | undefined): void {
+        if (!id) {
+            return;
+        }
+
+        const payload = {
+            addressId: id,
+            address: {
+                streetName: address.streetName,
+                postalCode: address.postalCode,
+                city: address.city,
+                country: getCountryKey(address.country),
+            },
+        };
+
+        this.apiService
+            .updateCustomer('changeAddress', payload)
+            .pipe(untilDestroyed(this))
+            .subscribe({
+                next: customer => {
+                    this.customerService.setCustomer(customer);
+                    console.info('show ok message');
+
+                    this.changeDetector.markForCheck();
+                },
+                error: () => {
+                    console.info('show err message');
+                },
+            });
     }
 }

@@ -1,12 +1,18 @@
-export interface Addresses {
-    id: string;
+export interface Address {
+    id?: string;
     country: string;
     postalCode: string;
     streetName: string;
     city: string;
 }
+
+export interface Addresses {
+    shipping: Address[];
+    billing: Address[];
+}
+
 export interface Customer {
-    addresses: Addresses[];
+    addresses: Address[];
     email: string;
     firstName: string;
     id: string;
@@ -27,7 +33,6 @@ export interface Customer {
     shippingAddressIds: string[];
     versionModifiedAt?: string;
 }
-
 export interface CustomerResponseDto {
     customer: Customer;
 }

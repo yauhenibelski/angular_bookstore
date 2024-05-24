@@ -19,26 +19,27 @@ import { AsyncPipe } from '@angular/common';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { filter, map, switchMap } from 'rxjs';
 import { Router, RouterLink } from '@angular/router';
-import { isEmail } from 'src/app/shared/form-validators/email';
-import { passwordValidators } from 'src/app/shared/form-validators/password';
-import { hasSpace } from 'src/app/shared/form-validators/has-space';
+import { isEmail } from 'src/app/shared/validators/email';
+import { passwordValidators } from 'src/app/shared/validators/password';
+import { hasSpace } from 'src/app/shared/validators/has-space';
 import { GetErrorMassagePipe } from 'src/app/shared/pipes/get-error-massage/get-error-massage.pipe';
-import { CheckUniqueEmail } from 'src/app/shared/form-validators/async-email-check';
+import { CheckUniqueEmail } from 'src/app/shared/validators/async-email-check';
 import { AuthService } from 'src/app/shared/services/auth/auth.service';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ApiService } from 'src/app/shared/services/api/api.service';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { SignupCustomer } from 'src/app/interfaces/signup-customer-request';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { hasOneLatinCharacter } from './validators/has-one-latin-character';
-import { isDate } from './validators/date';
-import { isCountryExists } from './validators/is-country-exists';
-import { isPostalCodeValid } from './validators/is-postalcode-valid';
+import { formatDateOfBirth } from 'src/app/shared/utils/format-date-of-birth';
+import { hasOneLatinCharacter } from '../../shared/validators/has-one-latin-character';
+import { isDate } from '../../shared/validators/date';
+import { isCountryExists } from '../../shared/validators/is-country-exists';
+import { isPostalCodeValid } from '../../shared/validators/is-postalcode-valid';
 import { getCountryCodes } from './utils/get-country-codes';
 import { getCountryKey } from './utils/get-country-key';
 import { SuccessfulAccountCreationMessageComponent } from './successful-account-creation-message/successful-account-creation-message.component';
 import { Address } from './interface/address';
-import { hasOneCharacter } from './validators/has-least-one-character';
+import { hasOneCharacter } from '../../shared/validators/has-least-one-character';
 import { ErrorRegistrationComponent } from './error-registration/error-registration.component';
 
 @UntilDestroy()
@@ -210,7 +211,7 @@ export class RegistrationPageComponent {
 
         const mapFormValue: SignupCustomer = {
             ...formValue,
-            dateOfBirth: new Date(formValue.dateOfBirth).toJSON().slice(0, 10),
+            dateOfBirth: formatDateOfBirth(formValue.dateOfBirth),
             addresses,
         };
 

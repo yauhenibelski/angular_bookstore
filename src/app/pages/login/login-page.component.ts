@@ -5,15 +5,15 @@ import { MatButtonModule } from '@angular/material/button';
 import { FormControl, FormGroup, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { Router, RouterLink } from '@angular/router';
-import { CheckUniqueEmail } from 'src/app/shared/form-validators/async-email-check';
 import { CustomerService } from 'src/app/shared/services/customer/customer.service';
 import { switchMap, tap } from 'rxjs';
 import { setAccessTokenInCookie } from 'src/app/shared/utils/set-access-token-in-cookie';
 import { AuthService } from 'src/app/shared/services/auth/auth.service';
-import { hasSpace } from 'src/app/shared/form-validators/has-space';
-import { isEmail } from '../../shared/form-validators/email';
+import { CheckUniqueEmail } from 'src/app/shared/validators/async-email-check';
+import { isEmail } from 'src/app/shared/validators/email';
+import { hasSpace } from 'src/app/shared/validators/has-space';
+import { passwordValidators } from 'src/app/shared/validators/password';
 import { GetErrorMassagePipe } from '../../shared/pipes/get-error-massage/get-error-massage.pipe';
-import { passwordValidators } from '../../shared/form-validators/password';
 
 @Component({
     selector: 'app-login-page',

@@ -6,6 +6,7 @@ import { RegistrationPageComponent } from './pages/registration/registration-pag
 import { HeaderComponent } from './core/header/header.component';
 import { FooterComponent } from './core/footer/footer.component';
 import { LoaderService } from './shared/services/loader/loader.service';
+import { ProfilePageComponent } from './pages/profile/profile-page.component';
 
 @Component({
     selector: 'app-root',
@@ -19,6 +20,7 @@ import { LoaderService } from './shared/services/loader/loader.service';
         HeaderComponent,
         FooterComponent,
         MatProgressBarModule,
+        ProfilePageComponent,
     ],
 })
 export class AppComponent {

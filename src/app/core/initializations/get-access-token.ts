@@ -1,12 +1,12 @@
 import { ApiService } from 'src/app/shared/services/api/api.service';
-import * as cookieHandler from 'cookie';
+import { parse } from 'cookie';
 import { ANONYMOUS_TOKEN_SHORT_NAME } from 'src/app/shared/constants/short-names';
 import { EMPTY, catchError, retry, switchMap } from 'rxjs';
 import { AuthService } from 'src/app/shared/services/auth/auth.service';
 
 export function getAccessToken(apiService: ApiService, authService: AuthService) {
     return () => {
-        const documentCookie = cookieHandler.parse(document.cookie);
+        const documentCookie = parse(document.cookie);
 
         if ('accessToken' in documentCookie) {
             const accessToken = documentCookie['accessToken'];

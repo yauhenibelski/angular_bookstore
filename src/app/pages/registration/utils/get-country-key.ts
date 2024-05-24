@@ -1,8 +1,8 @@
-import * as countryCodes from 'country-codes-list';
+import { customList } from 'country-codes-list';
 import { formatString } from './format-string';
 
 export const getCountryKey = (countryName: string): string => {
-    const key = Object.entries(countryCodes.customList()).find(([, name]) => {
+    const key = Object.entries(customList()).find(([, name]) => {
         return formatString(name).toLowerCase() === countryName.toLowerCase();
     });
 
