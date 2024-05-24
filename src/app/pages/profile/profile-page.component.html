@@ -23,7 +23,13 @@
                 </mat-form-field>
 
                 <mat-action-row>
-                    <button mat-button color="warn" (click)="firstName.close()">close</button>
+                    <button
+                        mat-button
+                        color="warn"
+                        (click)="firstName.close(); $event.preventDefault()"
+                    >
+                        close
+                    </button>
                     <button
                         mat-button
                         color="primary"
@@ -55,7 +61,13 @@
                 </mat-form-field>
 
                 <mat-action-row>
-                    <button mat-button color="warn" (click)="lastName.close()">close</button>
+                    <button
+                        mat-button
+                        color="warn"
+                        (click)="lastName.close(); $event.preventDefault()"
+                    >
+                        close
+                    </button>
                     <button
                         mat-button
                         color="primary"
@@ -87,7 +99,13 @@
                 </mat-form-field>
 
                 <mat-action-row>
-                    <button mat-button color="warn" (click)="email.close()">close</button>
+                    <button
+                        mat-button
+                        color="warn"
+                        (click)="email.close(); $event.preventDefault()"
+                    >
+                        close
+                    </button>
                     <button
                         mat-button
                         color="primary"
@@ -123,7 +141,9 @@
                 </mat-form-field>
 
                 <mat-action-row>
-                    <button mat-button color="warn" (click)="date.close()">close</button>
+                    <button mat-button color="warn" (click)="date.close(); $event.preventDefault()">
+                        close
+                    </button>
                     <button
                         mat-button
                         color="primary"
@@ -138,12 +158,8 @@
 
         <h2 [style.marginTop.px]="30">Shipping address</h2>
         <mat-accordion>
-            @for (
-                item of customer.addresses
-                    | addressFilter: customer.shippingAddressIds : 'shipping';
-                track $index
-            ) {
-                <mat-expansion-panel>
+            @for (item of addresses?.shipping; track $index) {
+                <mat-expansion-panel #addressPanel>
                     <mat-expansion-panel-header>
                         <mat-panel-title>
                             Country: {{ getCountryByCode(item.country) }}
@@ -151,18 +167,38 @@
                         <mat-panel-title>City: {{ item.city }}</mat-panel-title>
                         <mat-panel-description>Street: {{ item.streetName }}</mat-panel-description>
                     </mat-expansion-panel-header>
-                    <p>I'm visible because I am open</p>
+
+                    <app-address-form #addressForm></app-address-form>
+
+                    <mat-action-row>
+                        <button
+                            mat-button
+                            color="warn"
+                            (click)="addressPanel.close(); $event.preventDefault()"
+                        >
+                            close
+                        </button>
+
+                        <button
+                            mat-button
+                            color="primary"
+                            [disabled]="!addressForm.form.valid"
+                            (click)="
+                                updateAddress(addressForm.getValue(), item.id);
+                                addressForm.writeValue(null)
+                            "
+                        >
+                            edit
+                        </button>
+                    </mat-action-row>
                 </mat-expansion-panel>
             }
         </mat-accordion>
 
         <h2 [style.marginTop.px]="30">Billing address</h2>
         <mat-accordion>
-            @for (
-                item of customer.addresses | addressFilter: customer.shippingAddressIds : 'billing';
-                track $index
-            ) {
-                <mat-expansion-panel>
+            @for (item of addresses?.billing; track $index) {
+                <mat-expansion-panel #addressPanel>
                     <mat-expansion-panel-header>
                         <mat-panel-title>
                             Country: {{ getCountryByCode(item.country) }}
@@ -170,7 +206,30 @@
                         <mat-panel-title>City: {{ item.city }}</mat-panel-title>
                         <mat-panel-description>Street: {{ item.streetName }}</mat-panel-description>
                     </mat-expansion-panel-header>
-                    <p>I'm visible because I am open</p>
+
+                    <app-address-form #addressForm></app-address-form>
+
+                    <mat-action-row>
+                        <button
+                            mat-button
+                            color="warn"
+                            (click)="addressPanel.close(); $event.preventDefault()"
+                        >
+                            close
+                        </button>
+
+                        <button
+                            mat-button
+                            color="primary"
+                            [disabled]="!addressForm.form.valid"
+                            (click)="
+                                updateAddress(addressForm.getValue(), item.id);
+                                addressForm.writeValue(null)
+                            "
+                        >
+                            edit
+                        </button>
+                    </mat-action-row>
                 </mat-expansion-panel>
             }
         </mat-accordion>
