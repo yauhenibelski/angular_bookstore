@@ -20,6 +20,9 @@ import { ApiService } from 'src/app/shared/services/api/api.service';
 import { Action } from 'src/app/shared/services/api/action.type';
 import { formatDateOfBirth } from 'src/app/shared/utils/format-date-of-birth';
 import { Address, Addresses } from 'src/app/interfaces/customer-response-dto';
+import { passwordValidators } from 'src/app/shared/validators/password';
+import { switchMap } from 'rxjs';
+import { AuthService } from 'src/app/shared/services/auth/auth.service';
 import { getCountryByCode } from '../registration/utils/get-country-by-code';
 import { AddressFormComponent } from './address-form/address-form.component';
 import { getCountryKey } from '../registration/utils/get-country-key';
@@ -47,12 +50,16 @@ import { getCountryKey } from '../registration/utils/get-country-key';
 })
 export class ProfilePageComponent {
     private readonly apiService = inject(ApiService);
+    private readonly authService = inject(AuthService);
     private readonly formBuilder = inject(FormBuilder);
     private readonly customerService = inject(CustomerService);
     private readonly checkUniqueEmail = inject(CheckUniqueEmail);
     private readonly changeDetector = inject(ChangeDetectorRef);
 
     readonly customer$ = this.customerService.customer$;
+
+    isNewPasswordHide = true;
+    isCurrentPasswordHide = true;
 
     get addresses(): Addresses | null {
         return this.customerService.addresses;
@@ -64,6 +71,8 @@ export class ProfilePageComponent {
         firstName: ['', [hasOneLatinCharacter, hasSpace]],
         lastName: ['', [hasOneLatinCharacter, hasSpace]],
         dateOfBirth: ['', [isDate]],
+        currentPassword: ['', [...Object.values(passwordValidators)]],
+        newPassword: ['', [...Object.values(passwordValidators)]],
         email: new FormControl('', {
             validators: [isEmail],
             asyncValidators: [this.checkUniqueEmail.validate.bind(this.checkUniqueEmail)],
@@ -82,35 +91,25 @@ export class ProfilePageComponent {
 
         if (action === 'setFirstName') {
             payload = { firstName };
-
-            this.controls.firstName.reset();
-            this.controls.firstName.markAsUntouched();
         }
 
         if (action === 'setLastName') {
             payload = { lastName };
-
-            this.controls.lastName.reset();
-            this.controls.lastName.markAsUntouched();
         }
 
         if (action === 'changeEmail') {
             payload = { email };
-
-            this.controls.email.reset();
-            this.controls.email.markAsUntouched();
         }
 
         if (action === 'setDateOfBirth') {
             payload = { dateOfBirth: formatDateOfBirth(dateOfBirth) };
-
-            this.controls.dateOfBirth.reset();
-            this.controls.dateOfBirth.markAsUntouched();
         }
 
         if (!payload) {
             return;
         }
+
+        this.resetControls();
 
         this.apiService
             .updateCustomer(action, payload)
@@ -148,12 +147,40 @@ export class ProfilePageComponent {
                 next: customer => {
                     this.customerService.setCustomer(customer);
                     console.info('show ok message');
-
-                    this.changeDetector.markForCheck();
                 },
                 error: () => {
                     console.info('show err message');
                 },
             });
+    }
+
+    resetControls(): void {
+        Object.values(this.controls).forEach(control => {
+            control.reset();
+            control.markAsUntouched();
+        });
+    }
+
+    changePassword(): void {
+        const { newPassword, currentPassword } = this.form.getRawValue();
+
+        this.apiService
+            .changePassword(currentPassword, newPassword)
+            .pipe(
+                untilDestroyed(this),
+                switchMap(({ email }) =>
+                    this.authService.getPasswordFlowToken({ email, password: newPassword }),
+                ),
+            )
+            .subscribe({
+                next: () => {
+                    console.info('show ok message');
+                },
+                error: () => {
+                    console.info('show err message');
+                },
+            });
+
+        this.resetControls();
     }
 }

@@ -36,7 +36,7 @@
                         [disabled]="!controls.firstName.valid"
                         (click)="updateCustomer('setFirstName')"
                     >
-                        edit
+                        save
                     </button>
                 </mat-action-row>
             </mat-expansion-panel>
@@ -74,7 +74,7 @@
                         [disabled]="!controls.lastName.valid"
                         (click)="updateCustomer('setLastName')"
                     >
-                        edit
+                        save
                     </button>
                 </mat-action-row>
             </mat-expansion-panel>
@@ -112,7 +112,85 @@
                         [disabled]="!controls.email.valid"
                         (click)="updateCustomer('changeEmail')"
                     >
-                        edit
+                        save
+                    </button>
+                </mat-action-row>
+            </mat-expansion-panel>
+
+            <mat-expansion-panel #password hideToggle class="password-wrap">
+                <mat-expansion-panel-header>
+                    <mat-panel-title>Password</mat-panel-title>
+                    <mat-panel-description>
+                        ********
+                        <mat-icon>password</mat-icon>
+                    </mat-panel-description>
+                </mat-expansion-panel-header>
+
+                <mat-form-field>
+                    <mat-label>Password</mat-label>
+                    <input
+                        matInput
+                        formControlName="currentPassword"
+                        [type]="isCurrentPasswordHide ? 'password' : 'text'"
+                    />
+                    <button
+                        mat-icon-button
+                        matSuffix
+                        [attr.aria-label]="'Hide password'"
+                        [attr.aria-pressed]="isCurrentPasswordHide"
+                        (click)="
+                            isCurrentPasswordHide = !isCurrentPasswordHide; $event.preventDefault()
+                        "
+                    >
+                        <mat-icon>
+                            {{ isCurrentPasswordHide ? 'visibility_off' : 'visibility' }}
+                        </mat-icon>
+                    </button>
+                    @if (controls.currentPassword.errors) {
+                        <mat-error>
+                            {{ controls.currentPassword.errors | getErrorMassage }}
+                        </mat-error>
+                    }
+                </mat-form-field>
+
+                <mat-form-field>
+                    <mat-label>New password</mat-label>
+                    <input
+                        matInput
+                        formControlName="newPassword"
+                        [type]="isNewPasswordHide ? 'password' : 'text'"
+                    />
+                    <button
+                        mat-icon-button
+                        matSuffix
+                        [attr.aria-label]="'Hide password'"
+                        [attr.aria-pressed]="isNewPasswordHide"
+                        (click)="isNewPasswordHide = !isNewPasswordHide; $event.preventDefault()"
+                    >
+                        <mat-icon>
+                            {{ isNewPasswordHide ? 'visibility_off' : 'visibility' }}
+                        </mat-icon>
+                    </button>
+                    @if (controls.newPassword.errors) {
+                        <mat-error>{{ controls.newPassword.errors | getErrorMassage }}</mat-error>
+                    }
+                </mat-form-field>
+
+                <mat-action-row>
+                    <button
+                        mat-button
+                        color="warn"
+                        (click)="password.close(); $event.preventDefault()"
+                    >
+                        close
+                    </button>
+                    <button
+                        mat-button
+                        color="primary"
+                        [disabled]="!controls.newPassword.valid && !controls.newPassword.valid"
+                        (click)="changePassword()"
+                    >
+                        save
                     </button>
                 </mat-action-row>
             </mat-expansion-panel>
@@ -150,7 +228,7 @@
                         [disabled]="!controls.dateOfBirth.valid"
                         (click)="updateCustomer('setDateOfBirth')"
                     >
-                        edit
+                        save
                     </button>
                 </mat-action-row>
             </mat-expansion-panel>
@@ -188,7 +266,7 @@
                                 addressForm.writeValue(null)
                             "
                         >
-                            edit
+                            save
                         </button>
                     </mat-action-row>
                 </mat-expansion-panel>
@@ -227,7 +305,7 @@
                                 addressForm.writeValue(null)
                             "
                         >
-                            edit
+                            save
                         </button>
                     </mat-action-row>
                 </mat-expansion-panel>

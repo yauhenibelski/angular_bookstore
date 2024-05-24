@@ -7,8 +7,13 @@
     align-items: center;
 }
 
-.example-headers-align .mat-mdc-form-field + .mat-mdc-form-field {
-    margin-left: 8px;
+// .example-headers-align .mat-mdc-form-field + .mat-mdc-form-field {
+// margin-left: 8px;
+// }
+.password-wrap {
+    mat-form-field {
+        margin: 3px;
+    }
 }
 
 mat-action-row {
