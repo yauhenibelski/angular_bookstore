@@ -11,6 +11,8 @@ export interface SignupCustomer {
     lastName: string;
     password: string;
     addresses: Addresses[];
+    shippingAddresses: number[];
+    billingAddresses: number[];
     defaultShippingAddress?: number;
     defaultBillingAddress?: number;
     dateOfBirth: string;

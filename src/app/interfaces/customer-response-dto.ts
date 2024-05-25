@@ -25,7 +25,7 @@ export interface Customer {
     lastModifiedAt: string;
     authenticationMode: string;
     stores: unknown[];
-    billingAddressIds: unknown[];
+    billingAddressIds: string[];
     createdBy?: unknown;
     defaultShippingAddressId?: string;
     lastMessageSequenceNumber?: number;

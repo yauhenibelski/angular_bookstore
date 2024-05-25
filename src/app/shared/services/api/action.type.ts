@@ -7,4 +7,6 @@ export type Action =
     | 'removeAddress'
     | 'setDefaultShippingAddress'
     | 'setDefaultBillingAddress'
-    | 'setDateOfBirth';
+    | 'setDateOfBirth'
+    | 'addShippingAddressId'
+    | 'addBillingAddressId';
