@@ -1,5 +1,5 @@
 import { AbstractControl, FormControl, ValidatorFn } from '@angular/forms';
-import * as postalCodes from 'postal-codes-js';
+import { validate } from 'postal-codes-js';
 
 export const isPostalCodeValid = (
     controlCountryName: FormControl,
@@ -16,6 +16,6 @@ export const isPostalCodeValid = (
             return err;
         }
 
-        return typeof postalCodes.validate(countryCode, control.value) === 'boolean' ? null : err;
+        return typeof validate(countryCode, control.value) === 'boolean' ? null : err;
     };
 };

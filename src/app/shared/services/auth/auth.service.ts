@@ -129,8 +129,11 @@ export class AuthService {
                 },
             )
             .pipe(
-                tap(passwordFlowToken => {
-                    setAccessTokenInCookie(passwordFlowToken, false);
+                tap(response => {
+                    this.token.access = response.access_token;
+                    this.token.refresh = response.refresh_token;
+
+                    setAccessTokenInCookie(response, false);
                 }),
             );
     }

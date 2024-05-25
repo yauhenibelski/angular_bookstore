@@ -1,0 +1,466 @@
+<h2>Profile</h2>
+@if (customer$ | async; as customer) {
+    <form [formGroup]="form">
+        <mat-accordion class="example-headers-align">
+            <mat-expansion-panel #firstName hideToggle>
+                <mat-expansion-panel-header>
+                    <mat-panel-title>First name</mat-panel-title>
+
+                    <mat-panel-description>
+                        {{ customer.firstName }}
+                        <mat-icon>account_circle</mat-icon>
+                    </mat-panel-description>
+                </mat-expansion-panel-header>
+
+                <mat-form-field>
+                    <mat-label>Change first name</mat-label>
+                    <input matInput placeholder="First name" formControlName="firstName" />
+                    @if (controls.firstName.errors) {
+                        <mat-error>
+                            {{ controls.firstName.errors | getErrorMassage }}
+                        </mat-error>
+                    }
+                </mat-form-field>
+
+                <mat-action-row>
+                    <div>
+                        <button
+                            mat-button
+                            color="primary"
+                            (click)="firstName.close(); $event.preventDefault()"
+                        >
+                            close
+                        </button>
+                        <button
+                            mat-button
+                            color="primary"
+                            [disabled]="!controls.firstName.valid"
+                            (click)="updateCustomer('setFirstName')"
+                        >
+                            edit
+                        </button>
+                    </div>
+                </mat-action-row>
+            </mat-expansion-panel>
+
+            <mat-expansion-panel #lastName hideToggle>
+                <mat-expansion-panel-header>
+                    <mat-panel-title>Last name</mat-panel-title>
+                    <mat-panel-description>
+                        {{ customer.lastName }}
+                        <mat-icon>account_circle</mat-icon>
+                    </mat-panel-description>
+                </mat-expansion-panel-header>
+
+                <mat-form-field>
+                    <mat-label>Change last name</mat-label>
+                    <input matInput placeholder="Last name" formControlName="lastName" />
+                    @if (controls.lastName.errors) {
+                        <mat-error>
+                            {{ controls.lastName.errors | getErrorMassage }}
+                        </mat-error>
+                    }
+                </mat-form-field>
+
+                <mat-action-row>
+                    <div>
+                        <button
+                            mat-button
+                            color="primary"
+                            (click)="lastName.close(); $event.preventDefault()"
+                        >
+                            close
+                        </button>
+                        <button
+                            mat-button
+                            color="primary"
+                            [disabled]="!controls.lastName.valid"
+                            (click)="updateCustomer('setLastName')"
+                        >
+                            edit
+                        </button>
+                    </div>
+                </mat-action-row>
+            </mat-expansion-panel>
+
+            <mat-expansion-panel #email hideToggle>
+                <mat-expansion-panel-header>
+                    <mat-panel-title>Email</mat-panel-title>
+                    <mat-panel-description>
+                        {{ customer.email }}
+                        <mat-icon>alternate_email</mat-icon>
+                    </mat-panel-description>
+                </mat-expansion-panel-header>
+
+                <mat-form-field>
+                    <mat-label>Change email</mat-label>
+                    <input matInput placeholder="Email" formControlName="email" />
+                    @if (controls.email.errors) {
+                        <mat-error>
+                            {{ controls.email.errors | getErrorMassage }}
+                        </mat-error>
+                    }
+                </mat-form-field>
+
+                <mat-action-row>
+                    <div>
+                        <button
+                            mat-button
+                            color="primary"
+                            (click)="email.close(); $event.preventDefault()"
+                        >
+                            close
+                        </button>
+
+                        <button
+                            mat-button
+                            color="primary"
+                            [disabled]="!controls.email.valid"
+                            (click)="updateCustomer('changeEmail')"
+                        >
+                            edit
+                        </button>
+                    </div>
+                </mat-action-row>
+            </mat-expansion-panel>
+
+            <mat-expansion-panel #password hideToggle class="password-wrap">
+                <mat-expansion-panel-header>
+                    <mat-panel-title>Password</mat-panel-title>
+                    <mat-panel-description>
+                        ********
+                        <mat-icon>password</mat-icon>
+                    </mat-panel-description>
+                </mat-expansion-panel-header>
+
+                <mat-form-field>
+                    <mat-label>Password</mat-label>
+                    <input
+                        matInput
+                        formControlName="currentPassword"
+                        [type]="isCurrentPasswordHide ? 'password' : 'text'"
+                    />
+                    <button
+                        mat-icon-button
+                        matSuffix
+                        [attr.aria-label]="'Hide password'"
+                        [attr.aria-pressed]="isCurrentPasswordHide"
+                        (click)="
+                            isCurrentPasswordHide = !isCurrentPasswordHide; $event.preventDefault()
+                        "
+                    >
+                        <mat-icon>
+                            {{ isCurrentPasswordHide ? 'visibility_off' : 'visibility' }}
+                        </mat-icon>
+                    </button>
+                    @if (controls.currentPassword.errors) {
+                        <mat-error>
+                            {{ controls.currentPassword.errors | getErrorMassage }}
+                        </mat-error>
+                    }
+                </mat-form-field>
+
+                <mat-form-field>
+                    <mat-label>New password</mat-label>
+                    <input
+                        matInput
+                        formControlName="newPassword"
+                        [type]="isNewPasswordHide ? 'password' : 'text'"
+                    />
+                    <button
+                        mat-icon-button
+                        matSuffix
+                        [attr.aria-label]="'Hide password'"
+                        [attr.aria-pressed]="isNewPasswordHide"
+                        (click)="isNewPasswordHide = !isNewPasswordHide; $event.preventDefault()"
+                    >
+                        <mat-icon>
+                            {{ isNewPasswordHide ? 'visibility_off' : 'visibility' }}
+                        </mat-icon>
+                    </button>
+                    @if (controls.newPassword.errors) {
+                        <mat-error>{{ controls.newPassword.errors | getErrorMassage }}</mat-error>
+                    }
+                </mat-form-field>
+
+                <mat-action-row>
+                    <div>
+                        <button
+                            mat-button
+                            color="primary"
+                            (click)="password.close(); $event.preventDefault()"
+                        >
+                            close
+                        </button>
+                        <button
+                            mat-button
+                            color="primary"
+                            [disabled]="!controls.newPassword.valid && !controls.newPassword.valid"
+                            (click)="changePassword()"
+                        >
+                            save
+                        </button>
+                    </div>
+                </mat-action-row>
+            </mat-expansion-panel>
+
+            <mat-expansion-panel #date hideToggle>
+                <mat-expansion-panel-header>
+                    <mat-panel-title>Date of Birth</mat-panel-title>
+                    <mat-panel-description>
+                        {{ customer.dateOfBirth }}
+                        <mat-icon>date_range</mat-icon>
+                    </mat-panel-description>
+                </mat-expansion-panel-header>
+
+                <mat-form-field>
+                    <mat-label>Change date</mat-label>
+                    <input matInput formControlName="dateOfBirth" [matDatepicker]="picker" />
+                    <mat-hint>MM/DD/YYYY</mat-hint>
+                    <mat-datepicker-toggle matIconSuffix [for]="picker" />
+                    <mat-datepicker #picker></mat-datepicker>
+
+                    @if (controls.dateOfBirth.errors) {
+                        <mat-error>
+                            {{ controls.dateOfBirth.errors | getErrorMassage }}
+                        </mat-error>
+                    }
+                </mat-form-field>
+
+                <mat-action-row>
+                    <div>
+                        <button
+                            mat-button
+                            color="primary"
+                            (click)="date.close(); $event.preventDefault()"
+                        >
+                            close
+                        </button>
+                        <button
+                            mat-button
+                            color="primary"
+                            [disabled]="!controls.dateOfBirth.valid"
+                            (click)="updateCustomer('setDateOfBirth')"
+                        >
+                            edit
+                        </button>
+                    </div>
+                </mat-action-row>
+            </mat-expansion-panel>
+        </mat-accordion>
+
+        <h2 [style.marginTop.px]="30">Shipping address</h2>
+        <mat-accordion>
+            @for (item of addresses?.shipping; track $index) {
+                <mat-expansion-panel #addressPanel>
+                    <mat-expansion-panel-header>
+                        <mat-panel-title>
+                            {{ item.country | getCountryByCode }}
+                        </mat-panel-title>
+                        <mat-panel-title>City: {{ item.city }}</mat-panel-title>
+                        <mat-panel-description>
+                            Street: {{ item.streetName }} / {{ item.postalCode }}
+                        </mat-panel-description>
+                    </mat-expansion-panel-header>
+
+                    <app-address-form #addressForm></app-address-form>
+
+                    <mat-action-row>
+                        <div>
+                            <button
+                                mat-button
+                                color="primary"
+                                (click)="addressPanel.close(); $event.preventDefault()"
+                            >
+                                close
+                            </button>
+
+                            <button
+                                mat-button
+                                color="primary"
+                                [disabled]="!addressForm.form.valid"
+                                (click)="
+                                    updateAddress(
+                                        addressForm.getValue(),
+                                        item.id,
+                                        'shipping',
+                                        defaultShippingAddToggle.checked
+                                    );
+                                    addressForm.writeValue(null)
+                                "
+                            >
+                                edit
+                            </button>
+
+                            <mat-slide-toggle
+                                #defaultShippingAddToggle
+                                color="primary"
+                                [disabled]="!addressForm.form.valid"
+                            >
+                                set default
+                            </mat-slide-toggle>
+                        </div>
+
+                        <button
+                            mat-button
+                            color="warn"
+                            (click)="removeAddress(item.id + ''); $event.preventDefault()"
+                        >
+                            remove
+                        </button>
+                    </mat-action-row>
+                </mat-expansion-panel>
+            }
+            <mat-expansion-panel #addShippingAddressPanel>
+                <mat-expansion-panel-header>
+                    <mat-panel-description [style.justifyContent]="'center'">
+                        <mat-icon>post_add</mat-icon>
+                        Add shipping address
+                    </mat-panel-description>
+                </mat-expansion-panel-header>
+
+                <app-address-form #addShippingAddressForm></app-address-form>
+
+                <mat-action-row>
+                    <div>
+                        <button
+                            mat-button
+                            color="primary"
+                            (click)="addShippingAddressPanel.close(); $event.preventDefault()"
+                        >
+                            close
+                        </button>
+
+                        <button
+                            mat-button
+                            color="primary"
+                            [disabled]="!addShippingAddressForm.form.valid"
+                            (click)="
+                                addAddress(
+                                    addShippingAddressForm.getValue(),
+                                    'shipping',
+                                    defaultShippingAddToggle.checked
+                                );
+                                addShippingAddressForm.writeValue(null)
+                            "
+                        >
+                            add
+                        </button>
+
+                        <mat-slide-toggle #defaultShippingAddToggle color="primary">
+                            set default
+                        </mat-slide-toggle>
+                    </div>
+                </mat-action-row>
+            </mat-expansion-panel>
+        </mat-accordion>
+
+        <h2 [style.marginTop.px]="30">Billing address</h2>
+        <mat-accordion>
+            @for (item of addresses?.billing; track $index) {
+                <mat-expansion-panel #addressPanel>
+                    <mat-expansion-panel-header>
+                        <mat-panel-title>
+                            {{ item.country | getCountryByCode }}
+                        </mat-panel-title>
+                        <mat-panel-title>City: {{ item.city }}</mat-panel-title>
+                        <mat-panel-description>
+                            Street: {{ item.streetName }} / {{ item.postalCode }}
+                        </mat-panel-description>
+                    </mat-expansion-panel-header>
+
+                    <app-address-form #addressForm></app-address-form>
+
+                    <mat-action-row>
+                        <div>
+                            <button
+                                mat-button
+                                color="primary"
+                                (click)="addressPanel.close(); $event.preventDefault()"
+                            >
+                                close
+                            </button>
+
+                            <button
+                                mat-button
+                                color="primary"
+                                [disabled]="!addressForm.form.valid"
+                                (click)="
+                                    updateAddress(
+                                        addressForm.getValue(),
+                                        item.id,
+                                        'billing',
+                                        defaultBillingAddToggle.checked
+                                    );
+                                    addressForm.writeValue(null)
+                                "
+                            >
+                                edit
+                            </button>
+
+                            <mat-slide-toggle
+                                #defaultBillingAddToggle
+                                color="primary"
+                                [disabled]="!addressForm.form.valid"
+                            >
+                                set default
+                            </mat-slide-toggle>
+                        </div>
+
+                        <button
+                            mat-button
+                            color="warn"
+                            (click)="removeAddress(item.id + ''); $event.preventDefault()"
+                        >
+                            remove
+                        </button>
+                    </mat-action-row>
+                </mat-expansion-panel>
+            }
+            <mat-expansion-panel #addBillingAddressPanel>
+                <mat-expansion-panel-header>
+                    <mat-panel-description [style.justifyContent]="'center'">
+                        <mat-icon>post_add</mat-icon>
+                        Add billing address
+                    </mat-panel-description>
+                </mat-expansion-panel-header>
+
+                <app-address-form #addBillingAddressForm></app-address-form>
+
+                <mat-action-row>
+                    <div>
+                        <button
+                            mat-button
+                            color="primary"
+                            (click)="addBillingAddressPanel.close(); $event.preventDefault()"
+                        >
+                            close
+                        </button>
+
+                        <button
+                            mat-button
+                            color="primary"
+                            [disabled]="!addBillingAddressForm.form.valid"
+                            (click)="
+                                addAddress(
+                                    addBillingAddressForm.getValue(),
+                                    'billing',
+                                    defaultBillingAddToggle.checked
+                                );
+                                addBillingAddressForm.writeValue(null)
+                            "
+                        >
+                            add
+                        </button>
+
+                        <mat-slide-toggle #defaultBillingAddToggle color="primary">
+                            set default
+                        </mat-slide-toggle>
+                    </div>
+                </mat-action-row>
+            </mat-expansion-panel>
+        </mat-accordion>
+    </form>
+} @else {
+    <h2>add registration link</h2>
+}

@@ -1,0 +1,32 @@
+:host {
+    display: block;
+}
+
+h2 {
+    margin-left: 10px;
+}
+
+.example-headers-align .mat-expansion-panel-header-description {
+    justify-content: space-between;
+    align-items: center;
+}
+
+.password-wrap {
+    mat-form-field {
+        margin: 3px;
+    }
+}
+
+mat-action-row {
+    justify-content: space-between;
+    align-items: center;
+
+    mat-slide-toggle {
+        margin-left: 10px;
+    }
+}
+
+mat-form-field {
+    width: 100%;
+    max-width: 400px;
+}
