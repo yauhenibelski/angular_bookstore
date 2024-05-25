@@ -1,0 +1,47 @@
+:host {
+    display: flex;
+    justify-content: space-between;
+    gap: 5px;
+    height: 100%;
+  
+  &:hover {
+    transform: scale(1.02);
+    box-shadow: 1px 1px 5px rgb(163, 162, 162);
+    cursor: pointer;
+  }
+}
+mat-card {
+    display: flex;
+    width: 100%;
+}
+
+img {
+    height: 250px;
+    width: 100%;
+    transform: scale(0.8);
+}
+
+h3 {
+    margin: 0;
+}
+
+.header {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-betweenнять оставшееся пространство;
+    padding: 10px;
+}
+
+.author {
+    margin: 0;
+    color: rgb(158, 158, 158);
+}
+.name {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+.price {
+    color: rgb(191, 160, 20);
+}

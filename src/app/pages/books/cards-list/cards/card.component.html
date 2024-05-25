@@ -1,0 +1,14 @@
+<mat-card>
+    <img
+        mat-card-image
+        alt="Photo of a Shiba Inu"
+        [src]="book.masterData.staged.masterVariant.images[0].url"
+    />
+    <div class="header">
+        <p class="price">
+            {{ book.masterData.current.masterVariant.prices[0].value.centAmount | currency: 'EUR' }}
+        </p>
+        <p class="author">{{ book.masterData.current.masterVariant.attributes[0].value }}</p>
+        <h3 class="name">{{ book.masterData.current.name.en }}</h3>
+    </div>
+</mat-card>
