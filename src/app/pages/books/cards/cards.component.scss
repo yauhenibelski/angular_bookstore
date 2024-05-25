@@ -1,0 +1,36 @@
+:host {
+    display: flex;
+    justify-content: space-between;
+    gap: 5px;
+    height: 100%;
+}
+:host:hover {
+    transform: scale(1.04);
+    box-shadow: 3px 2px 6px gray;
+    cursor: pointer;
+}
+
+mat-card {
+    display: flex;
+    width: 100%;
+}
+
+img {
+    height: 250px;
+    width: 100%;
+}
+
+h3 {
+    margin: 0;
+}
+
+.header {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+}
+
+.author {
+    margin: 0;
+    color: rgb(158, 158, 158);
+}
