@@ -93,4 +93,13 @@ export class ApiService {
                 }),
             );
     }
+
+    changePassword(currentPassword: string, newPassword: string): Observable<Customer> {
+        return this.httpClient.post<Customer>('/customers/password', {
+            id: this.customerService.customer?.id,
+            version: this.customerService.customer?.version,
+            currentPassword,
+            newPassword,
+        });
+    }
 }

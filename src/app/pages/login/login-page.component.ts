@@ -54,11 +54,10 @@ export class LoginPageComponent {
     readonly controls = this.loginForm.controls;
 
     loginErrorOutput(): void {
-        const formValue = this.loginForm.getRawValue();
         const { email, password } = this.loginForm.controls;
         const err = { error: 'wrong login or password' };
 
-        email.setValue(formValue.email);
+        email.setValue('');
         password.setValue('');
 
         email.setErrors(err);
