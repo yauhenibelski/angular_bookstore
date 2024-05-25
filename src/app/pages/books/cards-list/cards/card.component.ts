@@ -6,13 +6,13 @@ import { ProductDto } from 'src/app/interfaces/product';
 import { MatIconModule } from '@angular/material/icon';
 
 @Component({
-    selector: 'app-cards',
+    selector: 'app-card',
     standalone: true,
-    templateUrl: './cards.component.html',
-    styleUrl: './cards.component.scss',
+    templateUrl: './card.component.html',
+    styleUrl: './card.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [MatCardModule, MatButtonModule, CurrencyPipe, MatIconModule],
 })
-export class CardsComponent {
+export class CardComponent {
     @Input({ required: true }) book!: ProductDto;
 }
