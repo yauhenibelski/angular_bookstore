@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder, FormControl, ReactiveFormsModule } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { CustomerService } from 'src/app/shared/services/customer/customer.service';
@@ -23,9 +23,12 @@ import { Address, Addresses } from 'src/app/interfaces/customer-response-dto';
 import { passwordValidators } from 'src/app/shared/validators/password';
 import { switchMap } from 'rxjs';
 import { AuthService } from 'src/app/shared/services/auth/auth.service';
-import { getCountryByCode } from '../registration/utils/get-country-by-code';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { GetCountryByCodePipe } from 'src/app/shared/pipes/get-country-by-code/get-country-by-code.pipe';
+import { HttpErrorResponse } from '@angular/common/http';
+import { getCountryKey } from 'src/app/shared/utils/get-country-key';
 import { AddressFormComponent } from './address-form/address-form.component';
-import { getCountryKey } from '../registration/utils/get-country-key';
 
 @UntilDestroy()
 @Component({
@@ -42,6 +45,8 @@ import { getCountryKey } from '../registration/utils/get-country-key';
         MatDatepickerModule,
         GetErrorMassagePipe,
         AddressFormComponent,
+        MatSlideToggleModule,
+        GetCountryByCodePipe,
     ],
     providers: [provideNativeDateAdapter(), CheckUniqueEmail],
     templateUrl: './profile-page.component.html',
@@ -54,7 +59,7 @@ export class ProfilePageComponent {
     private readonly formBuilder = inject(FormBuilder);
     private readonly customerService = inject(CustomerService);
     private readonly checkUniqueEmail = inject(CheckUniqueEmail);
-    private readonly changeDetector = inject(ChangeDetectorRef);
+    private readonly snackBar = inject(MatSnackBar);
 
     readonly customer$ = this.customerService.customer$;
 
@@ -65,7 +70,16 @@ export class ProfilePageComponent {
         return this.customerService.addresses;
     }
 
-    getCountryByCode = getCountryByCode; // todo: replace to pipe
+    openSnackBar(error?: HttpErrorResponse): void {
+        const massage = error ? error.error['message'] || 'Editing error' : 'Successfully changed';
+
+        this.snackBar.open(`${massage}`, undefined, {
+            duration: 2000,
+            horizontalPosition: 'right',
+            verticalPosition: 'top',
+            panelClass: error ? 'snack-bar-err' : 'snack-bar-success',
+        });
+    }
 
     form = this.formBuilder.nonNullable.group({
         firstName: ['', [hasOneLatinCharacter, hasSpace]],
@@ -115,23 +129,35 @@ export class ProfilePageComponent {
             .updateCustomer(action, payload)
             .pipe(untilDestroyed(this))
             .subscribe({
-                next: customer => {
-                    this.customerService.setCustomer(customer);
-                    console.info('show ok message');
+                next: () => {
+                    this.openSnackBar();
                 },
-                error: () => {
-                    console.info('show err message');
+                error: (err: unknown) => {
+                    if (err instanceof HttpErrorResponse) {
+                        this.openSnackBar(err);
+                    }
                 },
             });
     }
 
-    updateAddress(address: Address, id: string | undefined): void {
-        if (!id) {
-            return;
-        }
+    updateAddress(
+        address: Address,
+        addressId: string | undefined,
+        type: 'shipping' | 'billing',
+        setDefault: boolean,
+    ): void {
+        const defaultAddressAction =
+            type === 'shipping' ? 'setDefaultShippingAddress' : 'setDefaultBillingAddress';
+
+        const setDefaultAddressPayload = setDefault
+            ? {
+                  action: defaultAddressAction,
+                  addressId,
+              }
+            : undefined;
 
         const payload = {
-            addressId: id,
+            addressId,
             address: {
                 streetName: address.streetName,
                 postalCode: address.postalCode,
@@ -141,15 +167,16 @@ export class ProfilePageComponent {
         };
 
         this.apiService
-            .updateCustomer('changeAddress', payload)
+            .updateCustomer('changeAddress', payload, setDefaultAddressPayload)
             .pipe(untilDestroyed(this))
             .subscribe({
-                next: customer => {
-                    this.customerService.setCustomer(customer);
-                    console.info('show ok message');
+                next: () => {
+                    this.openSnackBar();
                 },
-                error: () => {
-                    console.info('show err message');
+                error: (err: unknown) => {
+                    if (err instanceof HttpErrorResponse) {
+                        this.openSnackBar(err);
+                    }
                 },
             });
     }
@@ -174,13 +201,84 @@ export class ProfilePageComponent {
             )
             .subscribe({
                 next: () => {
-                    console.info('show ok message');
+                    this.openSnackBar();
                 },
-                error: () => {
-                    console.info('show err message');
+                error: (err: unknown) => {
+                    if (err instanceof HttpErrorResponse) {
+                        this.openSnackBar(err);
+                    }
                 },
             });
 
         this.resetControls();
+    }
+
+    addAddress(address: Address, type: 'shipping' | 'billing', setDefault: boolean): void {
+        const action = type === 'shipping' ? 'addShippingAddressId' : 'addBillingAddressId';
+        const defaultAddressAction =
+            type === 'shipping' ? 'setDefaultShippingAddress' : 'setDefaultBillingAddress';
+
+        let lastIdIndex: number;
+        let addressId: string;
+
+        const payload = {
+            address: {
+                streetName: address.streetName,
+                postalCode: address.postalCode,
+                city: address.city,
+                country: getCountryKey(address.country),
+            },
+        };
+
+        this.apiService
+            .updateCustomer('addAddress', payload)
+            .pipe(
+                untilDestroyed(this),
+                switchMap(({ addresses }) => {
+                    lastIdIndex = addresses.length - 1;
+                    addressId = addresses[lastIdIndex].id!;
+
+                    const setDefaultAddressPayload = setDefault
+                        ? {
+                              action: defaultAddressAction,
+                              addressId,
+                          }
+                        : undefined;
+
+                    return this.apiService.updateCustomer(
+                        action,
+                        { addressId },
+                        setDefaultAddressPayload,
+                    );
+                }),
+            )
+            .subscribe({
+                next: () => {
+                    this.openSnackBar();
+                },
+                error: (err: unknown) => {
+                    if (err instanceof HttpErrorResponse) {
+                        this.openSnackBar(err);
+                    }
+                },
+            });
+    }
+
+    removeAddress(addressId: string): void {
+        this.apiService
+            .updateCustomer('removeAddress', {
+                addressId,
+            })
+            .pipe(untilDestroyed(this))
+            .subscribe({
+                next: () => {
+                    this.openSnackBar();
+                },
+                error: (err: unknown) => {
+                    if (err instanceof HttpErrorResponse) {
+                        this.openSnackBar(err);
+                    }
+                },
+            });
     }
 }

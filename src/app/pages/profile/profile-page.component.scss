@@ -2,14 +2,15 @@
     display: block;
 }
 
+h2 {
+    margin-left: 10px;
+}
+
 .example-headers-align .mat-expansion-panel-header-description {
     justify-content: space-between;
     align-items: center;
 }
 
-// .example-headers-align .mat-mdc-form-field + .mat-mdc-form-field {
-// margin-left: 8px;
-// }
 .password-wrap {
     mat-form-field {
         margin: 3px;
@@ -17,7 +18,12 @@
 }
 
 mat-action-row {
-    justify-content: start;
+    justify-content: space-between;
+    align-items: center;
+
+    mat-slide-toggle {
+        margin-left: 10px;
+    }
 }
 
 mat-form-field {

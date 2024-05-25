@@ -11,3 +11,19 @@ body {
     font-family: Roboto, 'Helvetica Neue', sans-serif;
     max-width: 1300px;
 }
+
+.snack-bar-success {
+    text-align: center;
+
+    .mdc-snackbar__surface {
+        background-color: #206f1e !important;
+    }
+}
+
+.snack-bar-err {
+    text-align: center;
+
+    .mdc-snackbar__surface {
+        background-color: #9f2f2f !important;
+    }
+}

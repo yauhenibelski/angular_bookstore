@@ -9,7 +9,7 @@ import { isPostalCodeValid } from 'src/app/shared/validators/is-postalcode-valid
 import { isCountryExists } from 'src/app/shared/validators/is-country-exists';
 import { MatInputModule } from '@angular/material/input';
 import { Address } from 'src/app/interfaces/customer-response-dto';
-import { getCountryCodes } from '../../registration/utils/get-country-codes';
+import { getCountryCodes } from 'src/app/shared/utils/get-country-codes';
 
 @Component({
     selector: 'app-address-form',

@@ -31,12 +31,12 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { SignupCustomer } from 'src/app/interfaces/signup-customer-request';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { formatDateOfBirth } from 'src/app/shared/utils/format-date-of-birth';
+import { getCountryCodes } from 'src/app/shared/utils/get-country-codes';
+import { getCountryKey } from 'src/app/shared/utils/get-country-key';
 import { hasOneLatinCharacter } from '../../shared/validators/has-one-latin-character';
 import { isDate } from '../../shared/validators/date';
 import { isCountryExists } from '../../shared/validators/is-country-exists';
 import { isPostalCodeValid } from '../../shared/validators/is-postalcode-valid';
-import { getCountryCodes } from './utils/get-country-codes';
-import { getCountryKey } from './utils/get-country-key';
 import { SuccessfulAccountCreationMessageComponent } from './successful-account-creation-message/successful-account-creation-message.component';
 import { Address } from './interface/address';
 import { hasOneCharacter } from '../../shared/validators/has-least-one-character';
@@ -85,15 +85,13 @@ export class RegistrationPageComponent {
 
     isPasswordHide = true;
 
-    openSnackBar(hasError: boolean): void {
-        const SECONDS = 3000;
-        const massage = hasError
+    openSnackBar(error?: unknown): void {
+        const duration = 3000;
+        const massage = error
             ? ErrorRegistrationComponent
             : SuccessfulAccountCreationMessageComponent;
 
-        this.snackBar.openFromComponent(massage, {
-            duration: SECONDS,
-        });
+        this.snackBar.openFromComponent(massage, { duration });
     }
 
     private readonly shippingAddressCountryControl = new FormControl('', {
@@ -213,6 +211,8 @@ export class RegistrationPageComponent {
             ...formValue,
             dateOfBirth: formatDateOfBirth(formValue.dateOfBirth),
             addresses,
+            shippingAddresses: [0], // index from array address
+            billingAddresses: [1], // index from array address
         };
 
         if (useDefaultShippingAddress) {
@@ -231,12 +231,12 @@ export class RegistrationPageComponent {
             )
             .subscribe({
                 next: () => {
-                    this.openSnackBar(false);
+                    this.openSnackBar();
                     this.authService.setLoginStatus(true);
                     this.router.navigateByUrl('/main');
                 },
-                error: () => {
-                    this.openSnackBar(true);
+                error: (err: unknown) => {
+                    this.openSnackBar(err);
                 },
             });
     }

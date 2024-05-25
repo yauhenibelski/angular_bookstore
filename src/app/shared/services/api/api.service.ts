@@ -20,16 +20,23 @@ export class ApiService {
     private readonly cartService = inject(CartService);
     private readonly httpClient = inject(HttpClient);
 
-    updateCustomer(action: Action, payload: { [key: string]: unknown }): Observable<Customer> {
-        return this.httpClient.post<Customer>('/me', {
-            version: this.customerService.customer?.version,
-            actions: [
-                {
-                    action,
-                    ...payload,
-                },
-            ],
-        });
+    updateCustomer(
+        action: Action,
+        payload: { [key: string]: unknown },
+        extraAction?: { [key: string]: unknown },
+    ): Observable<Customer> {
+        return this.httpClient
+            .post<Customer>('/me', {
+                version: this.customerService.customer?.version,
+                actions: [
+                    {
+                        action,
+                        ...payload,
+                    },
+                    extraAction,
+                ].filter(Boolean),
+            })
+            .pipe(tap(customer => this.customerService.setCustomer(customer)));
     }
 
     checkUserByEmail(email: string) {
