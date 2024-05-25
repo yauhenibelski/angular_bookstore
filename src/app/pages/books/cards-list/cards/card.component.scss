@@ -3,13 +3,13 @@
     justify-content: space-between;
     gap: 5px;
     height: 100%;
-}
-:host:hover {
+  
+  &:hover {
     transform: scale(1.02);
     box-shadow: 1px 1px 5px rgb(163, 162, 162);
     cursor: pointer;
+  }
 }
-
 mat-card {
     display: flex;
     width: 100%;
