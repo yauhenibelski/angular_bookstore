@@ -12,17 +12,23 @@
             <mat-icon class="icon">shopping_cart</mat-icon>
             Cart
         </button>
-
+        @if (isLogined$ | async) {
+            <button mat-menu-item routerLink="/profile">
+                <mat-icon class="icon">person</mat-icon>
+                Profile
+            </button>
+        }
         <button mat-menu-item routerLink="/login" (click)="logOut()">
             {{ (isLogined$ | async) ? 'Log out' : 'Log in' }}
 
             <mat-icon>{{ (isLogined$ | async) ? 'logout' : 'login' }}</mat-icon>
         </button>
-
-        <button mat-menu-item routerLink="/registration" [disabled]="isLogined$ | async">
-            <mat-icon>person_add</mat-icon>
-            Sign up
-        </button>
+        @if (!(isLogined$ | async)) {
+            <button mat-menu-item routerLink="/registration">
+                <mat-icon>person_add</mat-icon>
+                Sign up
+            </button>
+        }
     </mat-menu>
 </div>
 
@@ -31,7 +37,12 @@
         <mat-icon class="icon">shopping_cart</mat-icon>
         Cart
     </a>
-
+    @if (isLogined$ | async) {
+        <a mat-raised-button routerLink="/profile">
+            Profile
+            <mat-icon>person</mat-icon>
+        </a>
+    }
     <a mat-raised-button routerLink="/login" routerLinkActive="hide" (click)="logOut()">
         {{ (isLogined$ | async) ? 'Log out' : 'Log in' }}
 
