@@ -5,6 +5,7 @@ import { LoginPageComponent } from '../pages/login/login-page.component';
 import { NotFoundPageComponent } from '../pages/404/not-found-page.component';
 import { isLoggedGuard } from './guards/is-logged.guard';
 import { CartPageComponent } from '../pages/cart/cart-page.component';
+import { ProfilePageComponent } from '../pages/profile/profile-page.component';
 
 export const routes: Routes = [
     {
@@ -24,6 +25,10 @@ export const routes: Routes = [
     {
         path: 'cart',
         component: CartPageComponent,
+    },
+    {
+        path: 'profile',
+        component: ProfilePageComponent,
     },
     {
         path: '',
