@@ -1,0 +1,75 @@
+:host {
+    display: flex;
+    //     gap: 15px;
+    //     margin: 10px;
+}
+
+// .all-img {
+//     display: flex;
+//     flex-direction: column;
+//     gap: 10px;
+//     width: 12%;
+//     cursor: pointer;
+// }
+
+// .all-img img {
+//     border: 3px solid rgba(255, 255, 255, 0);
+//     filter: saturate(0.15);
+// }
+
+// .all-img img:hover {
+//     border: 3px solid gray;
+//     filter: none;
+// }
+
+// .main {
+//     width: 35%;
+// }
+
+// .main-img {
+//     width: 100%;
+//     min-width: 150px;
+//     cursor: pointer;
+// }
+
+// .main-detailed {
+//     width: 100%;
+// }
+// .name {
+//     font-size: 27px;
+// }
+// .author {
+//     color: gray;
+// }
+// .description {
+//     font-size: 20px;
+// }
+// .price {
+//     font-size: 20px;
+//     color: rgb(191, 160, 20);
+// }
+
+// @media (max-width: 568px) {
+//     :host {
+//         flex-direction: column;
+//         justify-content: center;
+//         align-items: center;
+//     }
+//     .all-img {
+//         flex-direction: row;
+//         width: 100%;
+//         overflow: auto;
+//         scrollbar-width: thin;
+//         justify-content: center;
+//         order: 2;
+//     }
+//     .all-img img {
+//         max-width: 80px;
+//     }
+//     .main {
+//         order: 1;
+//     }
+//     .main-detailed {
+//         order: 3;
+//     }
+// }

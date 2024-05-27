@@ -50,7 +50,7 @@ interface MasterVariant {
     assets: unknown[];
 }
 
-interface Product {
+export interface Product {
     name: Language;
     description: Language;
     categories: Categories[];
@@ -59,6 +59,7 @@ interface Product {
     variants: unknown[];
     searchKeywords: unknown;
     masterVariant: MasterVariant;
+    id: string;
 }
 
 interface MasterData {
@@ -81,4 +82,12 @@ export interface ProductDto {
     masterData: MasterData;
     key: string;
     lastVariantId: number;
+}
+
+export interface ProductsDto {
+    count: number;
+    limit: number;
+    total: number;
+    offset: number;
+    results: Product[];
 }

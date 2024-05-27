@@ -6,7 +6,8 @@ import { NotFoundPageComponent } from '../pages/404/not-found-page.component';
 import { isLoggedGuard } from './guards/is-logged.guard';
 import { CartPageComponent } from '../pages/cart/cart-page.component';
 import { ProfilePageComponent } from '../pages/profile/profile-page.component';
-import { CardDetailedComponent } from '../pages/books/card-detailed/card-detailed.component';
+// import { CardDetailedComponent } from '../pages/card-detailed/card-detailed.component';
+import { CardsListComponent } from '../pages/books/cards-list/cards-list.component';
 
 export const routes: Routes = [
     {
@@ -22,15 +23,30 @@ export const routes: Routes = [
     {
         path: 'main',
         component: BooksPageComponent,
+        children: [
+            {
+                path: ':category',
+                component: CardsListComponent,
+            },
+            {
+                path: ':category/:subcategory',
+                component: CardsListComponent,
+            },
+            {
+                path: '',
+                pathMatch: 'full',
+                component: CardsListComponent,
+            },
+        ],
     },
     {
         path: 'cart',
         component: CartPageComponent,
     },
-    {
-        path: 'main/:id',
-        component: CardDetailedComponent,
-    },
+    // {
+    //     path: 'detailed/:id',
+    //     component: CardDetailedComponent,
+    // },
     {
         path: 'profile',
         component: ProfilePageComponent,

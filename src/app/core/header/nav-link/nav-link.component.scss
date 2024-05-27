@@ -1,0 +1,13 @@
+:host {
+    display: block;
+}
+
+span {
+    margin: 3px;
+    color: #63636380;
+    cursor: pointer;
+
+    &:hover {
+        color: #636363;
+    }
+}

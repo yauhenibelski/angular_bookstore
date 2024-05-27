@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { CurrencyPipe } from '@angular/common';
-import { ProductDto } from 'src/app/interfaces/product';
+import { Product } from 'src/app/interfaces/product';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
 
@@ -15,5 +15,5 @@ import { RouterLink } from '@angular/router';
     imports: [MatCardModule, MatButtonModule, CurrencyPipe, MatIconModule, RouterLink],
 })
 export class CardComponent {
-    @Input({ required: true }) book!: ProductDto;
+    @Input({ required: true }) book!: Product;
 }
