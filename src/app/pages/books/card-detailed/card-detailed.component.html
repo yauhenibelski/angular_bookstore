@@ -1,0 +1,37 @@
+@if (this.item) {
+    <div class="all-img">
+        <!-- other img -->
+        <img
+            [alt]="this.item.masterData.staged.masterVariant.images[0].label"
+            [src]="this.item.masterData.staged.masterVariant.images[0].url"
+        />
+        <img
+            [alt]="this.item.masterData.staged.masterVariant.images[0].label"
+            [src]="this.item.masterData.staged.masterVariant.images[0].url"
+        />
+        <img
+            [alt]="this.item.masterData.staged.masterVariant.images[0].label"
+            [src]="this.item.masterData.staged.masterVariant.images[0].url"
+        />
+    </div>
+    <div class="main">
+        <img
+            class="main-img"
+            [alt]="this.item.masterData.staged.masterVariant.images[0].label"
+            [src]="this.item.masterData.staged.masterVariant.images[0].url"
+        />
+    </div>
+    <div class="main-detailed">
+        <h3 class="name">{{ this.item.masterData.current.name.en }}</h3>
+        <p class="author">{{ this.item.masterData.current.masterVariant.attributes[0].value }}</p>
+        <p class="price">
+            {{
+                this.item.masterData.current.masterVariant.prices[0].value.centAmount
+                    | currency: 'EUR'
+            }}
+        </p>
+        <p class="description">{{ this.item.masterData.current.description.en }}</p>
+    </div>
+} @else {
+    //do redirect to NotFound
+}

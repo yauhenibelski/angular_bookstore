@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { products } from 'src/app/shared/products-mock';
-import { CardComponent } from './cards/card.component';
+import { CardComponent } from './card/card.component';
 
 @Component({
     selector: 'app-cards-list',

@@ -1,7 +1,7 @@
-<mat-card>
+<mat-card [routerLink]="'/main/' + book.id">
     <img
         mat-card-image
-        alt="Photo of a Shiba Inu"
+        [alt]="book.masterData.staged.masterVariant.images[0].label"
         [src]="book.masterData.staged.masterVariant.images[0].url"
     />
     <div class="header">
