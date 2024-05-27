@@ -29,11 +29,16 @@ import { GetCountryByCodePipe } from 'src/app/shared/pipes/get-country-by-code/g
 import { HttpErrorResponse } from '@angular/common/http';
 import { getCountryKey } from 'src/app/shared/utils/get-country-key';
 import { AddressFormComponent } from './address-form/address-form.component';
+import { RedirectToAuthorisationComponent } from './redirect-to-authorisation/redirect-to-authorisation.component';
 
 @UntilDestroy()
 @Component({
     selector: 'app-profile-page',
     standalone: true,
+    providers: [provideNativeDateAdapter(), CheckUniqueEmail],
+    templateUrl: './profile-page.component.html',
+    styleUrl: './profile-page.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         ReactiveFormsModule,
         AsyncPipe,
@@ -47,11 +52,8 @@ import { AddressFormComponent } from './address-form/address-form.component';
         AddressFormComponent,
         MatSlideToggleModule,
         GetCountryByCodePipe,
+        RedirectToAuthorisationComponent,
     ],
-    providers: [provideNativeDateAdapter(), CheckUniqueEmail],
-    templateUrl: './profile-page.component.html',
-    styleUrl: './profile-page.component.scss',
-    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProfilePageComponent {
     private readonly apiService = inject(ApiService);
