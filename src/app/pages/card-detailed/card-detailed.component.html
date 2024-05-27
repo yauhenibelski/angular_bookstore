@@ -1,38 +1,25 @@
-<!-- @if (this.item) {
+@if (book$ | async; as book) {
     <div class="all-img">
         <!-- other img -->
-<!-- <img
-            [alt]="this.item.masterData.staged.masterVariant.images[0].label"
-            [src]="this.item.masterData.staged.masterVariant.images[0].url"
-        />
-        <img
-            [alt]="this.item.masterData.staged.masterVariant.images[0].label"
-            [src]="this.item.masterData.staged.masterVariant.images[0].url"
-        />
-        <img
-            [alt]="this.item.masterData.staged.masterVariant.images[0].label"
-            [src]="this.item.masterData.staged.masterVariant.images[0].url"
-        />
+        <img [alt]="book.masterVariant.images[0].label" [src]="book.masterVariant.images[0].url" />
+        <img [alt]="book.masterVariant.images[0].label" [src]="book.masterVariant.images[0].url" />
+        <img [alt]="book.masterVariant.images[0].label" [src]="book.masterVariant.images[0].url" />
     </div>
     <div class="main">
         <img
             class="main-img"
-            [alt]="this.item.masterData.staged.masterVariant.images[0].label"
-            [src]="this.item.masterData.staged.masterVariant.images[0].url"
+            [alt]="book.masterVariant.images[0].label"
+            [src]="book.masterVariant.images[0].url"
         />
     </div>
     <div class="main-detailed">
-        <h3 class="name">{{ this.item.masterData.current.name.en }}</h3>
-        <p class="author">{{ this.item.masterData.current.masterVariant.attributes[0].value }}</p>
+        <h3 class="name">{{ book.name.en }}</h3>
+        <p class="author">{{ book.masterVariant.attributes[0].value }}</p>
         <p class="price">
-            {{
-                this.item.masterData.current.masterVariant.prices[0].value.centAmount
-                    | currency: 'EUR'
-            }}
+            {{ book.masterVariant.prices[0].value.centAmount / 100 | currency: 'EUR' }}
         </p>
-        <p class="description">{{ this.item.masterData.current.description.en }}</p>
+        <p class="description">{{ book.description.en }}</p>
     </div>
 } @else {
-    //do redirect to NotFound
-} -->
-<div></div>
+    <!--: todo redirect to NotFound -->
+}

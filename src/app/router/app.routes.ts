@@ -6,7 +6,7 @@ import { NotFoundPageComponent } from '../pages/404/not-found-page.component';
 import { isLoggedGuard } from './guards/is-logged.guard';
 import { CartPageComponent } from '../pages/cart/cart-page.component';
 import { ProfilePageComponent } from '../pages/profile/profile-page.component';
-// import { CardDetailedComponent } from '../pages/card-detailed/card-detailed.component';
+import { CardDetailedComponent } from '../pages/card-detailed/card-detailed.component';
 import { CardsListComponent } from '../pages/books/cards-list/cards-list.component';
 
 export const routes: Routes = [
@@ -43,10 +43,10 @@ export const routes: Routes = [
         path: 'cart',
         component: CartPageComponent,
     },
-    // {
-    //     path: 'detailed/:id',
-    //     component: CardDetailedComponent,
-    // },
+    {
+        path: 'detailed/:id',
+        component: CardDetailedComponent,
+    },
     {
         path: 'profile',
         component: ProfilePageComponent,
