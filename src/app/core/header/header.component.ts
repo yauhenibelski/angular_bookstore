@@ -7,6 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { NavLinkComponent } from './nav-link/nav-link.component';
 
 @UntilDestroy()
 @Component({
@@ -20,6 +21,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
         MatIconModule,
         MatMenuModule,
         MatButtonModule,
+        NavLinkComponent,
     ],
     templateUrl: './header.component.html',
     styleUrl: './header.component.scss',

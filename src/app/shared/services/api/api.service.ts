@@ -2,9 +2,11 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ProjectSettings } from 'src/app/shared/services/project-settings/project-settings.interface';
 import { Customer } from 'src/app/interfaces/customer-response-dto';
-import { Observable, tap } from 'rxjs';
+import { Observable, map, tap } from 'rxjs';
 import { environment } from 'src/app/environment/environment';
 import { v4 as uuidv4 } from 'uuid';
+import { Category, CategoryDto } from 'src/app/interfaces/category';
+import { Product, ProductsDto } from 'src/app/interfaces/product';
 import { ProjectSettingsService } from '../project-settings/project-settings.service';
 import { CartService } from '../cart/cart.service';
 import { Cart, CartResponseDto } from '../cart/cart.interface';
@@ -108,5 +110,31 @@ export class ApiService {
             currentPassword,
             newPassword,
         });
+    }
+
+    getCategories(id = ''): Observable<CategoryDto> {
+        return id
+            ? this.httpClient.get<CategoryDto>(
+                  `/categories?where=parent(${encodeURIComponent(`id="${id}"`)})`,
+              )
+            : this.httpClient.get<CategoryDto>('/categories?where=not(parent%20is%20defined)');
+    }
+
+    getCategoryByKey(key: string): Observable<Category> {
+        return this.httpClient.get<Category>(`/categories/key=${key}`);
+    }
+
+    getProductsByCategoryID(id: string): Observable<Product[]> {
+        return this.httpClient
+            .get<ProductsDto>(
+                `/product-projections/search?filter=${encodeURIComponent(`categories.id:"${id}"`)}`,
+            )
+            .pipe(map(({ results }) => results));
+    }
+
+    getProducts(): Observable<Product[]> {
+        return this.httpClient
+            .get<ProductsDto>('/product-projections/search')
+            .pipe(map(({ results }) => results));
     }
 }

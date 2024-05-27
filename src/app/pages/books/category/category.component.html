@@ -1,0 +1,9 @@
+@if (categoryList$ | async; as categoryList) {
+    @for (category of categoryList; track $index) {
+        <mat-nav-list>
+            <mat-list-item (click)="navigate(category.key, !category['parent'])">
+                {{ category.name['en-US'] }}
+            </mat-list-item>
+        </mat-nav-list>
+    }
+}
