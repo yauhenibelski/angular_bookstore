@@ -9,6 +9,7 @@ import { ProfilePageComponent } from '../pages/profile/profile-page.component';
 import { CardDetailedComponent } from '../pages/card-detailed/card-detailed.component';
 import { CardsListComponent } from '../pages/books/cards-list/cards-list.component';
 import { isUnregisteredGuard } from './guards/is-unregistered/is-unregistered.guard';
+import { MainComponent } from '../pages/main/main.component';
 
 export const routes: Routes = [
     {
@@ -23,6 +24,10 @@ export const routes: Routes = [
     },
     {
         path: 'main',
+        component: MainComponent,
+    },
+    {
+        path: 'books',
         component: BooksPageComponent,
         children: [
             {
