@@ -2,69 +2,82 @@
     <a routerLink="main">
         <img src="assets/img/logo.png" alt="logo" />
     </a>
-    <!--
+
     @if (isLogined$ | async) {
-        для тру
-
-    }
-    @else {
-         для фолс
-    } -->
-
-    <div class="buttons-wrap-menu">
-        <button mat-icon-button [matMenuTriggerFor]="menu">
-            <mat-icon>more_vert</mat-icon>
-        </button>
-
-        <mat-menu #menu="matMenu">
-            <button mat-menu-item routerLink="/cart">
-                <mat-icon class="icon">shopping_cart</mat-icon>
-                Cart
+        <div class="buttons-wrap-menu">
+            <button mat-icon-button [matMenuTriggerFor]="menu">
+                <mat-icon>more_vert</mat-icon>
             </button>
-            @if (isLogined$ | async) {
+
+            <mat-menu #menu="matMenu">
+                <button mat-menu-item routerLink="/cart">
+                    <mat-icon class="icon">shopping_cart</mat-icon>
+                    Cart
+                </button>
                 <button mat-menu-item routerLink="/profile">
                     <mat-icon class="icon">person</mat-icon>
                     Profile
                 </button>
-            }
-            <button mat-menu-item routerLink="/login" (click)="logOut()">
-                {{ (isLogined$ | async) ? 'Log out' : 'Log in' }}
-
-                <mat-icon>{{ (isLogined$ | async) ? 'logout' : 'login' }}</mat-icon>
-            </button>
-            @if (!(isLogined$ | async)) {
-                <button mat-menu-item routerLink="/registration">
-                    <mat-icon>person_add</mat-icon>
-                    Sign up
+                <button mat-menu-item routerLink="/login" (click)="logOut()">
+                    Log out
+                    <mat-icon>logout</mat-icon>
                 </button>
-            }
-        </mat-menu>
-    </div>
-
-    <div class="buttons-wrap">
-        <a mat-raised-button routerLink="/cart">
-            <mat-icon class="icon">shopping_cart</mat-icon>
-            Cart
-        </a>
-        @if (isLogined$ | async) {
+            </mat-menu>
+        </div>
+        <div class="buttons-wrap">
+            <a mat-raised-button routerLink="/cart">
+                <mat-icon class="icon">shopping_cart</mat-icon>
+                Cart
+            </a>
             <a mat-raised-button routerLink="/profile">
                 Profile
                 <mat-icon>person</mat-icon>
             </a>
-        }
-        <a mat-raised-button routerLink="/login" routerLinkActive="hide" (click)="logOut()">
-            {{ (isLogined$ | async) ? 'Log out' : 'Log in' }}
+            <a mat-raised-button routerLink="/login" routerLinkActive="hide" (click)="logOut()">
+                Log out
+                <mat-icon>logout</mat-icon>
+            </a>
+        </div>
+    } @else {
+        <div class="buttons-wrap-menu">
+            <button mat-icon-button [matMenuTriggerFor]="menu">
+                <mat-icon>more_vert</mat-icon>
+            </button>
 
-            <mat-icon>{{ (isLogined$ | async) ? 'logout' : 'login' }}</mat-icon>
-        </a>
+            <mat-menu #menu="matMenu">
+                <button mat-menu-item routerLink="/cart">
+                    <mat-icon class="icon">shopping_cart</mat-icon>
+                    Cart
+                </button>
+                <button mat-menu-item routerLink="/login" (click)="logOut()">
+                    Log in
+                    <mat-icon>login</mat-icon>
+                </button>
 
-        @if (!(isLogined$ | async)) {
+                <button mat-menu-item routerLink="/registration">
+                    <mat-icon>person_add</mat-icon>
+                    Sign up
+                </button>
+            </mat-menu>
+        </div>
+
+        <div class="buttons-wrap">
+            <a mat-raised-button routerLink="/cart">
+                <mat-icon class="icon">shopping_cart</mat-icon>
+                Cart
+            </a>
+            <a mat-raised-button routerLink="/login" routerLinkActive="hide" (click)="logOut()">
+                Log in
+
+                <mat-icon>login</mat-icon>
+            </a>
+
             <a mat-raised-button routerLink="/registration" routerLinkActive="hide">
                 Sign up
                 <mat-icon>person_add</mat-icon>
             </a>
-        }
-    </div>
+        </div>
+    }
 </header>
 
 <app-nav-link></app-nav-link>

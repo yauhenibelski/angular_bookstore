@@ -48,6 +48,11 @@ export const routes: Routes = [
         component: CardDetailedComponent,
     },
     {
+        path: 'detailed',
+        redirectTo: 'main',
+        pathMatch: 'full',
+    },
+    {
         path: 'profile',
         component: ProfilePageComponent,
     },
