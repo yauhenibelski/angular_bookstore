@@ -29,7 +29,7 @@ import { GetCountryByCodePipe } from 'src/app/shared/pipes/get-country-by-code/g
 import { HttpErrorResponse } from '@angular/common/http';
 import { getCountryKey } from 'src/app/shared/utils/get-country-key';
 import { AddressFormComponent } from './address-form/address-form.component';
-import { RedirectToAuthorisationComponent } from './redirect-to-authorisation/redirect-to-authorisation.component';
+import { RedirectToAuthorizationComponent } from './redirect-to-authorization/redirect-to-authorization.component';
 
 @UntilDestroy()
 @Component({
@@ -52,7 +52,7 @@ import { RedirectToAuthorisationComponent } from './redirect-to-authorisation/re
         AddressFormComponent,
         MatSlideToggleModule,
         GetCountryByCodePipe,
-        RedirectToAuthorisationComponent,
+        RedirectToAuthorizationComponent,
     ],
 })
 export class ProfilePageComponent {

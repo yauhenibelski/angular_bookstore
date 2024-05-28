@@ -3,11 +3,12 @@ import { BooksPageComponent } from '../pages/books/books-page.component';
 import { RegistrationPageComponent } from '../pages/registration/registration-page.component';
 import { LoginPageComponent } from '../pages/login/login-page.component';
 import { NotFoundPageComponent } from '../pages/404/not-found-page.component';
-import { isLoggedGuard } from './guards/is-logged.guard';
+import { isLoggedGuard } from './guards/is-loggined/is-logged.guard';
 import { CartPageComponent } from '../pages/cart/cart-page.component';
 import { ProfilePageComponent } from '../pages/profile/profile-page.component';
 import { CardDetailedComponent } from '../pages/card-detailed/card-detailed.component';
 import { CardsListComponent } from '../pages/books/cards-list/cards-list.component';
+import { isUnregisteredGuard } from './guards/is-unregistered/is-unregistered.guard';
 
 export const routes: Routes = [
     {
@@ -55,6 +56,7 @@ export const routes: Routes = [
     {
         path: 'profile',
         component: ProfilePageComponent,
+        canActivate: [isUnregisteredGuard],
     },
     {
         path: '',

@@ -2,11 +2,11 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 @Component({
-    selector: 'app-redirect-to-authorisation',
+    selector: 'app-redirect-to-authorization',
     standalone: true,
     imports: [RouterLink],
-    templateUrl: './redirect-to-authorisation.component.html',
-    styleUrl: './redirect-to-authorisation.component.scss',
+    templateUrl: './redirect-to-authorization.component.html',
+    styleUrl: './redirect-to-authorization.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class RedirectToAuthorisationComponent {}
+export class RedirectToAuthorizationComponent {}

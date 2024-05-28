@@ -4,26 +4,6 @@
     </a>
 
     @if (isLogined$ | async) {
-        <div class="buttons-wrap-menu">
-            <button mat-icon-button [matMenuTriggerFor]="menu">
-                <mat-icon>more_vert</mat-icon>
-            </button>
-
-            <mat-menu #menu="matMenu">
-                <button mat-menu-item routerLink="/cart">
-                    <mat-icon class="icon">shopping_cart</mat-icon>
-                    Cart
-                </button>
-                <button mat-menu-item routerLink="/profile">
-                    <mat-icon class="icon">person</mat-icon>
-                    Profile
-                </button>
-                <button mat-menu-item routerLink="/login" (click)="logOut()">
-                    Log out
-                    <mat-icon>logout</mat-icon>
-                </button>
-            </mat-menu>
-        </div>
         <div class="buttons-wrap">
             <a mat-raised-button routerLink="/cart">
                 <mat-icon class="icon">shopping_cart</mat-icon>
@@ -39,28 +19,6 @@
             </a>
         </div>
     } @else {
-        <div class="buttons-wrap-menu">
-            <button mat-icon-button [matMenuTriggerFor]="menu">
-                <mat-icon>more_vert</mat-icon>
-            </button>
-
-            <mat-menu #menu="matMenu">
-                <button mat-menu-item routerLink="/cart">
-                    <mat-icon class="icon">shopping_cart</mat-icon>
-                    Cart
-                </button>
-                <button mat-menu-item routerLink="/login" (click)="logOut()">
-                    Log in
-                    <mat-icon>login</mat-icon>
-                </button>
-
-                <button mat-menu-item routerLink="/registration">
-                    <mat-icon>person_add</mat-icon>
-                    Sign up
-                </button>
-            </mat-menu>
-        </div>
-
         <div class="buttons-wrap">
             <a mat-raised-button routerLink="/cart">
                 <mat-icon class="icon">shopping_cart</mat-icon>
@@ -78,6 +36,40 @@
             </a>
         </div>
     }
+
+    <div class="buttons-wrap-menu">
+        <button mat-icon-button [matMenuTriggerFor]="menu">
+            <mat-icon>more_vert</mat-icon>
+        </button>
+
+        <mat-menu #menu="matMenu">
+            <button mat-menu-item routerLink="/cart">
+                <mat-icon class="icon">shopping_cart</mat-icon>
+                Cart
+            </button>
+
+            @if (isLogined$ | async) {
+                <button mat-menu-item routerLink="/profile">
+                    <mat-icon class="icon">person</mat-icon>
+                    Profile
+                </button>
+                <button mat-menu-item routerLink="/login" (click)="logOut()">
+                    Log out
+                    <mat-icon>logout</mat-icon>
+                </button>
+            } @else {
+                <button mat-menu-item routerLink="/login" (click)="logOut()">
+                    Log in
+                    <mat-icon>login</mat-icon>
+                </button>
+
+                <button mat-menu-item routerLink="/registration">
+                    <mat-icon>person_add</mat-icon>
+                    Sign up
+                </button>
+            }
+        </mat-menu>
+    </div>
 </header>
 
 <app-nav-link></app-nav-link>
