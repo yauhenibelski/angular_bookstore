@@ -1,7 +1,13 @@
 <header>
-    <a routerLink="main">
-        <img src="assets/img/logo.png" alt="logo" />
-    </a>
+    <div class="main">
+        <a routerLink="main">
+            <img src="assets/img/logo.png" alt="logo" />
+        </a>
+        <a mat-raised-button routerLink="/books">
+            Catalog
+            <mat-icon>auto_stories</mat-icon>
+        </a>
+    </div>
 
     @if (isLogined$ | async) {
         <div class="buttons-wrap">
