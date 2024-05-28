@@ -1,8 +1,12 @@
-<mat-card>
-    <img mat-card-image alt="Photo of a Shiba Inu" [src]="book.masterVariant.images[0].url" />
+<mat-card [routerLink]="['/detailed', book.id]">
+    <img
+        mat-card-image
+        [alt]="book.masterVariant.images[0].label"
+        [src]="book.masterVariant.images[0].url"
+    />
     <div class="header">
         <p class="price">
-            {{ book.masterVariant.prices[0].value.centAmount | currency: 'EUR' }}
+            {{ book.masterVariant.prices[0].value.centAmount / 100 | currency: 'EUR' }}
         </p>
         <p class="author">{{ book.masterVariant.attributes[0].value }}</p>
         <h3 class="name">{{ book.name.en }}</h3>

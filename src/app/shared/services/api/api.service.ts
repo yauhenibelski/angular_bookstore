@@ -6,7 +6,7 @@ import { Observable, map, tap } from 'rxjs';
 import { environment } from 'src/app/environment/environment';
 import { v4 as uuidv4 } from 'uuid';
 import { Category, CategoryDto } from 'src/app/interfaces/category';
-import { Product, ProductsDto } from 'src/app/interfaces/product';
+import { Product, ProductDto, ProductsDto } from 'src/app/interfaces/product';
 import { ProjectSettingsService } from '../project-settings/project-settings.service';
 import { CartService } from '../cart/cart.service';
 import { Cart, CartResponseDto } from '../cart/cart.interface';
@@ -136,5 +136,9 @@ export class ApiService {
         return this.httpClient
             .get<ProductsDto>('/product-projections/search')
             .pipe(map(({ results }) => results));
+    }
+
+    getProductByID(id: string): Observable<ProductDto> {
+        return this.httpClient.get<ProductDto>(`/products/${id}`);
     }
 }

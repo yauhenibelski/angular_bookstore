@@ -1,5 +1,10 @@
 import { APP_INITIALIZER, ApplicationConfig } from '@angular/core';
-import { PreloadAllModules, provideRouter, withPreloading } from '@angular/router';
+import {
+    PreloadAllModules,
+    provideRouter,
+    withComponentInputBinding,
+    withPreloading,
+} from '@angular/router';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { routes } from './router/app.routes';
@@ -13,7 +18,7 @@ import { handleInvalidRefreshTokenInterceptor } from './core/interceptors/handle
 
 export const appConfig: ApplicationConfig = {
     providers: [
-        provideRouter(routes, withPreloading(PreloadAllModules)),
+        provideRouter(routes, withPreloading(PreloadAllModules), withComponentInputBinding()),
         provideAnimationsAsync(),
         provideHttpClient(
             withInterceptors([
