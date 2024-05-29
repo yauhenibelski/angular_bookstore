@@ -1,16 +1,6 @@
 @if (book$ | async; as book) {
     <div class="all-img">
-        <!-- other img -->
-        <img [alt]="book.masterVariant.images[0].label" [src]="book.masterVariant.images[0].url" />
-        <img [alt]="book.masterVariant.images[0].label" [src]="book.masterVariant.images[0].url" />
-        <img [alt]="book.masterVariant.images[0].label" [src]="book.masterVariant.images[0].url" />
-    </div>
-    <div class="main">
-        <img
-            class="main-img"
-            [alt]="book.masterVariant.images[0].label"
-            [src]="book.masterVariant.images[0].url"
-        />
+        <gallery gallerize thumbPosition="left" [items]="images" [dots]="true"></gallery>
     </div>
     <div class="main-detailed">
         <h3 class="name">{{ book.name.en }}</h3>
