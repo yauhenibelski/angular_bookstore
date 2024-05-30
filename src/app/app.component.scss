@@ -6,17 +6,3 @@
     background-size: 25%;
     background-position: 95% 80%;
 }
-
-mat-progress-bar {
-    --mdc-linear-progress-track-color: transparent;
-    --mdc-linear-progress-active-indicator-color: #3f51b5c9;
-
-    position: sticky;
-    top: 0;
-    right: 0;
-    opacity: 0;
-    z-index: 10;
-}
-.mat-progress-bar-active {
-    opacity: 1;
-}

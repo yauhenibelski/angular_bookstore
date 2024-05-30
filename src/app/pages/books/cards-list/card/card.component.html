@@ -1,14 +1,14 @@
 <mat-card [routerLink]="['/detailed', book.id]">
     <img
         mat-card-image
-        [alt]="book.masterVariant.images[0].label"
-        [src]="book.masterVariant.images[0].url"
+        [alt]="book.masterVariant.images.at(0)?.label"
+        [src]="book.masterVariant.images.at(0)?.url"
     />
     <div class="header">
         <p class="price">
             {{ book.masterVariant.prices[0].value.centAmount / 100 | currency: 'EUR' }}
         </p>
-        <p class="author">{{ book.masterVariant.attributes[0].value }}</p>
+        <p class="author">{{ book.masterVariant.attributes.at(0)?.value }}</p>
         <h3 class="name">{{ book.name.en }}</h3>
     </div>
 </mat-card>

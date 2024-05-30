@@ -7,6 +7,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { LoaderService } from 'src/app/shared/services/loader/loader.service';
 import { NavLinkComponent } from './nav-link/nav-link.component';
 
 @UntilDestroy()
@@ -22,6 +24,7 @@ import { NavLinkComponent } from './nav-link/nav-link.component';
         MatMenuModule,
         MatButtonModule,
         NavLinkComponent,
+        MatProgressBarModule,
     ],
     templateUrl: './header.component.html',
     styleUrl: './header.component.scss',
@@ -29,6 +32,8 @@ import { NavLinkComponent } from './nav-link/nav-link.component';
 })
 export class HeaderComponent {
     private readonly authService = inject(AuthService);
+    readonly isLoading$ = inject(LoaderService).isLoading$;
+
     readonly isLogined$ = this.authService.isLogined$;
 
     logOut(): void {

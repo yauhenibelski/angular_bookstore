@@ -141,4 +141,10 @@ export class ApiService {
     getProductByID(id: string): Observable<ProductDto> {
         return this.httpClient.get<ProductDto>(`/products/${id}`);
     }
+
+    searchProduct(text: string): Observable<ProductsDto> {
+        return this.httpClient.get<ProductsDto>(
+            `/product-projections/search?text.en=*${text}*&fuzzy=true&fuzzyLevel=2`,
+        );
+    }
 }

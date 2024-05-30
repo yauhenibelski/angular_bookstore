@@ -31,6 +31,8 @@ export class ProductStoreService {
             this.activeSubscription.unsubscribe();
         }
 
+        this.productSubject.next(null);
+
         this.activeSubscription = this.apiService
             .getProductByID(id)
             .pipe(map(productDto => productDto.masterData.current))
@@ -49,6 +51,8 @@ export class ProductStoreService {
             this.activeSubscription.unsubscribe();
         }
 
+        this.productsSubject.next(null);
+
         this.activeSubscription = this.apiService
             .getProductsByCategoryID(categoryID)
             .subscribe(products => {
@@ -61,8 +65,10 @@ export class ProductStoreService {
             this.activeSubscription.unsubscribe();
         }
 
+        this.productsSubject.next(null);
+
         this.activeSubscription = this.apiService.getProducts().subscribe(products => {
-            this.productsSubject.next(products.sort(() => 0.5 - Math.random()));
+            this.productsSubject.next(products);
         });
     }
 }

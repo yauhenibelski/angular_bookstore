@@ -2,12 +2,16 @@
     <div class="all-img">
         <gallery gallerize thumbPosition="left" [items]="images" [dots]="true"></gallery>
     </div>
+
     <div class="main-detailed">
         <h3 class="name">{{ book.name.en }}</h3>
-        <p class="author">{{ book.masterVariant.attributes[0].value }}</p>
+        <p class="author">{{ book.masterVariant.attributes.at(0)?.value }}</p>
         <p class="price">
-            {{ book.masterVariant.prices[0].value.centAmount / 100 | currency: 'EUR' }}
+            {{
+                book.masterVariant.prices[0].value.centAmount / 100
+                    | currency: 'EUR' : 'symbol-narrow' : '1.0-2'
+            }}
         </p>
         <p class="description">{{ book.description.en }}</p>
     </div>
-} @else {}
+}

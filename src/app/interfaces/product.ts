@@ -19,10 +19,19 @@ interface PriceValue {
     fractionDigits: number;
 }
 
+interface Discount {
+    typeId: string;
+    id: string;
+}
+
 interface Price {
     id: string;
     value: PriceValue;
     key: string;
+    discounted?: {
+        value: PriceValue;
+        discount: Discount;
+    };
 }
 
 interface ImagDimensions {
@@ -30,7 +39,7 @@ interface ImagDimensions {
     h: number;
 }
 
-interface Image {
+export interface Image {
     url: string;
     label: string;
     dimensions: ImagDimensions;
