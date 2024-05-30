@@ -69,12 +69,9 @@ export class CardsListComponent implements OnInit {
                 return;
             }
 
-            this.categoryService
-                .loadCategory()
-                .pipe(untilDestroyed(this))
-                .subscribe(() => {
-                    this.productStoreService.loadProducts();
-                });
+            this.productStoreService.loadProducts();
+
+            this.categoryService.loadCategory().pipe(untilDestroyed(this)).subscribe();
         });
     }
 }

@@ -14,8 +14,8 @@ import { CategoryService } from './service/category.service';
 })
 export class CategoryComponent {
     private readonly categoryService = inject(CategoryService);
-    private readonly router = inject(Router);
     private readonly activatedRoute = inject(ActivatedRoute);
+    private readonly router = inject(Router);
 
     readonly categoryList$ = this.categoryService.categoryList$;
 
