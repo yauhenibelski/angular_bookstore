@@ -32,7 +32,19 @@ gallery {
     font-size: 20px;
     color: rgb(191, 160, 20);
 }
-
+.discounted {
+    display: flex;
+    gap: 10px;
+}
+.old-price-discounted {
+    text-decoration: line-through;
+    font-size: 18px;
+    color: rgba(125, 123, 123, 0.716);
+}
+.price-discounted {
+    font-size: 20px;
+    color: rgb(114, 194, 17);
+}
 @media (max-width: 568px) {
     :host {
         flex-direction: column;
