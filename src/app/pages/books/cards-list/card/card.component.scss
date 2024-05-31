@@ -3,6 +3,7 @@
     justify-content: space-between;
     gap: 5px;
     height: 100%;
+    position: relative;
 
     &:hover {
         transform: scale(1.02);
@@ -44,4 +45,29 @@ h3 {
 }
 .price {
     color: rgb(191, 160, 20);
+}
+.discounted {
+    display: flex;
+    gap: 10px;
+}
+.old-price-discounted {
+    text-decoration: line-through;
+    color: rgba(125, 123, 123, 0.716);
+}
+.price-discounted {
+    color: rgb(114, 194, 17);
+}
+.discount {
+    position: absolute;
+    color: rgb(237, 240, 41);
+    z-index: 1;
+    font-size: 23px;
+    top: 10px;
+    left: 10px;
+    background-color: rgb(72, 134, 72);
+    width: 25px;
+    height: 30px;
+    padding-top: 5px;
+    text-align: center;
+    clip-path: polygon(100% 65%, 50% 100%, 0 65%, 0 0, 100% 0);
 }
