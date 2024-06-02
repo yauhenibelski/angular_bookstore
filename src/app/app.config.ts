@@ -15,6 +15,7 @@ import { AuthService } from './shared/services/auth/auth.service';
 import { updateTokenInterceptor } from './core/interceptors/update-token/update-token.interceptor';
 import { setUrlInterceptor } from './core/interceptors/set-url/set-url.interceptor';
 import { handleInvalidRefreshTokenInterceptor } from './core/interceptors/handle-invalid-refresh-token/handle-invalid-refresh-token.interceptor';
+import { setFilterValueInterceptor } from './core/interceptors/set-filter-value/set-filter-value.interceptor';
 
 export const appConfig: ApplicationConfig = {
     providers: [
@@ -22,6 +23,7 @@ export const appConfig: ApplicationConfig = {
         provideAnimationsAsync(),
         provideHttpClient(
             withInterceptors([
+                setFilterValueInterceptor,
                 setUrlInterceptor,
                 updateTokenInterceptor,
                 handleInvalidRefreshTokenInterceptor,

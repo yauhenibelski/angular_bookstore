@@ -26,7 +26,7 @@ export class ProductStoreService {
         return this.productSubject.asObservable();
     }
 
-    loadProductByID(id: string) {
+    loadProductByKey(id: string) {
         if (this.activeSubscription) {
             this.activeSubscription.unsubscribe();
         }
@@ -34,7 +34,7 @@ export class ProductStoreService {
         this.productSubject.next(null);
 
         this.activeSubscription = this.apiService
-            .getProductByID(id)
+            .getProductByKey(id)
             .pipe(map(productDto => productDto.masterData.current))
             .subscribe({
                 next: product => {
@@ -46,21 +46,7 @@ export class ProductStoreService {
             });
     }
 
-    loadProductsByCategory(categoryID: string): void {
-        if (this.activeSubscription) {
-            this.activeSubscription.unsubscribe();
-        }
-
-        this.productsSubject.next(null);
-
-        this.activeSubscription = this.apiService
-            .getProductsByCategoryID(categoryID)
-            .subscribe(products => {
-                this.productsSubject.next(products);
-            });
-    }
-
-    loadProducts() {
+    loadProducts(): void {
         if (this.activeSubscription) {
             this.activeSubscription.unsubscribe();
         }

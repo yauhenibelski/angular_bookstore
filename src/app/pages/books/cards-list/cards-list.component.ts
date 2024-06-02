@@ -1,10 +1,10 @@
-/* eslint-disable rxjs/no-nested-subscribe */
-import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { switchMap, tap } from 'rxjs';
 import { ProductStoreService } from 'src/app/shared/services/product-store/product-store.service';
 import { AsyncPipe } from '@angular/common';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { SortProductService } from 'src/app/shared/services/sort-product/sort-product.service';
 import { CategoryService } from '../category/service/category.service';
 import { CardComponent } from './card/card.component';
 
@@ -17,61 +17,70 @@ import { CardComponent } from './card/card.component';
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [CardComponent, AsyncPipe],
 })
-export class CardsListComponent implements OnInit {
+export class CardsListComponent implements OnDestroy {
     private readonly productStoreService = inject(ProductStoreService);
+    private readonly sortProductService = inject(SortProductService);
     private readonly activatedRoute = inject(ActivatedRoute);
     private readonly categoryService = inject(CategoryService);
     private readonly router = inject(Router);
 
-    readonly books$ = this.productStoreService.products$;
-
-    ngOnInit(): void {
-        this.activatedRoute.paramMap.subscribe(params => {
+    readonly books$ = this.activatedRoute.paramMap.pipe(
+        untilDestroyed(this),
+        switchMap(params => {
             const category = params.get('category')?.toLowerCase();
             const subcategory = params.get('subcategory')?.toLowerCase();
 
             if (subcategory && category) {
-                this.categoryService
-                    .getCategoryByKey(category)
-                    .pipe(
-                        untilDestroyed(this),
-                        switchMap(({ id }) => this.categoryService.loadChildrenCategory(id)),
-                        switchMap(() => this.categoryService.getCategoryByKey(subcategory)),
-                    )
-                    .subscribe({
-                        next: ({ id }) => {
-                            this.productStoreService.loadProductsByCategory(id);
-                        },
-                        error: () => {
-                            this.router.navigateByUrl('/404');
-                        },
-                    });
-
-                return;
+                return this.categoryService.getCategoryByKey(category).pipe(
+                    untilDestroyed(this),
+                    switchMap(({ id }) => this.categoryService.loadChildrenCategory(id)),
+                    switchMap(() =>
+                        this.categoryService.getCategoryByKey(subcategory).pipe(
+                            tap({
+                                next: ({ id }) => {
+                                    this.sortProductService.categoryID = id;
+                                    this.productStoreService.loadProducts();
+                                },
+                                error: () => {
+                                    this.router.navigateByUrl('/404');
+                                },
+                            }),
+                        ),
+                    ),
+                    switchMap(() => this.productStoreService.products$),
+                );
             }
 
             if (category) {
-                this.categoryService
-                    .getCategoryByKey(category)
-                    .pipe(
-                        untilDestroyed(this),
-                        tap(({ id }) => {
-                            this.productStoreService.loadProductsByCategory(id);
-                        }),
-                        switchMap(({ id }) => this.categoryService.loadChildrenCategory(id)),
-                    )
-                    .subscribe({
-                        error: () => {
-                            this.router.navigateByUrl('/404');
-                        },
-                    });
-
-                return;
+                return this.categoryService.getCategoryByKey(category).pipe(
+                    untilDestroyed(this),
+                    tap(({ id }) => {
+                        this.sortProductService.categoryID = id;
+                        this.productStoreService.loadProducts();
+                    }),
+                    switchMap(({ id }) =>
+                        this.categoryService.loadChildrenCategory(id).pipe(
+                            tap({
+                                error: () => {
+                                    this.router.navigateByUrl('/404');
+                                },
+                            }),
+                        ),
+                    ),
+                    switchMap(() => this.productStoreService.products$),
+                );
             }
 
+            this.sortProductService.categoryID = null;
             this.productStoreService.loadProducts();
 
             this.categoryService.loadCategory().pipe(untilDestroyed(this)).subscribe();
-        });
+
+            return this.productStoreService.products$;
+        }),
+    );
+
+    ngOnDestroy(): void {
+        this.sortProductService.categoryID = null;
     }
 }

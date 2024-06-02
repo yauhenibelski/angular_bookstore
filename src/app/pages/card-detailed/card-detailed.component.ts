@@ -16,8 +16,8 @@ import { filter, tap } from 'rxjs';
 export class CardDetailedComponent {
     private readonly productStoreService = inject(ProductStoreService);
 
-    @Input() set id(id: string | undefined) {
-        this.productStoreService.loadProductByID(`${id}`);
+    @Input() set key(key: string | undefined) {
+        this.productStoreService.loadProductByKey(`${key}`);
     }
 
     readonly book$ = this.productStoreService.currentProduct$.pipe(

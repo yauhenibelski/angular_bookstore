@@ -69,6 +69,7 @@ export interface Product {
     searchKeywords: unknown;
     masterVariant: MasterVariant;
     id: string;
+    key: string;
 }
 
 interface MasterData {

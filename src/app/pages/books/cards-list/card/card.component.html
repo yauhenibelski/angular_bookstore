@@ -1,4 +1,4 @@
-<mat-card [routerLink]="['/detailed', book.id]">
+<mat-card [routerLink]="['/detailed', book.key]">
     <img
         mat-card-image
         [alt]="book.masterVariant.images.at(0)?.label"
@@ -6,7 +6,10 @@
     />
     <div class="header">
         <p class="price">
-            {{ book.masterVariant.prices[0].value.centAmount / 100 | currency: 'EUR' }}
+            {{
+                book.masterVariant.prices[0].value.centAmount / 100
+                    | currency: 'EUR' : 'symbol-narrow' : '1.0-2'
+            }}
         </p>
         <p class="author">{{ book.masterVariant.attributes.at(0)?.value }}</p>
         <h3 class="name">{{ book.name.en }}</h3>
