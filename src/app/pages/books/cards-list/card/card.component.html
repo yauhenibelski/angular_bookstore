@@ -1,16 +1,31 @@
 <mat-card [routerLink]="['/detailed', book.key]">
+    @if (book.masterVariant.prices[0].discounted) {
+        <div class="discount">%</div>
+    }
     <img
         mat-card-image
         [alt]="book.masterVariant.images.at(0)?.label"
         [src]="book.masterVariant.images.at(0)?.url"
     />
     <div class="header">
-        <p class="price">
-            {{
-                book.masterVariant.prices[0].value.centAmount / 100
-                    | currency: 'EUR' : 'symbol-narrow' : '1.0-2'
-            }}
-        </p>
+        @if (book.masterVariant.prices[0].discounted) {
+            <div class="discounted">
+                <p class="price-discounted">
+                    {{
+                        book.masterVariant.prices[0].discounted.value.centAmount / 100
+                            | currency: 'EUR'
+                    }}
+                </p>
+                <p class="old-price-discounted">
+                    {{ book.masterVariant.prices[0].value.centAmount / 100 | currency: 'EUR' }}
+                </p>
+            </div>
+        } @else {
+            <p class="price">
+                {{ book.masterVariant.prices[0].value.centAmount / 100 | currency: 'EUR' }}
+            </p>
+        }
+
         <p class="author">{{ book.masterVariant.attributes.at(0)?.value }}</p>
         <h3 class="name">{{ book.name.en }}</h3>
     </div>
