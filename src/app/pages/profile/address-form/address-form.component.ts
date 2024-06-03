@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, inject } from '@angular/core';
 import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { GetErrorMassagePipe } from 'src/app/shared/pipes/get-error-massage/get-error-massage.pipe';
@@ -10,6 +10,7 @@ import { isCountryExists } from 'src/app/shared/validators/is-country-exists';
 import { MatInputModule } from '@angular/material/input';
 import { Address } from 'src/app/interfaces/customer-response-dto';
 import { getCountryCodes } from 'src/app/shared/utils/get-country-codes';
+import { getCountryByCode } from 'src/app/shared/utils/get-country-by-code';
 
 @Component({
     selector: 'app-address-form',
@@ -26,6 +27,17 @@ import { getCountryCodes } from 'src/app/shared/utils/get-country-codes';
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AddressFormComponent {
+    @Input() set customerAddress(customerAddress: Address | null) {
+        if (customerAddress) {
+            const { city, country, postalCode, streetName } = this.controls;
+
+            country.setValue(getCountryByCode(customerAddress.country));
+            postalCode.setValue(customerAddress.postalCode);
+            streetName.setValue(customerAddress.streetName);
+            city.setValue(customerAddress.city);
+        }
+    }
+
     private readonly formBuilder = inject(FormBuilder);
 
     readonly countryCodes = getCountryCodes();
@@ -74,7 +86,7 @@ export class AddressFormComponent {
         }),
         streetName: new FormControl('', {
             nonNullable: true,
-            validators: [hasOneCharacter, hasSpace],
+            validators: [hasOneCharacter],
         }),
         postalCode: new FormControl('', {
             validators: [isPostalCodeValid(this.countryControl, this.countryCodes)],

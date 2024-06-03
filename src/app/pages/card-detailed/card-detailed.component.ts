@@ -4,11 +4,12 @@ import { ProductStoreService } from 'src/app/shared/services/product-store/produ
 import { GalleryModule, GalleryItem, ImageItem } from 'ng-gallery';
 import { LightboxModule } from 'ng-gallery/lightbox';
 import { filter, tap } from 'rxjs';
+import { CentsToEurosPipe } from 'src/app/shared/pipes/cents-to-euros/cents-to-euros.pipe';
 
 @Component({
     selector: 'app-card-detailed',
     standalone: true,
-    imports: [CurrencyPipe, AsyncPipe, GalleryModule, LightboxModule],
+    imports: [CurrencyPipe, AsyncPipe, GalleryModule, LightboxModule, CentsToEurosPipe],
     templateUrl: './card-detailed.component.html',
     styleUrl: './card-detailed.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,

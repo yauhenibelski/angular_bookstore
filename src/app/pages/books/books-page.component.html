@@ -38,10 +38,20 @@
                 </mat-slider>
                 <div class="price-wrap">
                     <span>
-                        min {{ rangeValue.min / 100 | currency: 'EUR' : 'symbol-narrow' : '1.0-2' }}
+                        min
+                        {{
+                            rangeValue.min
+                                | centsToEuros
+                                | currency: 'EUR' : 'symbol-narrow' : '1.0-2'
+                        }}
                     </span>
                     <span>
-                        max {{ rangeValue.max / 100 | currency: 'EUR' : 'symbol-narrow' : '1.0-2' }}
+                        max
+                        {{
+                            rangeValue.max
+                                | centsToEuros
+                                | currency: 'EUR' : 'symbol-narrow' : '1.0-2'
+                        }}
                     </span>
                 </div>
             </div>

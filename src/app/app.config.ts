@@ -3,6 +3,7 @@ import {
     PreloadAllModules,
     provideRouter,
     withComponentInputBinding,
+    withHashLocation,
     withPreloading,
 } from '@angular/router';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
@@ -19,7 +20,12 @@ import { setFilterValueInterceptor } from './core/interceptors/set-filter-value/
 
 export const appConfig: ApplicationConfig = {
     providers: [
-        provideRouter(routes, withPreloading(PreloadAllModules), withComponentInputBinding()),
+        provideRouter(
+            routes,
+            withPreloading(PreloadAllModules),
+            withComponentInputBinding(),
+            withHashLocation(),
+        ),
         provideAnimationsAsync(),
         provideHttpClient(
             withInterceptors([

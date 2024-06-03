@@ -251,19 +251,19 @@
 
         <h2 [style.marginTop.px]="30">Shipping address</h2>
         <mat-accordion>
-            @for (item of addresses?.shipping; track $index) {
+            @for (address of addresses?.shipping; track $index) {
                 <mat-expansion-panel #addressPanel>
                     <mat-expansion-panel-header>
                         <mat-panel-title>
-                            {{ item.country | getCountryByCode }}
+                            {{ address.country | getCountryByCode }}
                         </mat-panel-title>
-                        <mat-panel-title>City: {{ item.city }}</mat-panel-title>
+                        <mat-panel-title>City: {{ address.city }}</mat-panel-title>
                         <mat-panel-description>
-                            Street: {{ item.streetName }} / {{ item.postalCode }}
+                            Street: {{ address.streetName }} / {{ address.postalCode }}
                         </mat-panel-description>
                     </mat-expansion-panel-header>
 
-                    <app-address-form #addressForm></app-address-form>
+                    <app-address-form #addressForm [customerAddress]="address"></app-address-form>
 
                     <mat-action-row>
                         <div>
@@ -282,7 +282,7 @@
                                 (click)="
                                     updateAddress(
                                         addressForm.getValue(),
-                                        item.id,
+                                        address.id,
                                         'shipping',
                                         defaultShippingAddToggle.checked
                                     );
@@ -304,7 +304,7 @@
                         <button
                             mat-button
                             color="warn"
-                            (click)="removeAddress(item.id + ''); $event.preventDefault()"
+                            (click)="removeAddress(address.id + ''); $event.preventDefault()"
                         >
                             remove
                         </button>
@@ -357,19 +357,19 @@
 
         <h2 [style.marginTop.px]="30">Billing address</h2>
         <mat-accordion>
-            @for (item of addresses?.billing; track $index) {
+            @for (address of addresses?.billing; track $index) {
                 <mat-expansion-panel #addressPanel>
                     <mat-expansion-panel-header>
                         <mat-panel-title>
-                            {{ item.country | getCountryByCode }}
+                            {{ address.country | getCountryByCode }}
                         </mat-panel-title>
-                        <mat-panel-title>City: {{ item.city }}</mat-panel-title>
+                        <mat-panel-title>City: {{ address.city }}</mat-panel-title>
                         <mat-panel-description>
-                            Street: {{ item.streetName }} / {{ item.postalCode }}
+                            Street: {{ address.streetName }} / {{ address.postalCode }}
                         </mat-panel-description>
                     </mat-expansion-panel-header>
 
-                    <app-address-form #addressForm></app-address-form>
+                    <app-address-form #addressForm [customerAddress]="address"></app-address-form>
 
                     <mat-action-row>
                         <div>
@@ -388,7 +388,7 @@
                                 (click)="
                                     updateAddress(
                                         addressForm.getValue(),
-                                        item.id,
+                                        address.id,
                                         'billing',
                                         defaultBillingAddToggle.checked
                                     );
@@ -410,7 +410,7 @@
                         <button
                             mat-button
                             color="warn"
-                            (click)="removeAddress(item.id + ''); $event.preventDefault()"
+                            (click)="removeAddress(address.id + ''); $event.preventDefault()"
                         >
                             remove
                         </button>
