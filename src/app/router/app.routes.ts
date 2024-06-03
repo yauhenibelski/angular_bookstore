@@ -1,25 +1,22 @@
 import { Routes } from '@angular/router';
-import { BooksPageComponent } from '../pages/books/books-page.component';
-import { RegistrationPageComponent } from '../pages/registration/registration-page.component';
-import { LoginPageComponent } from '../pages/login/login-page.component';
 import { NotFoundPageComponent } from '../pages/404/not-found-page.component';
 import { isLoggedGuard } from './guards/is-loggined/is-logged.guard';
-import { CartPageComponent } from '../pages/cart/cart-page.component';
-import { ProfilePageComponent } from '../pages/profile/profile-page.component';
-import { CardDetailedComponent } from '../pages/card-detailed/card-detailed.component';
 import { isUnregisteredGuard } from './guards/is-unregistered/is-unregistered.guard';
 import { MainComponent } from '../pages/main/main.component';
-import { CardsListComponent } from '../pages/books/cards-list/cards-list.component';
 
 export const routes: Routes = [
     {
         path: 'registration',
-        component: RegistrationPageComponent,
+        loadComponent: () =>
+            import('../pages/registration/registration-page.component').then(
+                m => m.RegistrationPageComponent,
+            ),
         canActivate: [isLoggedGuard],
     },
     {
         path: 'login',
-        component: LoginPageComponent,
+        loadComponent: () =>
+            import('../pages/login/login-page.component').then(m => m.LoginPageComponent),
         canActivate: [isLoggedGuard],
     },
     {
@@ -28,39 +25,54 @@ export const routes: Routes = [
     },
     {
         path: 'books',
-        component: BooksPageComponent,
+        loadComponent: () =>
+            import('../pages/books/books-page.component').then(m => m.BooksPageComponent),
         children: [
             {
                 path: ':category',
-                component: CardsListComponent,
+                loadComponent: () =>
+                    import('../pages/books/cards-list/cards-list.component').then(
+                        m => m.CardsListComponent,
+                    ),
             },
             {
                 path: ':category/:subcategory',
-                component: CardsListComponent,
+                loadComponent: () =>
+                    import('../pages/books/cards-list/cards-list.component').then(
+                        m => m.CardsListComponent,
+                    ),
             },
             {
                 path: '',
                 pathMatch: 'full',
-                component: CardsListComponent,
+                loadComponent: () =>
+                    import('../pages/books/cards-list/cards-list.component').then(
+                        m => m.CardsListComponent,
+                    ),
             },
         ],
     },
     {
         path: 'cart',
-        component: CartPageComponent,
+        loadComponent: () =>
+            import('../pages/cart/cart-page.component').then(m => m.CartPageComponent),
     },
     {
         path: 'detailed/:key',
-        component: CardDetailedComponent,
+        loadComponent: () =>
+            import('../pages/card-detailed/card-detailed.component').then(
+                m => m.CardDetailedComponent,
+            ),
     },
     {
         path: 'detailed',
-        redirectTo: 'main',
         pathMatch: 'full',
+        redirectTo: '/books',
     },
     {
         path: 'profile',
-        component: ProfilePageComponent,
+        loadComponent: () =>
+            import('../pages/profile/profile-page.component').then(m => m.ProfilePageComponent),
         canActivate: [isUnregisteredGuard],
     },
     {

@@ -123,7 +123,7 @@ export class RegistrationPageComponent {
                 }),
                 streetName: new FormControl('', {
                     nonNullable: true,
-                    validators: [hasOneCharacter, hasSpace],
+                    validators: [hasOneCharacter],
                 }),
                 postalCode: new FormControl('', {
                     validators: [
@@ -140,7 +140,7 @@ export class RegistrationPageComponent {
                 }),
                 streetName: new FormControl('', {
                     nonNullable: true,
-                    validators: [hasOneCharacter, hasSpace],
+                    validators: [hasOneCharacter],
                 }),
                 postalCode: new FormControl('', {
                     validators: [
