@@ -16,6 +16,7 @@ import { ProfilePageComponent } from './profile-page.component';
 interface CustomerServiceMock {
     customer$: Observable<Customer>;
     addresses: Observable<Address[]>;
+    setCustomer: jasmine.Spy;
 }
 
 interface ApiServiceMock {
@@ -64,6 +65,7 @@ describe('ProfilePageComponent', () => {
                 shippingAddressIds: [],
             }),
             addresses: of([]),
+            setCustomer: jasmine.createSpy('setCustomer'),
         };
 
         apiServiceMock = jasmine.createSpyObj<ApiServiceMock>('ApiService', [
