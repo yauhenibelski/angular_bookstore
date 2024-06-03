@@ -1,5 +1,5 @@
 @for (book of books$ | async; track book.id) {
     <app-card [book]="book"></app-card>
 } @empty {
-    <p>not found</p>
+    <p class="empty">There are no products matching your request</p>
 }

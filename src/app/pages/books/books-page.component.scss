@@ -23,6 +23,7 @@ mat-drawer {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 10px;
 }
 
 form {
@@ -31,6 +32,12 @@ form {
     gap: 30px;
     margin-top: 30px;
     height: max-content;
+}
+
+.toggle-button-wrap {
+    .toggle-category-btn {
+        display: none;
+    }
 }
 
 .range-wrap {
@@ -51,4 +58,34 @@ form {
     display: flex;
     justify-content: space-around;
     width: 100%;
+}
+
+.close {
+    display: flex;
+    justify-content: end;
+}
+
+@media (max-width: 617px) {
+    .tune-wrap {
+        padding: 10px;
+        flex-direction: column;
+    }
+
+    app-search {
+        order: 0;
+    }
+
+    app-nav-link {
+        order: 1;
+    }
+
+    .toggle-button-wrap {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+
+        .toggle-category-btn {
+            display: block;
+        }
+    }
 }

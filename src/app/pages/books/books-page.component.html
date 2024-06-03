@@ -1,19 +1,34 @@
 <mat-drawer-container autosize class="example-container">
     <div class="tune-wrap">
         <app-nav-link></app-nav-link>
+        <app-search></app-search>
 
-        <button mat-icon-button (click)="drawer.toggle()">
-            <mat-icon>tune</mat-icon>
-        </button>
+        <div class="toggle-button-wrap">
+            <button
+                mat-icon-button
+                class="toggle-category-btn"
+                [mat-menu-trigger-for]="category.matMenu"
+            >
+                <mat-icon>menu_book</mat-icon>
+            </button>
+
+            <button mat-icon-button (click)="drawer.toggle()">
+                <mat-icon>tune</mat-icon>
+            </button>
+        </div>
     </div>
 
     <div class="books-wrap">
-        <app-category></app-category>
+        <app-category #category></app-category>
         <router-outlet></router-outlet>
     </div>
 
-    <mat-drawer #drawer mode="side" position="end" class="example-sidenav">
-        <app-search></app-search>
+    <mat-drawer #drawer mode="over" position="end" class="example-sidenav">
+        <div class="close">
+            <button mat-icon-button (click)="drawer.close()">
+                <mat-icon>close</mat-icon>
+            </button>
+        </div>
         <form [formGroup]="form">
             <mat-form-field>
                 <mat-label>Sort books by:</mat-label>
@@ -56,9 +71,9 @@
                 </div>
             </div>
 
-            <button mat-raised-button (click)="setSortValue()">Apply</button>
+            <button mat-raised-button (click)="setSortValue(); drawer.close()">Apply</button>
 
-            <button mat-raised-button (click)="resetSortValue()">Clear</button>
+            <button mat-raised-button (click)="resetSortValue(); drawer.close()">Clear</button>
         </form>
     </mat-drawer>
 </mat-drawer-container>

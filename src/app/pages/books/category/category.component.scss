@@ -2,7 +2,8 @@
     display: block;
 }
 
-.hide {
-    color: antiquewhite;
-    margin: 10px;
+@media (max-width: 617px) {
+    .buttons-wrap {
+        display: none;
+    }
 }

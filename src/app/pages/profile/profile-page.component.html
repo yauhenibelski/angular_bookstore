@@ -254,13 +254,19 @@
             @for (address of addresses?.shipping; track $index) {
                 <mat-expansion-panel #addressPanel>
                     <mat-expansion-panel-header>
-                        <mat-panel-title>
-                            {{ address.country | getCountryByCode }}
-                        </mat-panel-title>
-                        <mat-panel-title>City: {{ address.city }}</mat-panel-title>
-                        <mat-panel-description>
-                            Street: {{ address.streetName }} / {{ address.postalCode }}
-                        </mat-panel-description>
+                        <div class="address-wrap">
+                            <mat-panel-title>
+                                <span>{{ address.country | getCountryByCode }}</span>
+                            </mat-panel-title>
+
+                            <mat-panel-title>
+                                <span>{{ address.city }}</span>
+                            </mat-panel-title>
+
+                            <mat-panel-description>
+                                <span>{{ address.streetName }} / {{ address.postalCode }}</span>
+                            </mat-panel-description>
+                        </div>
                     </mat-expansion-panel-header>
 
                     <app-address-form #addressForm [customerAddress]="address"></app-address-form>
@@ -360,13 +366,19 @@
             @for (address of addresses?.billing; track $index) {
                 <mat-expansion-panel #addressPanel>
                     <mat-expansion-panel-header>
-                        <mat-panel-title>
-                            {{ address.country | getCountryByCode }}
-                        </mat-panel-title>
-                        <mat-panel-title>City: {{ address.city }}</mat-panel-title>
-                        <mat-panel-description>
-                            Street: {{ address.streetName }} / {{ address.postalCode }}
-                        </mat-panel-description>
+                        <div class="address-wrap">
+                            <mat-panel-title>
+                                <span>{{ address.country | getCountryByCode }}</span>
+                            </mat-panel-title>
+
+                            <mat-panel-title>
+                                <span>{{ address.city }}</span>
+                            </mat-panel-title>
+
+                            <mat-panel-description>
+                                <span>{{ address.streetName }} / {{ address.postalCode }}</span>
+                            </mat-panel-description>
+                        </div>
                     </mat-expansion-panel-header>
 
                     <app-address-form #addressForm [customerAddress]="address"></app-address-form>
