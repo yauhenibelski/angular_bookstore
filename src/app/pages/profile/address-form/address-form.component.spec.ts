@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { AddressFormComponent } from './address-form.component';
 
 describe('AddressFormComponent', () => {
@@ -8,7 +8,7 @@ describe('AddressFormComponent', () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            imports: [AddressFormComponent],
+            imports: [NoopAnimationsModule, AddressFormComponent],
         }).compileComponents();
 
         fixture = TestBed.createComponent(AddressFormComponent);
