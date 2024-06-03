@@ -8,7 +8,7 @@
 
     <mat-autocomplete #auto="matAutocomplete">
         @for (book of books$ | async; track book) {
-            <mat-option [value]="book.name.en" [routerLink]="['/detailed', book.id]">
+            <mat-option [value]="book.name.en" [routerLink]="['/detailed', book.key]">
                 <div class="book-wrap">
                     <img alt="" [src]="book.masterVariant.images.at(0)?.url" />
                     {{ book.name.en }}

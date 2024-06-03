@@ -50,7 +50,7 @@ export const routes: Routes = [
         component: CartPageComponent,
     },
     {
-        path: 'detailed/:id',
+        path: 'detailed/:key',
         component: CardDetailedComponent,
     },
     {

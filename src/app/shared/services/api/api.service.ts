@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpContext } from '@angular/common/http';
 import { ProjectSettings } from 'src/app/shared/services/project-settings/project-settings.interface';
 import { Customer } from 'src/app/interfaces/customer-response-dto';
 import { Observable, map, tap } from 'rxjs';
@@ -12,6 +12,7 @@ import { CartService } from '../cart/cart.service';
 import { Cart, CartResponseDto } from '../cart/cart.interface';
 import { CustomerService } from '../customer/customer.service';
 import { Action } from './action.type';
+import { IS_FILTER_DISABLED } from './http-context-token';
 
 @Injectable({
     providedIn: 'root',
@@ -124,27 +125,22 @@ export class ApiService {
         return this.httpClient.get<Category>(`/categories/key=${key}`);
     }
 
-    getProductsByCategoryID(id: string): Observable<Product[]> {
-        return this.httpClient
-            .get<ProductsDto>(
-                `/product-projections/search?filter=${encodeURIComponent(`categories.id:"${id}"`)}`,
-            )
-            .pipe(map(({ results }) => results));
-    }
-
     getProducts(): Observable<Product[]> {
         return this.httpClient
-            .get<ProductsDto>('/product-projections/search')
+            .get<ProductsDto>(`/product-projections/search`)
             .pipe(map(({ results }) => results));
     }
 
-    getProductByID(id: string): Observable<ProductDto> {
-        return this.httpClient.get<ProductDto>(`/products/${id}`);
+    getProductByKey(key: string): Observable<ProductDto> {
+        return this.httpClient.get<ProductDto>(`/products/key=${key}`);
     }
 
     searchProduct(text: string): Observable<ProductsDto> {
         return this.httpClient.get<ProductsDto>(
             `/product-projections/search?text.en=*${text}*&fuzzy=true&fuzzyLevel=2`,
+            {
+                context: new HttpContext().set(IS_FILTER_DISABLED, true),
+            },
         );
     }
 }

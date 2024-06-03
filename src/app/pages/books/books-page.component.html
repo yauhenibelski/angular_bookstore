@@ -1,6 +1,54 @@
-<app-search></app-search>
+<mat-drawer-container autosize class="example-container">
+    <div class="tune-wrap">
+        <app-nav-link></app-nav-link>
 
-<div class="books-wrap">
-    <app-category></app-category>
-    <router-outlet></router-outlet>
-</div>
+        <button mat-icon-button (click)="drawer.toggle()">
+            <mat-icon>tune</mat-icon>
+        </button>
+    </div>
+
+    <div class="books-wrap">
+        <app-category></app-category>
+        <router-outlet></router-outlet>
+    </div>
+
+    <mat-drawer #drawer mode="side" position="end" class="example-sidenav">
+        <app-search></app-search>
+        <form [formGroup]="form">
+            <mat-form-field>
+                <mat-label>Sort books by:</mat-label>
+                <mat-select formControlName="sort" [(value)]="sortParams.sort">
+                    <mat-option />
+
+                    <mat-option value="name.en asc">name asc</mat-option>
+
+                    <mat-option value="name.en desc">name desc</mat-option>
+
+                    <mat-option value="price desc">price desc</mat-option>
+
+                    <mat-option value="price asc">price asc</mat-option>
+                </mat-select>
+            </mat-form-field>
+
+            <div class="range-wrap">
+                <h4>Price range filter</h4>
+                <mat-slider min="100" max="5000" formGroupName="priceRange">
+                    <input matSliderStartThumb formControlName="min" />
+                    <input matSliderEndThumb formControlName="max" />
+                </mat-slider>
+                <div class="price-wrap">
+                    <span>
+                        min {{ rangeValue.min / 100 | currency: 'EUR' : 'symbol-narrow' : '1.0-2' }}
+                    </span>
+                    <span>
+                        max {{ rangeValue.max / 100 | currency: 'EUR' : 'symbol-narrow' : '1.0-2' }}
+                    </span>
+                </div>
+            </div>
+
+            <button mat-raised-button (click)="setSortValue()">Apply</button>
+
+            <button mat-raised-button (click)="resetSortValue()">Clear</button>
+        </form>
+    </mat-drawer>
+</mat-drawer-container>

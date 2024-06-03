@@ -1,7 +1,7 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { NavigationEnd, Router, RouterLink } from '@angular/router';
-import { map, filter } from 'rxjs';
+import { map, filter, startWith } from 'rxjs';
 
 @Component({
     selector: 'app-nav-link',
@@ -13,7 +13,12 @@ import { map, filter } from 'rxjs';
 })
 export class NavLinkComponent {
     readonly links$ = this.router.events.pipe(
+        startWith(this.router.url),
         map(event => {
+            if (typeof event === 'string') {
+                return event.split('/').filter(Boolean);
+            }
+
             if (event instanceof NavigationEnd) {
                 return event.urlAfterRedirects.split('/').filter(Boolean);
             }

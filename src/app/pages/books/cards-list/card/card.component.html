@@ -1,4 +1,4 @@
-<mat-card [routerLink]="['/detailed', book.id]">
+<mat-card [routerLink]="['/detailed', book.key]">
     @if (book.masterVariant.prices[0].discounted) {
         <div class="discount">%</div>
     }
