@@ -5,6 +5,7 @@
         [formControl]="control"
         [matAutocomplete]="auto"
     />
+    <mat-icon class="icon">search</mat-icon>
 
     <mat-autocomplete #auto="matAutocomplete">
         @for (book of books$ | async; track book) {

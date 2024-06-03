@@ -23,6 +23,7 @@ mat-drawer {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 10px;
 }
 
 form {
@@ -51,4 +52,22 @@ form {
     display: flex;
     justify-content: space-around;
     width: 100%;
+}
+
+.close {
+    display: flex;
+    justify-content: end;
+}
+
+@media (max-width: 617px) {
+    .tune-wrap {
+        padding: 10px;
+        flex-direction: column;
+    }
+    app-search {
+        order: 0;
+    }
+    app-nav-link {
+        order: 1;
+    }
 }
