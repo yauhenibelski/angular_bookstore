@@ -34,6 +34,7 @@ form {
     position: absolute;
     padding-right: 10px;
 }
+
 mat-option {
     .book-wrap {
         display: flex;
@@ -51,8 +52,14 @@ mat-option {
 @media (max-width: 617px) {
     form {
         justify-content: center;
+
+        input {
+            max-width: none;
+            width: 100%;
+        }
     }
+
     .icon {
-        right: 10%;
+        right: 10px;
     }
 }

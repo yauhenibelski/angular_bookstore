@@ -34,6 +34,12 @@ form {
     height: max-content;
 }
 
+.toggle-button-wrap {
+    .toggle-category-btn {
+        display: none;
+    }
+}
+
 .range-wrap {
     display: flex;
     flex-direction: column;
@@ -64,10 +70,22 @@ form {
         padding: 10px;
         flex-direction: column;
     }
+
     app-search {
         order: 0;
     }
+
     app-nav-link {
         order: 1;
+    }
+
+    .toggle-button-wrap {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+
+        .toggle-category-btn {
+            display: block;
+        }
     }
 }

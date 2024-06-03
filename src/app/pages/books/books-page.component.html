@@ -2,10 +2,16 @@
     <div class="tune-wrap">
         <app-nav-link></app-nav-link>
         <app-search></app-search>
-        <div>
-            <button mat-icon-button>
-                <mat-icon>list</mat-icon>
+
+        <div class="toggle-button-wrap">
+            <button
+                mat-icon-button
+                class="toggle-category-btn"
+                [mat-menu-trigger-for]="category.matMenu"
+            >
+                <mat-icon>menu_book</mat-icon>
             </button>
+
             <button mat-icon-button (click)="drawer.toggle()">
                 <mat-icon>tune</mat-icon>
             </button>
@@ -13,7 +19,7 @@
     </div>
 
     <div class="books-wrap">
-        <app-category></app-category>
+        <app-category #category></app-category>
         <router-outlet></router-outlet>
     </div>
 
@@ -47,17 +53,27 @@
                 </mat-slider>
                 <div class="price-wrap">
                     <span>
-                        min {{ rangeValue.min / 100 | currency: 'EUR' : 'symbol-narrow' : '1.0-2' }}
+                        min
+                        {{
+                            rangeValue.min
+                                | centsToEuros
+                                | currency: 'EUR' : 'symbol-narrow' : '1.0-2'
+                        }}
                     </span>
                     <span>
-                        max {{ rangeValue.max / 100 | currency: 'EUR' : 'symbol-narrow' : '1.0-2' }}
+                        max
+                        {{
+                            rangeValue.max
+                                | centsToEuros
+                                | currency: 'EUR' : 'symbol-narrow' : '1.0-2'
+                        }}
                     </span>
                 </div>
             </div>
 
             <button mat-raised-button (click)="setSortValue(); drawer.close()">Apply</button>
 
-            <button mat-raised-button (click)="resetSortValue()">Clear</button>
+            <button mat-raised-button (click)="resetSortValue(); drawer.close()">Clear</button>
         </form>
     </mat-drawer>
 </mat-drawer-container>

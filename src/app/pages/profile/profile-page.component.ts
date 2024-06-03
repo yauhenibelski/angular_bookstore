@@ -21,7 +21,7 @@ import { Action } from 'src/app/shared/services/api/action.type';
 import { formatDateOfBirth } from 'src/app/shared/utils/format-date-of-birth';
 import { Address, Addresses } from 'src/app/interfaces/customer-response-dto';
 import { passwordValidators } from 'src/app/shared/validators/password';
-import { switchMap } from 'rxjs';
+import { filter, switchMap, tap } from 'rxjs';
 import { AuthService } from 'src/app/shared/services/auth/auth.service';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -63,7 +63,16 @@ export class ProfilePageComponent {
     private readonly checkUniqueEmail = inject(CheckUniqueEmail);
     private readonly snackBar = inject(MatSnackBar);
 
-    readonly customer$ = this.customerService.customer$;
+    readonly customer$ = this.customerService.customer$.pipe(
+        filter(Boolean),
+        tap(customer => {
+            const { firstName, lastName, dateOfBirth } = this.controls;
+
+            firstName.setValue(customer.firstName);
+            lastName.setValue(customer.lastName);
+            dateOfBirth.setValue(customer.dateOfBirth);
+        }),
+    );
 
     isNewPasswordHide = true;
     isCurrentPasswordHide = true;
@@ -197,9 +206,14 @@ export class ProfilePageComponent {
             .changePassword(currentPassword, newPassword)
             .pipe(
                 untilDestroyed(this),
-                switchMap(({ email }) =>
-                    this.authService.getPasswordFlowToken({ email, password: newPassword }),
-                ),
+                switchMap(customer => {
+                    this.customerService.setCustomer(customer);
+
+                    return this.authService.getPasswordFlowToken({
+                        email: customer.email,
+                        password: newPassword,
+                    });
+                }),
             )
             .subscribe({
                 next: () => {

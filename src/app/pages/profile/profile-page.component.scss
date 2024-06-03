@@ -30,3 +30,17 @@ mat-form-field {
     width: 100%;
     max-width: 400px;
 }
+
+.address-wrap {
+    display: flex;
+    width: 100%;
+
+    mat-panel-title,
+    mat-panel-description {
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
+        word-break: break-all;
+        overflow: hidden;
+    }
+}

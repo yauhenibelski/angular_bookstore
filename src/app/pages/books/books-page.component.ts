@@ -11,6 +11,8 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CurrencyPipe } from '@angular/common';
 import { ProductStoreService } from 'src/app/shared/services/product-store/product-store.service';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { CentsToEurosPipe } from 'src/app/shared/pipes/cents-to-euros/cents-to-euros.pipe';
+import { MatMenuModule } from '@angular/material/menu';
 import { NavLinkComponent } from './nav-link/nav-link.component';
 import { SearchComponent } from './search/search.component';
 import { CategoryComponent } from './category/category.component';
@@ -35,6 +37,8 @@ import { CategoryComponent } from './category/category.component';
         MatSelectModule,
         MatFormFieldModule,
         MatSliderModule,
+        CentsToEurosPipe,
+        MatMenuModule,
     ],
 })
 export class BooksPageComponent implements OnInit {
