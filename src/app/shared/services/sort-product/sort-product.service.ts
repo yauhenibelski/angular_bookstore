@@ -10,6 +10,8 @@ export class SortProductService {
         max: 4000,
     };
 
+    offset = 0;
+
     private sortParams: SortProduct = {};
 
     priceRange = this.minMaxPriceRange;
