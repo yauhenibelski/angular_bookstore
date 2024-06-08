@@ -1,0 +1,73 @@
+:host {
+    display: flex;
+    justify-content: space-between;
+    gap: 5px;
+    height: 100%;
+    position: relative;
+
+    &:hover {
+        transform: scale(1.02);
+        box-shadow: 1px 1px 5px rgb(163, 162, 162);
+        cursor: pointer;
+    }
+}
+mat-card {
+    display: flex;
+    width: 100%;
+}
+
+img {
+    height: 250px;
+    width: 100%;
+    transform: scale(0.8);
+}
+
+h3 {
+    margin: 0;
+}
+
+.header {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-betweenнять оставшееся пространство;
+    padding: 10px;
+}
+
+.author {
+    margin: 0;
+    color: rgb(158, 158, 158);
+}
+.name {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+.price {
+    color: rgb(191, 160, 20);
+}
+.discounted {
+    display: flex;
+    gap: 10px;
+}
+.old-price-discounted {
+    text-decoration: line-through;
+    color: rgba(125, 123, 123, 0.716);
+}
+.price-discounted {
+    color: rgb(114, 194, 17);
+}
+.discount {
+    position: absolute;
+    color: rgb(237, 240, 41);
+    z-index: 1;
+    font-size: 23px;
+    top: 10px;
+    left: 10px;
+    background-color: rgb(72, 134, 72);
+    width: 25px;
+    height: 30px;
+    padding-top: 5px;
+    text-align: center;
+    clip-path: polygon(100% 65%, 50% 100%, 0 65%, 0 0, 100% 0);
+}

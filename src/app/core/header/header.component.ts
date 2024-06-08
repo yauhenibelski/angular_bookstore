@@ -5,8 +5,9 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from 'src/app/shared/services/auth/auth.service';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
-
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { LoaderService } from 'src/app/shared/services/loader/loader.service';
 
 @UntilDestroy()
 @Component({
@@ -20,6 +21,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
         MatIconModule,
         MatMenuModule,
         MatButtonModule,
+        MatProgressBarModule,
     ],
     templateUrl: './header.component.html',
     styleUrl: './header.component.scss',
@@ -27,6 +29,8 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 })
 export class HeaderComponent {
     private readonly authService = inject(AuthService);
+    readonly isLoading$ = inject(LoaderService).isLoading$;
+
     readonly isLogined$ = this.authService.isLogined$;
 
     logOut(): void {

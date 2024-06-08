@@ -1,5 +1,11 @@
 import { APP_INITIALIZER, ApplicationConfig } from '@angular/core';
-import { PreloadAllModules, provideRouter, withPreloading } from '@angular/router';
+import {
+    PreloadAllModules,
+    provideRouter,
+    withComponentInputBinding,
+    withHashLocation,
+    withPreloading,
+} from '@angular/router';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { routes } from './router/app.routes';
@@ -10,13 +16,20 @@ import { AuthService } from './shared/services/auth/auth.service';
 import { updateTokenInterceptor } from './core/interceptors/update-token/update-token.interceptor';
 import { setUrlInterceptor } from './core/interceptors/set-url/set-url.interceptor';
 import { handleInvalidRefreshTokenInterceptor } from './core/interceptors/handle-invalid-refresh-token/handle-invalid-refresh-token.interceptor';
+import { setFilterValueInterceptor } from './core/interceptors/set-filter-value/set-filter-value.interceptor';
 
 export const appConfig: ApplicationConfig = {
     providers: [
-        provideRouter(routes, withPreloading(PreloadAllModules)),
+        provideRouter(
+            routes,
+            withPreloading(PreloadAllModules),
+            withComponentInputBinding(),
+            withHashLocation(),
+        ),
         provideAnimationsAsync(),
         provideHttpClient(
             withInterceptors([
+                setFilterValueInterceptor,
                 setUrlInterceptor,
                 updateTokenInterceptor,
                 handleInvalidRefreshTokenInterceptor,

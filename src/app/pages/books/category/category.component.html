@@ -1,0 +1,24 @@
+@if (categoryList$ | async; as categoryList) {
+    @for (category of categoryList; track $index) {
+        <mat-nav-list class="buttons-wrap">
+            <mat-list-item class="category" (click)="navigate(category.key, !category['parent'])">
+                {{ category.name['en-US'] }}
+            </mat-list-item>
+        </mat-nav-list>
+    }
+
+    <div class="buttons-wrap-menu">
+        <mat-menu #menu="matMenu">
+            @for (category of categoryList; track $index) {
+                <mat-nav-list>
+                    <mat-list-item
+                        class="category"
+                        (click)="navigate(category.key, !category['parent'])"
+                    >
+                        {{ category.name['en-US'] }}
+                    </mat-list-item>
+                </mat-nav-list>
+            }
+        </mat-menu>
+    </div>
+}

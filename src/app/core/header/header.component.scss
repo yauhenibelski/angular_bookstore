@@ -1,4 +1,22 @@
 :host {
+    display: block;
+}
+
+mat-progress-bar {
+    --mdc-linear-progress-track-color: transparent;
+    --mdc-linear-progress-active-indicator-color: #3f51b5c9;
+
+    position: sticky;
+    top: 0;
+    right: 0;
+    opacity: 0;
+    z-index: 10;
+}
+.mat-progress-bar-active {
+    opacity: 1;
+}
+
+header {
     border-radius: 40px 40px 0 0;
     display: flex;
     justify-content: space-between;
@@ -22,6 +40,11 @@ a {
     margin-right: 20px;
 }
 
+.main {
+    display: flex;
+    align-items: center;
+}
+
 .buttons-wrap-menu {
     display: none;
 }
@@ -30,7 +53,7 @@ a {
     display: none;
 }
 
-@media (max-width: 568px) {
+@media (max-width: 617px) {
     .buttons-wrap-menu {
         display: block;
         margin-right: 20px;

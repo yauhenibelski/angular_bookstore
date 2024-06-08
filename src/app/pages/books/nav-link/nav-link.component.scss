@@ -1,0 +1,15 @@
+:host {
+    display: block;
+    height: 20px;
+    width: 100%;
+}
+
+span {
+    margin: 3px;
+    color: #63636380;
+    cursor: pointer;
+
+    &:hover {
+        color: #636363;
+    }
+}

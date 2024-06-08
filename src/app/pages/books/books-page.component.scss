@@ -1,5 +1,91 @@
 :host {
+    display: block;
+}
+
+.books-wrap {
+    display: flex;
+}
+
+mat-drawer-container {
+    background-color: transparent;
+    min-height: 500px;
+}
+
+mat-drawer {
+    max-width: 400px;
+    width: 100%;
+    padding: 10px;
+    background-color: #ebebeb;
+    height: 100%;
+}
+
+.tune-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+form {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 30px;
+    margin-top: 30px;
+    height: max-content;
+}
+
+.toggle-button-wrap {
+    .toggle-category-btn {
+        display: none;
+    }
+}
+
+.range-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    mat-slider {
+        width: 85%;
+    }
+
+    h4 {
+        text-align: center;
+    }
+}
+
+.price-wrap {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+}
+
+.close {
+    display: flex;
+    justify-content: end;
+}
+
+@media (max-width: 617px) {
+    .tune-wrap {
+        padding: 10px;
+        flex-direction: column;
+    }
+
+    app-search {
+        order: 0;
+    }
+
+    app-nav-link {
+        order: 1;
+    }
+
+    .toggle-button-wrap {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+
+        .toggle-category-btn {
+            display: block;
+        }
+    }
 }

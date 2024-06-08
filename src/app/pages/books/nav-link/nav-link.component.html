@@ -1,0 +1,3 @@
+@for (item of links$ | async; track item) {
+    <span (click)="navigate(item)">/{{ item }}</span>
+}

@@ -33,16 +33,16 @@ export class AuthService {
         refresh: null,
     };
 
-    signUpCustomer(customer: SignupCustomer): Observable<CustomerResponseDto> {
+    signUpCustomer(signupCustomer: SignupCustomer): Observable<CustomerResponseDto> {
         return this.httpClient
-            .post<CustomerResponseDto>('/me/signup', customer, {
+            .post<CustomerResponseDto>('/me/signup', signupCustomer, {
                 headers: {
                     'Content-Type': 'text/plain',
                 },
             })
             .pipe(
-                tap(({ customer }) => {
-                    this.customerService.setCustomer(customer);
+                tap(({ customer: newCustomer }) => {
+                    this.customerService.setCustomer(newCustomer);
                 }),
             );
     }
@@ -73,8 +73,8 @@ export class AuthService {
                 },
             )
             .pipe(
-                tap(({ customer }) => {
-                    this.customerService.setCustomer(customer);
+                tap(({ customer: loggedInCustomer }) => {
+                    this.customerService.setCustomer(loggedInCustomer);
                 }),
             );
     }
@@ -129,8 +129,11 @@ export class AuthService {
                 },
             )
             .pipe(
-                tap(passwordFlowToken => {
-                    setAccessTokenInCookie(passwordFlowToken, false);
+                tap(response => {
+                    this.token.access = response.access_token;
+                    this.token.refresh = response.refresh_token;
+
+                    setAccessTokenInCookie(response, false);
                 }),
             );
     }

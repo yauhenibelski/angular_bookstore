@@ -1,0 +1,57 @@
+:host {
+    display: flex;
+    gap: 15px;
+    margin: 10px;
+}
+
+.all-img {
+    width: 50%;
+}
+
+gallery {
+    background-color: rgba(255, 255, 255, 0);
+}
+
+.main-detailed {
+    width: 100%;
+}
+
+.name {
+    font-size: 27px;
+}
+
+.author {
+    color: gray;
+}
+
+.description {
+    font-size: 20px;
+}
+
+.price {
+    font-size: 20px;
+    color: rgb(191, 160, 20);
+}
+.discounted {
+    display: flex;
+    gap: 10px;
+}
+.old-price-discounted {
+    text-decoration: line-through;
+    font-size: 18px;
+    color: rgba(125, 123, 123, 0.716);
+}
+.price-discounted {
+    font-size: 20px;
+    color: rgb(114, 194, 17);
+}
+@media (max-width: 568px) {
+    :host {
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    .all-img {
+        width: 95%;
+    }
+}

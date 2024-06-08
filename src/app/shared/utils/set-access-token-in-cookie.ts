@@ -1,4 +1,4 @@
-import * as cookieHandler from 'cookie';
+import { serialize } from 'cookie';
 import { AccessTokenResponseDto } from 'src/app/interfaces/access-token';
 import {
     ANONYMOUS_TOKEN_SHORT_NAME,
@@ -17,11 +17,11 @@ export const setAccessTokenInCookie = (
         : response.access_token;
 
     const cookies = [
-        cookieHandler.serialize(accessTokenName, token, {
+        serialize(accessTokenName, token, {
             secure: true,
             maxAge: response.expires_in,
         }),
-        cookieHandler.serialize(refreshTokenName, response.refresh_token, {
+        serialize(refreshTokenName, response.refresh_token, {
             secure: true,
             maxAge: response.expires_in + TEN_HOURS,
         }),

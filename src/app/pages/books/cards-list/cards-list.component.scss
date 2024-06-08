@@ -1,0 +1,13 @@
+:host {
+    flex-grow: 1;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 200px));
+    grid-auto-rows: min-content;
+    padding: 10px;
+    justify-content: center;
+    gap: 15px;
+}
+.empty {
+    width: 100%;
+    color: gray;
+}

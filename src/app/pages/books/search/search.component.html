@@ -1,0 +1,20 @@
+<form>
+    <input
+        placeholder="Search by word"
+        class="example-input"
+        [formControl]="control"
+        [matAutocomplete]="auto"
+    />
+    <mat-icon class="icon">search</mat-icon>
+
+    <mat-autocomplete #auto="matAutocomplete">
+        @for (book of books$ | async; track book) {
+            <mat-option [value]="book.name.en" [routerLink]="['/detailed', book.key]">
+                <div class="book-wrap">
+                    <img alt="" [src]="book.masterVariant.images.at(0)?.url" />
+                    {{ book.name.en }}
+                </div>
+            </mat-option>
+        }
+    </mat-autocomplete>
+</form>
