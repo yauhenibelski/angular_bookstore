@@ -4,7 +4,7 @@ import { MatCardModule } from '@angular/material/card';
 import { CurrencyPipe } from '@angular/common';
 import { Product } from 'src/app/interfaces/product';
 import { MatIconModule } from '@angular/material/icon';
-import { RouterLink } from '@angular/router';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 import { CentsToEurosPipe } from 'src/app/shared/pipes/cents-to-euros/cents-to-euros.pipe';
 
 @Component({
@@ -20,6 +20,7 @@ import { CentsToEurosPipe } from 'src/app/shared/pipes/cents-to-euros/cents-to-e
         MatIconModule,
         RouterLink,
         CentsToEurosPipe,
+        RouterLinkActive,
     ],
 })
 export class CardComponent {
