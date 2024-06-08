@@ -1,41 +1,50 @@
 <mat-card [routerLink]="['/detailed', book.key]">
-    @if (book.masterVariant.prices.at(0)?.discounted) {
-        <div class="discount">%</div>
-    }
-    <img
-        mat-card-image
-        [alt]="book.masterVariant.images.at(0)?.label"
-        [src]="book.masterVariant.images.at(0)?.url"
-    />
-    <div class="header">
+    <div>
         @if (book.masterVariant.prices.at(0)?.discounted) {
-            <div class="discounted">
-                <p class="price-discounted">
-                    {{
-                        book.masterVariant.prices.at(0)?.discounted?.value?.centAmount
-                            | centsToEuros
-                            | currency: 'EUR'
-                    }}
-                </p>
-                <p class="old-price-discounted">
+            <div class="discount">%</div>
+        }
+        <img
+            mat-card-image
+            [alt]="book.masterVariant.images.at(0)?.label"
+            [src]="book.masterVariant.images.at(0)?.url"
+        />
+        <div class="header">
+            @if (book.masterVariant.prices.at(0)?.discounted) {
+                <div class="discounted">
+                    <p class="price-discounted">
+                        {{
+                            book.masterVariant.prices.at(0)?.discounted?.value?.centAmount
+                                | centsToEuros
+                                | currency: 'EUR'
+                        }}
+                    </p>
+                    <p class="old-price-discounted">
+                        {{
+                            book.masterVariant.prices.at(0)?.value?.centAmount
+                                | centsToEuros
+                                | currency: 'EUR'
+                        }}
+                    </p>
+                </div>
+            } @else {
+                <p class="price">
                     {{
                         book.masterVariant.prices.at(0)?.value?.centAmount
                             | centsToEuros
                             | currency: 'EUR'
                     }}
                 </p>
-            </div>
-        } @else {
-            <p class="price">
-                {{
-                    book.masterVariant.prices.at(0)?.value?.centAmount
-                        | centsToEuros
-                        | currency: 'EUR'
-                }}
-            </p>
-        }
+            }
 
-        <p class="author">{{ book.masterVariant.attributes.at(0)?.value }}</p>
-        <h3 class="name">{{ book.name.en }}</h3>
+            <p class="author">{{ book.masterVariant.attributes.at(0)?.value }}</p>
+            <h3 class="name">{{ book.name.en }}</h3>
+        </div>
+    </div>
+    <!-- modify the display after adding a product to the cart -->
+    <div class="btn-add">
+        <button mat-menu-item routerLink="/cart" class="btn-icon">
+            <mat-icon class="icon">add</mat-icon>
+            <mat-icon class="icon">shopping_cart</mat-icon>
+        </button>
     </div>
 </mat-card>
