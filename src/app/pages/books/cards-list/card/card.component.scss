@@ -78,15 +78,28 @@ h3 {
     display: flex;
     justify-content: end;
     align-items: center;
-    padding: 5px;
+    padding: 10px;
+    cursor: pointer;
 }
-.btn-icon {
+.btn-activ {
+    font-size: 15px;
+    padding: 5px;
+    box-shadow: 1px 1px 5px rgb(163, 162, 162);
+    transition: 0.5s;
+    background-color: rgba(191, 160, 20, 0.244);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    &:hover {
+        background-color: rgba(191, 160, 20, 0.534);
+    }
+}
+.btn-disable {
     background-color: transparent;
+    color: gray;
     border: none;
     border-radius: 4px;
     padding: 5px;
-    &:hover {
-        box-shadow: 1px 1px 5px rgb(163, 162, 162);
-        cursor: pointer;
-    }
+    font-size: 15px;
+    cursor: pointer;
 }

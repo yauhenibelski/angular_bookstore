@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Subscription } from 'rxjs';
+import { BehaviorSubject, Observable, Subscription, filter, map } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Cart } from './cart.interface';
 import { Action } from './actions';
@@ -28,8 +28,13 @@ export class CartService {
         this.cartSubject.next(cart);
     }
 
-    hasProductInCart(productId: string): boolean {
-        return Boolean(this.cart?.lineItems.find(product => product.id === productId));
+    hasProductInCart(productId: string): Observable<boolean> {
+        return this.cartSubject.asObservable().pipe(
+            filter(Boolean),
+            map(({ lineItems }) => {
+                return Boolean(lineItems.find(product => product.productId === productId));
+            }),
+        );
     }
 
     private addToCartSubscription: Subscription | null = null;
