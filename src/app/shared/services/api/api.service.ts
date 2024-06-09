@@ -97,7 +97,7 @@ export class ApiService {
             })
             .pipe(
                 tap(cartRes => {
-                    const cart = cartRes.results.reverse()[0] ?? null;
+                    const cart = cartRes.results[0] ?? null;
 
                     this.cartService.setCart(cart);
                 }),

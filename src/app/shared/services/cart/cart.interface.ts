@@ -1,3 +1,5 @@
+import { Product } from 'src/app/interfaces/product';
+
 interface TotalPrice {
     type: string;
     currencyCode: string;
@@ -11,7 +13,7 @@ export interface Cart {
     version: number;
     createdAt: string;
     lastModifiedAt: string;
-    lineItems: unknown[];
+    lineItems: Product[];
     cartState: string;
     totalPrice: TotalPrice;
     shippingMode: string;
