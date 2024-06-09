@@ -46,7 +46,7 @@
             mat-menu-item
             routerLink="/cart"
             class="btn-icon"
-            (click)="cartService.addToCart(book.id)"
+            (click)="cartService.updateCartProduct('addLineItem', book.id)"
         >
             <mat-icon class="icon">add</mat-icon>
             <mat-icon class="icon">shopping_cart</mat-icon>
