@@ -42,7 +42,12 @@
     </div>
     <!-- modify the display after adding a product to the cart -->
     <div class="btn-add">
-        <button mat-menu-item routerLink="/cart" class="btn-icon">
+        <button
+            mat-menu-item
+            routerLink="/cart"
+            class="btn-icon"
+            (click)="cartService.addToCart(book.id)"
+        >
             <mat-icon class="icon">add</mat-icon>
             <mat-icon class="icon">shopping_cart</mat-icon>
         </button>
