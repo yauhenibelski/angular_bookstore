@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Cart } from './cart.interface';
+import { Action } from './actions';
 
 @Injectable({
     providedIn: 'root',
@@ -33,16 +34,20 @@ export class CartService {
 
     private addToCartSubscription: Subscription | null = null;
 
-    addToCart(productId: string): void {
+    updateCartProduct(action: Action, productId: string): void {
         if (this.addToCartSubscription) {
             this.addToCartSubscription.unsubscribe();
         }
 
-        const payload = {
-            action: 'addLineItem',
-            productId,
-            quantity: 1,
-        };
+        const payload: Record<string, unknown> = { action };
+
+        if (action === 'addLineItem') {
+            payload['productId'] = productId;
+        }
+
+        if (action === 'removeLineItem') {
+            payload['lineItemId'] = productId;
+        }
 
         this.addToCartSubscription = this.httpClient
             .post<Cart>(`/carts/${this.cartId}`, {
@@ -50,7 +55,7 @@ export class CartService {
                 actions: [payload],
             })
             .subscribe({
-                next: cart => this.cartSubject.next(cart),
+                next: cart => this.setCart(cart),
                 complete: () => {
                     this.addToCartSubscription = null;
                 },
