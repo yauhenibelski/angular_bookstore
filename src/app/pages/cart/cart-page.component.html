@@ -3,26 +3,29 @@
         <div class="book-details">
             <img
                 mat-card-image
-                [alt]="product.masterVariant.images.at(0)?.label"
-                [src]="product.masterVariant.images.at(0)?.url"
+                [alt]="product.variant?.images?.at(0)?.label"
+                [src]="product.variant?.images?.at(0)?.url"
             />
+
             <div class="description">
                 <p class="name">{{ product.name.en }}</p>
-                <p class="author">{{ product.masterVariant.attributes.at(0)?.value }}</p>
+                <p class="author">{{ product.variant?.attributes?.at(0)?.value }}</p>
             </div>
+
             <div class="prices">
-                @if (product.masterVariant.prices.at(0)?.discounted) {
+                @if (product.variant?.prices?.at(0)?.discounted) {
                     <div class="discounted">
                         <p class="price-discounted">
                             {{
-                                product.masterVariant.prices.at(0)?.discounted?.value?.centAmount
+                                product.variant?.prices?.at(0)?.discounted?.value?.centAmount
                                     | centsToEuros
                                     | currency: 'EUR'
                             }}
                         </p>
+
                         <p class="old-price-discounted">
                             {{
-                                product.masterVariant.prices.at(0)?.value?.centAmount
+                                product.variant?.prices?.at(0)?.value?.centAmount
                                     | centsToEuros
                                     | currency: 'EUR'
                             }}
@@ -31,7 +34,7 @@
                 } @else {
                     <p class="price">
                         {{
-                            product.masterVariant.prices.at(0)?.value?.centAmount
+                            product.variant?.prices?.at(0)?.value?.centAmount
                                 | centsToEuros
                                 | currency: 'EUR'
                         }}
@@ -39,6 +42,7 @@
                 }
             </div>
         </div>
+
         <div>
             <button mat-menu-item class="btn-delete">
                 <mat-icon class="icon">delete</mat-icon>
@@ -57,6 +61,7 @@
         <input class="input-promo-code" />
         <button mat-menu-item class="btn-promo-code">Apply</button>
     </div>
+
     <div class="cost">
         <div>The total cost</div>
         <div class="total">

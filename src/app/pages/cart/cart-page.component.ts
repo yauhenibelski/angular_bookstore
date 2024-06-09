@@ -2,7 +2,7 @@ import { AsyncPipe, CurrencyPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CartService } from 'src/app/shared/services/cart/cart.service';
 import { MatIconModule } from '@angular/material/icon';
-import { filter, map, tap } from 'rxjs';
+import { filter, map } from 'rxjs';
 import { MatCardModule } from '@angular/material/card';
 import { RouterLink } from '@angular/router';
 import { CentsToEurosPipe } from '../../shared/pipes/cents-to-euros/cents-to-euros.pipe';
@@ -17,13 +17,15 @@ import { CentsToEurosPipe } from '../../shared/pipes/cents-to-euros/cents-to-eur
 })
 export class CartPageComponent {
     totalCount = 0;
-    readonly productsInCart$ = this.cartServis.cart$.pipe(
+
+    readonly productsInCart$ = this.cartService.cart$.pipe(
         filter(Boolean),
-        tap(cart => {
+        map(cart => {
             this.totalCount = cart.totalPrice.centAmount;
+
+            return cart.lineItems;
         }),
-        map(cart => cart.lineItems),
     );
 
-    constructor(readonly cartServis: CartService) {}
+    constructor(readonly cartService: CartService) {}
 }

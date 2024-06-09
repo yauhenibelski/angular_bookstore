@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatIconModule } from '@angular/material/icon';
@@ -41,24 +41,7 @@ import { CategoryComponent } from './category/category.component';
         MatMenuModule,
     ],
 })
-export class BooksPageComponent implements OnInit {
-    readonly sortProductService = inject(SortProductService);
-    private readonly productStoreService = inject(ProductStoreService);
-
-    get sortParams() {
-        return this.sortProductService.params;
-    }
-
-    rangeValue = this.sortProductService.priceRange;
-
-    ngOnInit(): void {
-        this.form.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
-            const { priceRange } = this.form.getRawValue();
-
-            this.rangeValue = priceRange;
-        });
-    }
-
+export class BooksPageComponent {
     readonly form = new FormGroup({
         sort: new FormControl(this.sortProductService.params.sort, { nonNullable: true }),
         priceRange: new FormGroup({
@@ -66,6 +49,23 @@ export class BooksPageComponent implements OnInit {
             max: new FormControl(this.sortProductService.priceRange.max, { nonNullable: true }),
         }),
     });
+
+    rangeValue = this.sortProductService.priceRange;
+
+    constructor(
+        readonly sortProductService: SortProductService,
+        private readonly productStoreService: ProductStoreService,
+    ) {
+        this.form.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
+            const { priceRange } = this.form.getRawValue();
+
+            this.rangeValue = priceRange;
+        });
+    }
+
+    get sortParams() {
+        return this.sortProductService.params;
+    }
 
     setSortValue(): void {
         const {
