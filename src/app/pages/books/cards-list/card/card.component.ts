@@ -1,10 +1,10 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { CurrencyPipe } from '@angular/common';
+import { AsyncPipe, CurrencyPipe } from '@angular/common';
 import { Product } from 'src/app/interfaces/product';
 import { MatIconModule } from '@angular/material/icon';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { CentsToEurosPipe } from 'src/app/shared/pipes/cents-to-euros/cents-to-euros.pipe';
 import { CartService } from 'src/app/shared/services/cart/cart.service';
 
@@ -21,7 +21,7 @@ import { CartService } from 'src/app/shared/services/cart/cart.service';
         MatIconModule,
         RouterLink,
         CentsToEurosPipe,
-        RouterLinkActive,
+        AsyncPipe,
     ],
 })
 export class CardComponent {

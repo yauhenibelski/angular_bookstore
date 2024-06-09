@@ -70,6 +70,7 @@ export interface Product {
     masterVariant: MasterVariant;
     id: string;
     key: string;
+    productId?: string;
 }
 
 interface MasterData {
