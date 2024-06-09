@@ -1,1 +1,66 @@
-<p>cart-page</p>
+@for (product of productsInCart$ | async; track product.id) {
+    <div class="book">
+        <div class="book-details">
+            <img
+                mat-card-image
+                [alt]="product.masterVariant.images.at(0)?.label"
+                [src]="product.masterVariant.images.at(0)?.url"
+            />
+            <div class="description">
+                <p class="name">{{ product.name.en }}</p>
+                <p class="author">{{ product.masterVariant.attributes.at(0)?.value }}</p>
+            </div>
+            <div class="prices">
+                @if (product.masterVariant.prices.at(0)?.discounted) {
+                    <div class="discounted">
+                        <p class="price-discounted">
+                            {{
+                                product.masterVariant.prices.at(0)?.discounted?.value?.centAmount
+                                    | centsToEuros
+                                    | currency: 'EUR'
+                            }}
+                        </p>
+                        <p class="old-price-discounted">
+                            {{
+                                product.masterVariant.prices.at(0)?.value?.centAmount
+                                    | centsToEuros
+                                    | currency: 'EUR'
+                            }}
+                        </p>
+                    </div>
+                } @else {
+                    <p class="price">
+                        {{
+                            product.masterVariant.prices.at(0)?.value?.centAmount
+                                | centsToEuros
+                                | currency: 'EUR'
+                        }}
+                    </p>
+                }
+            </div>
+        </div>
+        <div>
+            <button mat-menu-item class="btn-delete">
+                <mat-icon class="icon">delete</mat-icon>
+            </button>
+        </div>
+    </div>
+} @empty {
+    <p class="empty">
+        The cart is empty. To start shopping, go to the
+        <a routerLink="/books">catalog</a>
+    </p>
+}
+<div class="total-cost">
+    <div class="promo-code">
+        <div>Do you have a promo code?</div>
+        <input class="input-promo-code" />
+        <button mat-menu-item class="btn-promo-code">Apply</button>
+    </div>
+    <div class="cost">
+        <div>The total cost</div>
+        <div class="total">
+            {{ totalCount | centsToEuros | currency: 'EUR' }}
+        </div>
+    </div>
+</div>

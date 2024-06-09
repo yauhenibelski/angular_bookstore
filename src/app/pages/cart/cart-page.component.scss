@@ -1,3 +1,76 @@
 :host {
-    display: block;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    padding: 30px;
+}
+.book-details {
+    display: flex;
+    flex-grow: 1;
+    justify-content: space-between;
+    align-items: center;
+}
+.book {
+    display: flex;
+    font-size: 18px;
+    padding: 5px 10px;
+    justify-content: space-between;
+    align-items: center;
+    text-align: center;
+    gap: 15px;
+    background-color: #ebebeba7;
+    img {
+        height: 100px;
+    }
+}
+.discounted {
+    display: flex;
+    gap: 10px;
+}
+.btn-delete {
+    border: none;
+    cursor: pointer;
+    &:hover {
+        color: brown;
+    }
+}
+.old-price-discounted {
+    text-decoration: line-through;
+    color: rgba(125, 123, 123, 0.716);
+}
+.total-cost {
+    border-top: 3px solid gray;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-align: center;
+    background-color: #ebebeba7;
+}
+.cost {
+    font-size: 23px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.prices {
+    display: flex;
+    flex-wrap: wrap;
+}
+.promo-code {
+    font-size: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.input-promo-code {
+    font-size: 18px;
+}
+.btn-promo-code {
+    cursor: pointer;
+}
+.empty {
+    font-size: 20px;
+    text-align: center;
 }

@@ -64,7 +64,6 @@ export class ProductStoreService {
 
         this.activeSubscription = this.apiService.getProducts().subscribe(response => {
             this.totalProducts = response.total;
-
             this.productsSubject.next(response.results);
         });
     }
