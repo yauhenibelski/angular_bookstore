@@ -2,11 +2,11 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpContext } from '@angular/common/http';
 import { ProjectSettings } from 'src/app/shared/services/project-settings/project-settings.interface';
 import { Customer } from 'src/app/interfaces/customer-response-dto';
-import { Observable, map, tap } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 import { environment } from 'src/app/environment/environment';
 import { v4 as uuidv4 } from 'uuid';
 import { Category, CategoryDto } from 'src/app/interfaces/category';
-import { Product, ProductDto, ProductsDto } from 'src/app/interfaces/product';
+import { ProductDto, ProductsDto } from 'src/app/interfaces/product';
 import { ProjectSettingsService } from '../project-settings/project-settings.service';
 import { CartService } from '../cart/cart.service';
 import { Cart, CartResponseDto } from '../cart/cart.interface';
@@ -97,7 +97,7 @@ export class ApiService {
             })
             .pipe(
                 tap(cartRes => {
-                    const cart = cartRes.results.reverse()[0] ?? null;
+                    const cart = cartRes.results[0] ?? null;
 
                     this.cartService.setCart(cart);
                 }),
@@ -125,10 +125,8 @@ export class ApiService {
         return this.httpClient.get<Category>(`/categories/key=${key}`);
     }
 
-    getProducts(): Observable<Product[]> {
-        return this.httpClient
-            .get<ProductsDto>(`/product-projections/search`)
-            .pipe(map(({ results }) => results));
+    getProducts(): Observable<ProductsDto> {
+        return this.httpClient.get<ProductsDto>(`/product-projections/search`);
     }
 
     getProductByKey(key: string): Observable<ProductDto> {

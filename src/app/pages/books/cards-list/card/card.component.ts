@@ -6,6 +6,7 @@ import { Product } from 'src/app/interfaces/product';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { CentsToEurosPipe } from 'src/app/shared/pipes/cents-to-euros/cents-to-euros.pipe';
+import { CartService } from 'src/app/shared/services/cart/cart.service';
 
 @Component({
     selector: 'app-card',
@@ -25,4 +26,6 @@ import { CentsToEurosPipe } from 'src/app/shared/pipes/cents-to-euros/cents-to-e
 })
 export class CardComponent {
     @Input({ required: true }) book!: Product;
+
+    constructor(readonly cartService: CartService) {}
 }

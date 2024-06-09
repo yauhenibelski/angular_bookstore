@@ -5,6 +5,7 @@ import { ProductStoreService } from 'src/app/shared/services/product-store/produ
 import { AsyncPipe } from '@angular/common';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { SortProductService } from 'src/app/shared/services/sort-product/sort-product.service';
+import { InfiniteScrollDirective } from 'src/app/shared/directives/infinite-scroll/infinite-scroll.directive';
 import { CategoryService } from '../category/service/category.service';
 import { CardComponent } from './card/card.component';
 
@@ -16,6 +17,7 @@ import { CardComponent } from './card/card.component';
     styleUrl: './cards-list.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [CardComponent, AsyncPipe],
+    hostDirectives: [InfiniteScrollDirective],
 })
 export class CardsListComponent implements OnDestroy {
     private readonly productStoreService = inject(ProductStoreService);
@@ -23,6 +25,12 @@ export class CardsListComponent implements OnDestroy {
     private readonly activatedRoute = inject(ActivatedRoute);
     private readonly categoryService = inject(CategoryService);
     private readonly router = inject(Router);
+
+    constructor(private readonly infiniteScrollDirective: InfiniteScrollDirective) {
+        infiniteScrollDirective.loadProducts.pipe(untilDestroyed(this)).subscribe(() => {
+            this.productStoreService.loadAdditionalProducts();
+        });
+    }
 
     readonly books$ = this.activatedRoute.paramMap.pipe(
         untilDestroyed(this),
