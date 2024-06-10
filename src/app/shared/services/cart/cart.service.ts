@@ -39,7 +39,7 @@ export class CartService {
         );
     }
 
-    updateCart(action: Action, productId?: string): void {
+    updateCart(action: Action, productId?: string, quantity?: number): void {
         if (!this.cart) {
             return;
         }
@@ -60,6 +60,10 @@ export class CartService {
 
         if (action === 'removeLineItem' && !productId) {
             actions = [...this.cart.lineItems].map(({ id }) => ({ action, lineItemId: id }));
+        }
+
+        if (action === 'changeLineItemQuantity' && quantity) {
+            actions.push({ action, quantity, lineItemId: productId });
         }
 
         this.updateCartSubscription = this.httpClient

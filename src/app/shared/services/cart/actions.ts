@@ -1,1 +1,1 @@
-export type Action = 'addLineItem' | 'removeLineItem';
+export type Action = 'addLineItem' | 'removeLineItem' | 'changeLineItemQuantity';
