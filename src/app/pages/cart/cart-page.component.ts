@@ -5,7 +5,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { filter, map } from 'rxjs';
 import { MatCardModule } from '@angular/material/card';
 import { RouterLink } from '@angular/router';
-import { ApiService } from 'src/app/shared/services/api/api.service';
 import { CentsToEurosPipe } from '../../shared/pipes/cents-to-euros/cents-to-euros.pipe';
 import { BookComponent } from './book/book.component';
 
