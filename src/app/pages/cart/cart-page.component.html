@@ -1,71 +1,25 @@
-@for (product of productsInCart$ | async; track product.id) {
-    <div class="book">
-        <div class="book-details">
-            <img
-                mat-card-image
-                [alt]="product.variant?.images?.at(0)?.label"
-                [src]="product.variant?.images?.at(0)?.url"
-            />
-
-            <div class="description">
-                <p class="name">{{ product.name.en }}</p>
-                <p class="author">{{ product.variant?.attributes?.at(0)?.value }}</p>
-            </div>
-
-            <div class="prices">
-                @if (product.variant?.prices?.at(0)?.discounted) {
-                    <div class="discounted">
-                        <p class="price-discounted">
-                            {{
-                                product.variant?.prices?.at(0)?.discounted?.value?.centAmount
-                                    | centsToEuros
-                                    | currency: 'EUR'
-                            }}
-                        </p>
-
-                        <p class="old-price-discounted">
-                            {{
-                                product.variant?.prices?.at(0)?.value?.centAmount
-                                    | centsToEuros
-                                    | currency: 'EUR'
-                            }}
-                        </p>
-                    </div>
-                } @else {
-                    <p class="price">
-                        {{
-                            product.variant?.prices?.at(0)?.value?.centAmount
-                                | centsToEuros
-                                | currency: 'EUR'
-                        }}
-                    </p>
-                }
+@if (productsInCart$ | async; as productsInCart) {
+    @for (product of productsInCart; track product.id) {
+        <app-book [product]="product"></app-book>
+    }
+    @if (productsInCart.length) {
+        <div class="promo-code">
+            <div>Do you have a promo code?</div>
+            <input class="input-promo-code" />
+            <button mat-menu-item class="btn-promo-code">Apply</button>
+        </div>
+        <div class="total-cost">
+            <div class="cost">
+                <div>The total cost</div>
+                <div class="total">
+                    {{ totalCount | centsToEuros | currency: 'EUR' }}
+                </div>
             </div>
         </div>
-
-        <div>
-            <button mat-menu-item class="btn-delete">
-                <mat-icon class="icon">delete</mat-icon>
-            </button>
-        </div>
-    </div>
-} @empty {
-    <p class="empty">
-        The cart is empty. To start shopping, go to the
-        <a routerLink="/books">catalog</a>
-    </p>
+    } @else {
+        <p class="empty">
+            The cart is empty. To start shopping, go to the
+            <a routerLink="/books">catalog</a>
+        </p>
+    }
 }
-<div class="total-cost">
-    <div class="promo-code">
-        <div>Do you have a promo code?</div>
-        <input class="input-promo-code" />
-        <button mat-menu-item class="btn-promo-code">Apply</button>
-    </div>
-
-    <div class="cost">
-        <div>The total cost</div>
-        <div class="total">
-            {{ totalCount | centsToEuros | currency: 'EUR' }}
-        </div>
-    </div>
-</div>

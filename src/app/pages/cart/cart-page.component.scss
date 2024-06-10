@@ -2,54 +2,20 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
-
     padding: 30px;
 }
-.book-details {
-    display: flex;
-    flex-grow: 1;
-    justify-content: space-between;
-    align-items: center;
-}
-.book {
-    display: flex;
-    font-size: 18px;
-    padding: 5px 10px;
-    justify-content: space-between;
-    align-items: center;
-    text-align: center;
-    gap: 15px;
-    background-color: #ebebeba7;
-    img {
-        height: 100px;
-    }
-}
-.discounted {
-    display: flex;
-    gap: 10px;
-}
-.btn-delete {
-    border: none;
-    cursor: pointer;
-    &:hover {
-        color: brown;
-    }
-}
-.old-price-discounted {
-    text-decoration: line-through;
-    color: rgba(125, 123, 123, 0.716);
-}
+
 .total-cost {
-    border-top: 3px solid gray;
+    // border-top: 3px solid gray;
     padding: 10px;
     display: flex;
-    justify-content: space-between;
+    justify-content: end;
     align-items: center;
     text-align: center;
     background-color: #ebebeba7;
+    font-size: 21px;
 }
 .cost {
-    font-size: 23px;
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -61,16 +27,32 @@
 .promo-code {
     font-size: 18px;
     display: flex;
-    flex-direction: column;
+    text-align: center;
+    border-top: 3px solid gray;
+    padding: 10px;
     gap: 10px;
 }
 .input-promo-code {
     font-size: 18px;
+    height: min-content;
 }
 .btn-promo-code {
     cursor: pointer;
+    height: 26px;
+    width: 50px;
 }
 .empty {
     font-size: 20px;
     text-align: center;
+}
+@media (max-width: 617px) {
+    .promo-code {
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        font-size: 17px;
+    }
+    .total-cost {
+        font-size: 19px;
+    }
 }
