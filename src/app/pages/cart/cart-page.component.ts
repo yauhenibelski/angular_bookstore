@@ -37,12 +37,5 @@ export class CartPageComponent {
         }),
     );
 
-    constructor(
-        readonly cartService: CartService,
-        readonly apiService: ApiService,
-    ) {}
-
-    q() {
-        this.apiService.createAnonymousCart().subscribe();
-    }
+    constructor(readonly cartService: CartService) {}
 }
