@@ -5,7 +5,7 @@
     padding: 30px;
 }
 
-.total-cost {
+.total-cost-wrap {
     // border-top: 3px solid gray;
     padding: 10px;
     display: flex;
@@ -15,15 +15,18 @@
     background-color: #ebebeba7;
     font-size: 21px;
 }
+
 .cost {
     display: flex;
     flex-direction: column;
     gap: 10px;
 }
+
 .prices {
     display: flex;
     flex-wrap: wrap;
 }
+
 .promo-code {
     font-size: 18px;
     display: flex;
@@ -32,19 +35,23 @@
     padding: 10px;
     gap: 10px;
 }
+
 .input-promo-code {
     font-size: 18px;
     height: min-content;
 }
+
 .btn-promo-code {
     cursor: pointer;
     height: 26px;
     width: 50px;
 }
+
 .empty {
     font-size: 20px;
     text-align: center;
 }
+
 @media (max-width: 617px) {
     .promo-code {
         flex-direction: column;
@@ -52,6 +59,7 @@
         align-items: center;
         font-size: 17px;
     }
+
     .total-cost {
         font-size: 19px;
     }
