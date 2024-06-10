@@ -18,7 +18,6 @@
                 </div>
             </div>
         </div>
-
     } @else {
         <p class="empty">
             The cart is empty. To start shopping, go to the
@@ -26,3 +25,6 @@
         </p>
     }
 }
+
+<!-- Todo: need to make some beautiful =) -->
+<button (click)="cartService.updateCart('removeLineItem')">Clear cart</button>

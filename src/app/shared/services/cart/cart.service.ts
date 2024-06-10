@@ -10,6 +10,8 @@ import { Action } from './actions';
 export class CartService {
     private readonly cartSubject = new BehaviorSubject<Cart | null>(null);
 
+    private updateCartSubscription: Subscription | null = null;
+
     constructor(private readonly httpClient: HttpClient) {}
 
     get cart$() {
@@ -37,32 +39,38 @@ export class CartService {
         );
     }
 
-    private addToCartSubscription: Subscription | null = null;
-
-    updateCartProduct(action: Action, productId: string): void {
-        if (this.addToCartSubscription) {
-            this.addToCartSubscription.unsubscribe();
+    updateCart(action: Action, productId?: string): void {
+        if (!this.cart) {
+            return;
         }
 
-        const payload: Record<string, unknown> = { action };
+        if (this.updateCartSubscription) {
+            this.updateCartSubscription.unsubscribe();
+        }
+
+        let actions: Array<Record<string, unknown>> = [];
 
         if (action === 'addLineItem') {
-            payload['productId'] = productId;
+            actions.push({ action, productId });
         }
 
-        if (action === 'removeLineItem') {
-            payload['lineItemId'] = productId;
+        if (action === 'removeLineItem' && productId) {
+            actions.push({ action, lineItemId: productId });
         }
 
-        this.addToCartSubscription = this.httpClient
+        if (action === 'removeLineItem' && !productId) {
+            actions = [...this.cart.lineItems].map(({ id }) => ({ action, lineItemId: id }));
+        }
+
+        this.updateCartSubscription = this.httpClient
             .post<Cart>(`/carts/${this.cartId}`, {
                 version: this.cart?.version,
-                actions: [payload],
+                actions,
             })
             .subscribe({
                 next: cart => this.setCart(cart),
                 complete: () => {
-                    this.addToCartSubscription = null;
+                    this.updateCartSubscription = null;
                 },
             });
     }
