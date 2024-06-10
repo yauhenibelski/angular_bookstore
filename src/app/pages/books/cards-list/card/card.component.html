@@ -49,9 +49,7 @@
             <button
                 mat-menu-item
                 class="btn-activ"
-                (click)="
-                    cartService.updateCartProduct('addLineItem', book.id); $event.stopPropagation()
-                "
+                (click)="cartService.updateCart('addLineItem', book.id); $event.stopPropagation()"
             >
                 Add to cart
             </button>
