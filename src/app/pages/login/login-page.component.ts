@@ -6,13 +6,14 @@ import { FormControl, FormGroup, ReactiveFormsModule, FormsModule } from '@angul
 import { MatIconModule } from '@angular/material/icon';
 import { Router, RouterLink } from '@angular/router';
 import { CustomerService } from 'src/app/shared/services/customer/customer.service';
-import { switchMap, tap } from 'rxjs';
+import { concatAll, from, switchMap, tap } from 'rxjs';
 import { setAccessTokenInCookie } from 'src/app/shared/utils/set-access-token-in-cookie';
 import { AuthService } from 'src/app/shared/services/auth/auth.service';
 import { CheckUniqueEmail } from 'src/app/shared/validators/async-email-check';
 import { isEmail } from 'src/app/shared/validators/email';
 import { hasSpace } from 'src/app/shared/validators/has-space';
 import { passwordValidators } from 'src/app/shared/validators/password';
+import { ApiService } from 'src/app/shared/services/api/api.service';
 import { GetErrorMassagePipe } from '../../shared/pipes/get-error-massage/get-error-massage.pipe';
 
 @Component({
@@ -35,6 +36,7 @@ import { GetErrorMassagePipe } from '../../shared/pipes/get-error-massage/get-er
 })
 export class LoginPageComponent {
     private readonly authService = inject(AuthService);
+    private readonly apiService = inject(ApiService);
     private readonly customerService = inject(CustomerService);
     private readonly router = inject(Router);
 
@@ -73,14 +75,20 @@ export class LoginPageComponent {
                 tap(({ customer }) => {
                     this.customerService.setCustomer(customer);
                 }),
-                switchMap(() => {
-                    return this.authService.getPasswordFlowToken(formValue);
-                }),
+                switchMap(() =>
+                    from([
+                        this.authService.getPasswordFlowToken(formValue).pipe(
+                            tap(passwordFlowToken => {
+                                setAccessTokenInCookie(passwordFlowToken, false);
+                            }),
+                        ),
+                        this.apiService.getCartByPasswordFlowToken(),
+                    ]),
+                ),
+                concatAll(),
             )
             .subscribe({
-                next: passwordFlowToken => {
-                    setAccessTokenInCookie(passwordFlowToken, false);
-
+                next: () => {
                     this.authService.setLoginStatus(true);
                     this.router.navigateByUrl('/main');
                 },

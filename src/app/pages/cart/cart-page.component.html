@@ -1,1 +1,27 @@
-<p>cart-page</p>
+@if (productsInCart$ | async; as productsInCart) {
+    @for (product of productsInCart; track product.id) {
+        <app-book [product]="product"></app-book>
+    }
+
+    @if (productsInCart.length) {
+        <div class="promo-code">
+            <div>Do you have a promo code?</div>
+            <input class="input-promo-code" />
+            <button mat-menu-item class="btn-promo-code">Apply</button>
+        </div>
+
+        <div class="total-cost-wrap">
+            <div class="cost">
+                <div>The total cost</div>
+                <div class="total">
+                    {{ totalCount | centsToEuros | currency: 'EUR' }}
+                </div>
+            </div>
+        </div>
+    } @else {
+        <p class="empty">
+            The cart is empty. To start shopping, go to the
+            <a routerLink="/books">catalog</a>
+        </p>
+    }
+}

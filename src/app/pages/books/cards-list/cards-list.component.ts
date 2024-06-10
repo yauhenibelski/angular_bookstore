@@ -1,11 +1,10 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostListener, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { switchMap, tap } from 'rxjs';
+import { Observable, concatAll, concatMap, defer, from, iif, switchMap, tap } from 'rxjs';
 import { ProductStoreService } from 'src/app/shared/services/product-store/product-store.service';
 import { AsyncPipe } from '@angular/common';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { SortProductService } from 'src/app/shared/services/sort-product/sort-product.service';
-import { InfiniteScrollDirective } from 'src/app/shared/directives/infinite-scroll/infinite-scroll.directive';
 import { CategoryService } from '../category/service/category.service';
 import { CardComponent } from './card/card.component';
 
@@ -17,76 +16,88 @@ import { CardComponent } from './card/card.component';
     styleUrl: './cards-list.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [CardComponent, AsyncPipe],
-    hostDirectives: [InfiniteScrollDirective],
 })
 export class CardsListComponent implements OnDestroy {
-    private readonly productStoreService = inject(ProductStoreService);
-    private readonly sortProductService = inject(SortProductService);
-    private readonly activatedRoute = inject(ActivatedRoute);
-    private readonly categoryService = inject(CategoryService);
-    private readonly router = inject(Router);
+    @HostListener('scroll', ['$event.target']) scroll({
+        scrollHeight,
+        scrollTop,
+        offsetHeight,
+    }: HTMLElement) {
+        const scrollDown = scrollHeight - scrollTop - offsetHeight;
+        const MIN_PADDING_PX = 500;
 
-    constructor(private readonly infiniteScrollDirective: InfiniteScrollDirective) {
-        infiniteScrollDirective.loadProducts.pipe(untilDestroyed(this)).subscribe(() => {
+        if (scrollDown <= MIN_PADDING_PX) {
             this.productStoreService.loadAdditionalProducts();
-        });
+        }
     }
 
-    readonly books$ = this.activatedRoute.paramMap.pipe(
-        untilDestroyed(this),
-        switchMap(params => {
-            const category = params.get('category')?.toLowerCase();
-            const subcategory = params.get('subcategory')?.toLowerCase();
+    readonly books$ = this.productStoreService.products$;
 
-            if (subcategory && category) {
-                return this.categoryService.getCategoryByKey(category).pipe(
-                    untilDestroyed(this),
-                    switchMap(({ id }) => this.categoryService.loadChildrenCategory(id)),
-                    switchMap(() =>
-                        this.categoryService.getCategoryByKey(subcategory).pipe(
-                            tap({
-                                next: ({ id }) => {
-                                    this.sortProductService.categoryID = id;
-                                    this.productStoreService.loadProducts();
-                                },
-                                error: () => {
-                                    this.router.navigateByUrl('/404');
-                                },
-                            }),
-                        ),
+    constructor(
+        private readonly router: Router,
+        private readonly activatedRoute: ActivatedRoute,
+        private readonly categoryService: CategoryService,
+        private readonly sortProductService: SortProductService,
+        private readonly productStoreService: ProductStoreService,
+    ) {
+        this.handleActivatedRoute().subscribe();
+    }
+
+    private handleActivatedRoute(): Observable<unknown> {
+        return this.activatedRoute.paramMap.pipe(
+            untilDestroyed(this),
+            concatMap(params => {
+                const category = params.get('category')?.toLowerCase();
+                const subcategory = params.get('subcategory')?.toLowerCase();
+
+                return iif(
+                    () => Boolean(category),
+                    defer(() =>
+                        subcategory
+                            ? this.categoryService.getCategoryByKey(category!).pipe(
+                                  switchMap(({ id }) =>
+                                      from([
+                                          this.categoryService.loadChildrenCategory(id),
+                                          this.categoryService.getCategoryByKey(subcategory).pipe(
+                                              tap({
+                                                  next: ({ id }) => {
+                                                      this.sortProductService.categoryID = id;
+                                                      this.productStoreService.loadProducts();
+                                                  },
+                                                  error: () => {
+                                                      this.router.navigateByUrl('/404');
+                                                  },
+                                              }),
+                                          ),
+                                      ]),
+                                  ),
+                                  concatAll(),
+                              )
+                            : this.categoryService.getCategoryByKey(category!).pipe(
+                                  switchMap(({ id }) => {
+                                      this.sortProductService.categoryID = id;
+                                      this.productStoreService.loadProducts();
+
+                                      return this.categoryService.loadChildrenCategory(id).pipe(
+                                          tap({
+                                              error: () => {
+                                                  this.router.navigateByUrl('/404');
+                                              },
+                                          }),
+                                      );
+                                  }),
+                              ),
                     ),
-                    switchMap(() => this.productStoreService.products$),
-                );
-            }
-
-            if (category) {
-                return this.categoryService.getCategoryByKey(category).pipe(
-                    untilDestroyed(this),
-                    tap(({ id }) => {
-                        this.sortProductService.categoryID = id;
+                    defer(() => {
+                        this.sortProductService.categoryID = null;
                         this.productStoreService.loadProducts();
+
+                        return this.categoryService.loadCategory();
                     }),
-                    switchMap(({ id }) =>
-                        this.categoryService.loadChildrenCategory(id).pipe(
-                            tap({
-                                error: () => {
-                                    this.router.navigateByUrl('/404');
-                                },
-                            }),
-                        ),
-                    ),
-                    switchMap(() => this.productStoreService.products$),
                 );
-            }
-
-            this.sortProductService.categoryID = null;
-            this.productStoreService.loadProducts();
-
-            this.categoryService.loadCategory().pipe(untilDestroyed(this)).subscribe();
-
-            return this.productStoreService.products$;
-        }),
-    );
+            }),
+        );
+    }
 
     ngOnDestroy(): void {
         this.sortProductService.categoryID = null;
