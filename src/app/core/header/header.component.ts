@@ -8,6 +8,9 @@ import { MatMenuModule } from '@angular/material/menu';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { LoaderService } from 'src/app/shared/services/loader/loader.service';
+import { MatBadgeModule } from '@angular/material/badge';
+import { CartService } from 'src/app/shared/services/cart/cart.service';
+import { filter, map } from 'rxjs';
 
 @UntilDestroy()
 @Component({
@@ -22,6 +25,7 @@ import { LoaderService } from 'src/app/shared/services/loader/loader.service';
         MatMenuModule,
         MatButtonModule,
         MatProgressBarModule,
+        MatBadgeModule,
     ],
     templateUrl: './header.component.html',
     styleUrl: './header.component.scss',
@@ -29,9 +33,21 @@ import { LoaderService } from 'src/app/shared/services/loader/loader.service';
 })
 export class HeaderComponent {
     private readonly authService = inject(AuthService);
-    readonly isLoading$ = inject(LoaderService).isLoading$;
 
+    readonly isLoading$ = inject(LoaderService).isLoading$;
     readonly isLogined$ = this.authService.isLogined$;
+    readonly cartLength$ = inject(CartService).cart$.pipe(
+        filter(Boolean),
+        map(cart => {
+            const cartLength = cart.lineItems.length;
+
+            this.matBadgeHidden = !cartLength;
+
+            return cartLength;
+        }),
+    );
+
+    matBadgeHidden = true;
 
     logOut(): void {
         if (this.authService.isLogined) {
