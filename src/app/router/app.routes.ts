@@ -76,6 +76,11 @@ export const routes: Routes = [
         canActivate: [isUnregisteredGuard],
     },
     {
+        path: 'about',
+        loadComponent: () =>
+            import('../pages/about-us/about-page.component').then(m => m.AboutPageComponent),
+    },
+    {
         path: '',
         pathMatch: 'full',
         redirectTo: 'main',
