@@ -72,6 +72,7 @@ export interface Product {
     key: string;
     productId?: string;
     variant?: Variant;
+    quantity?: number;
 }
 
 interface MasterData {

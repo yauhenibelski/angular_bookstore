@@ -1,20 +1,23 @@
 <div class="book-details">
     <div class="book-description">
         <img
-            [alt]="product.variant?.images?.at(0)?.label"
-            [src]="product.variant?.images?.at(0)?.url"
+            [alt]="product?.variant?.images?.at(0)?.label"
+            [src]="product?.variant?.images?.at(0)?.url"
         />
         <div class="description">
-            <p class="name">{{ product.name.en }}</p>
-            <p class="author">{{ product.variant?.attributes?.at(0)?.value }}</p>
+            <p class="name">{{ product?.name?.en }}</p>
+            <p class="author">{{ product?.variant?.attributes?.at(0)?.value }}</p>
         </div>
     </div>
+
+    <app-counter-input [formControl]="counter" />
+
     <div class="prices">
-        @if (product.variant?.prices?.at(0)?.discounted) {
+        @if (product?.variant?.prices?.at(0)?.discounted) {
             <div class="discounted">
                 <p class="price-discounted">
                     {{
-                        product.variant?.prices?.at(0)?.discounted?.value?.centAmount
+                        product?.variant?.prices?.at(0)?.discounted?.value?.centAmount
                             | centsToEuros
                             | currency: 'EUR'
                     }}
@@ -22,28 +25,29 @@
 
                 <p class="old-price-discounted">
                     {{
-                        product.variant?.prices?.at(0)?.value?.centAmount
+                        product?.variant?.prices?.at(0)?.value?.centAmount
                             | centsToEuros
                             | currency: 'EUR'
                     }}
                 </p>
             </div>
         } @else {
-            <p class="price">
+            <span class="price">
                 {{
-                    product.variant?.prices?.at(0)?.value?.centAmount
+                    product?.variant?.prices?.at(0)?.value?.centAmount
                         | centsToEuros
                         | currency: 'EUR'
                 }}
-            </p>
+            </span>
         }
     </div>
 </div>
+
 <div>
     <button
         mat-menu-item
         class="btn-delete"
-        (click)="cartService.updateCart('removeLineItem', product.id)"
+        (click)="cartService.updateCart('removeLineItem', product?.id)"
     >
         <mat-icon class="icon">delete</mat-icon>
     </button>
