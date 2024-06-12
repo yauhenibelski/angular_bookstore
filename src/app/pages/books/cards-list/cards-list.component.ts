@@ -1,6 +1,17 @@
-import { ChangeDetectionStrategy, Component, HostListener, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Observable, concatAll, concatMap, defer, from, iif, switchMap, tap } from 'rxjs';
+import {
+    Observable,
+    concatAll,
+    concatMap,
+    defer,
+    from,
+    fromEvent,
+    iif,
+    merge,
+    switchMap,
+    tap,
+} from 'rxjs';
 import { ProductStoreService } from 'src/app/shared/services/product-store/product-store.service';
 import { AsyncPipe } from '@angular/common';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -18,19 +29,6 @@ import { CardComponent } from './card/card.component';
     imports: [CardComponent, AsyncPipe],
 })
 export class CardsListComponent implements OnDestroy {
-    @HostListener('scroll', ['$event.target']) scroll({
-        scrollHeight,
-        scrollTop,
-        offsetHeight,
-    }: HTMLElement) {
-        const scrollDown = scrollHeight - scrollTop - offsetHeight;
-        const MIN_PADDING_PX = 500;
-
-        if (scrollDown <= MIN_PADDING_PX) {
-            this.productStoreService.loadAdditionalProducts();
-        }
-    }
-
     readonly books$ = this.productStoreService.products$;
 
     constructor(
@@ -40,12 +38,29 @@ export class CardsListComponent implements OnDestroy {
         private readonly sortProductService: SortProductService,
         private readonly productStoreService: ProductStoreService,
     ) {
-        this.handleActivatedRoute().subscribe();
+        merge(this.handleActivatedRoute(), this.withInfiniteScroll())
+            .pipe(untilDestroyed(this))
+            .subscribe();
+    }
+
+    private withInfiniteScroll(): Observable<Event> {
+        return fromEvent<Event>(document, 'scroll').pipe(
+            tap(({ target }) => {
+                const { scrollingElement } = <Document>target;
+                const { scrollHeight, scrollTop, offsetHeight } = <HTMLElement>scrollingElement;
+
+                const scrollDown = scrollHeight - scrollTop - offsetHeight;
+                const MIN_PADDING_PX = 500;
+
+                if (scrollDown <= MIN_PADDING_PX) {
+                    this.productStoreService.loadAdditionalProducts();
+                }
+            }),
+        );
     }
 
     private handleActivatedRoute(): Observable<unknown> {
         return this.activatedRoute.paramMap.pipe(
-            untilDestroyed(this),
             concatMap(params => {
                 const category = params.get('category')?.toLowerCase();
                 const subcategory = params.get('subcategory')?.toLowerCase();

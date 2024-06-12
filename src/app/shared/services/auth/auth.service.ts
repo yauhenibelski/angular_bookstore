@@ -62,7 +62,7 @@ export class AuthService {
                     email,
                     password,
                     anonymousCart: {
-                        id: this.cartService.cart.id,
+                        id: this.cartService.cart()?.id,
                         typeId: 'cart',
                     },
                 },
@@ -101,11 +101,11 @@ export class AuthService {
 
                     this.setLoginStatus(false);
                     this.customerService.setCustomer(null);
-                    this.cartService.setCart(null);
+                    this.cartService.cart.set(null);
 
                     setAccessTokenInCookie(response, true);
                 }),
-                highOrderCustomTap(this.apiService.createAnonymousCart()),
+                highOrderCustomTap(this.cartService.createAnonymousCart()),
             );
     }
 

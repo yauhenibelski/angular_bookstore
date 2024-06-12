@@ -3,8 +3,13 @@ import { parse } from 'cookie';
 import { ANONYMOUS_TOKEN_SHORT_NAME } from 'src/app/shared/constants/short-names';
 import { EMPTY, catchError, retry, switchMap } from 'rxjs';
 import { AuthService } from 'src/app/shared/services/auth/auth.service';
+import { CartService } from 'src/app/shared/services/cart/cart.service';
 
-export function getAccessToken(apiService: ApiService, authService: AuthService) {
+export function getAccessToken(
+    apiService: ApiService,
+    authService: AuthService,
+    cartService: CartService,
+) {
     return () => {
         const documentCookie = parse(document.cookie);
 
@@ -17,7 +22,7 @@ export function getAccessToken(apiService: ApiService, authService: AuthService)
 
                 authService.setToken(documentCookie);
 
-                return apiService.createAnonymousCart().pipe(
+                return cartService.createAnonymousCart().pipe(
                     retry(1),
                     catchError(() => EMPTY),
                 );
@@ -28,7 +33,7 @@ export function getAccessToken(apiService: ApiService, authService: AuthService)
                 authService.setLoginStatus(true);
 
                 return apiService.getCustomerByPasswordFlowToken().pipe(
-                    switchMap(() => apiService.getCartByPasswordFlowToken()),
+                    switchMap(() => cartService.getCartByPasswordFlowToken()),
                     retry(1),
                     catchError(() => {
                         authService.setLoginStatus(false);
