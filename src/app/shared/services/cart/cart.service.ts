@@ -1,34 +1,46 @@
-import { Injectable, Signal, computed, signal } from '@angular/core';
-import { Observable, Subscription, tap } from 'rxjs';
+import { Injectable } from '@angular/core';
+import { BehaviorSubject, Observable, Subscription, filter, map } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { v4 as uuidv4 } from 'uuid';
-import { Cart, CartResponseDto, UpdatePayload } from './cart.interface';
+import { Cart } from './cart.interface';
 import { Action } from './actions';
 
 @Injectable({
     providedIn: 'root',
 })
 export class CartService {
-    readonly cart = signal<Cart | null>(null);
+    private readonly cartSubject = new BehaviorSubject<Cart | null>(null);
 
     private updateCartSubscription: Subscription | null = null;
 
     constructor(private readonly httpClient: HttpClient) {}
 
-    private get cartId(): string {
-        return `${this.cart()?.id}`;
+    get cart$() {
+        return this.cartSubject.asObservable();
     }
 
-    hasProductInCart(productId: string): Signal<boolean> {
-        const product = this.cart()?.lineItems.find(product => product.productId === productId);
-
-        return computed(() => !!product);
+    get cart() {
+        return this.cartSubject.value;
     }
 
-    updateCart(action: Action, { productId, quantity, removeAll }: UpdatePayload): void {
-        const cart = this.cart();
+    private get cartId() {
+        return `${this.cartSubject.value?.id}`;
+    }
 
-        if (!cart) {
+    setCart(cart: Cart | null): void {
+        this.cartSubject.next(cart);
+    }
+
+    hasProductInCart(productId: string): Observable<boolean> {
+        return this.cartSubject.asObservable().pipe(
+            filter(Boolean),
+            map(({ lineItems }) => {
+                return Boolean(lineItems.find(product => product.productId === productId));
+            }),
+        );
+    }
+
+    updateCart(action: Action, productId?: string, quantity?: number): void {
+        if (!this.cart) {
             return;
         }
 
@@ -46,8 +58,8 @@ export class CartService {
             actions.push({ action, lineItemId: productId });
         }
 
-        if (action === 'removeLineItem' && removeAll) {
-            actions = [...cart.lineItems].map(({ id }) => ({ action, lineItemId: id }));
+        if (action === 'removeLineItem' && !productId) {
+            actions = [...this.cart.lineItems].map(({ id }) => ({ action, lineItemId: id }));
         }
 
         if (action === 'changeLineItemQuantity' && quantity) {
@@ -56,50 +68,14 @@ export class CartService {
 
         this.updateCartSubscription = this.httpClient
             .post<Cart>(`/carts/${this.cartId}`, {
-                version: cart.version,
+                version: this.cart?.version,
                 actions,
             })
             .subscribe({
-                next: cart => {
-                    this.cart.set(cart);
-                },
+                next: cart => this.setCart(cart),
                 complete: () => {
                     this.updateCartSubscription = null;
                 },
             });
-    }
-
-    createAnonymousCart(): Observable<Cart> {
-        return this.httpClient
-            .post<Cart>(
-                '/carts',
-                { currency: 'EUR', anonymousId: uuidv4() },
-                {
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                },
-            )
-            .pipe(
-                tap(cart => {
-                    this.cart.set(cart);
-                }),
-            );
-    }
-
-    getCartByPasswordFlowToken(): Observable<CartResponseDto> {
-        return this.httpClient
-            .get<CartResponseDto>('/me/carts', {
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            })
-            .pipe(
-                tap(cartRes => {
-                    const cart = cartRes.results[0] ?? null;
-
-                    this.cart.set(cart);
-                }),
-            );
     }
 }

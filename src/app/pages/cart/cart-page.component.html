@@ -1,34 +1,30 @@
-@if (products()?.length) {
-    <button
-        mat-raised-button
-        class="btn-delete"
-        (click)="cartService.updateCart('removeLineItem', { removeAll: true })"
-    >
-        Clear cart
-    </button>
-}
-@for (product of products(); track product.id) {
-    <app-book [product]="product"></app-book>
-} @empty {
-    <p class="empty">
-        The cart is empty. To start shopping, go to the
-        <a routerLink="/books">catalog</a>
-    </p>
-}
+@if (productsInCart$ | async; as productsInCart) {
+    @for (product of productsInCart; track product.id) {
+        <app-book [product]="product"></app-book>
+    }
 
-@if (products()?.length) {
-    <div class="promo-code">
-        <div>Do you have a promo code?</div>
-        <input class="input-promo-code" />
-        <button mat-menu-item class="btn-promo-code">Apply</button>
-    </div>
+    @if (productsInCart.length) {
+        <div class="promo-code">
+            <div>Do you have a promo code?</div>
+            <input class="input-promo-code" />
+            <button mat-menu-item class="btn-promo-code">Apply</button>
+        </div>
 
-    <div class="total-cost-wrap">
-        <div class="cost">
-            <div>The total cost</div>
-            <div class="total">
-                {{ totalCount() | centsToEuros | currency: 'EUR' }}
+        <div class="total-cost-wrap">
+            <div class="cost">
+                <div>The total cost</div>
+                <div class="total">
+                    {{ totalCount | centsToEuros | currency: 'EUR' }}
+                </div>
             </div>
         </div>
-    </div>
+    } @else {
+        <p class="empty">
+            The cart is empty. To start shopping, go to the
+            <a routerLink="/books">catalog</a>
+        </p>
+    }
 }
+
+<!-- Todo: need to make some beautiful =) -->
+<button (click)="cartService.updateCart('removeLineItem')">Clear cart</button>

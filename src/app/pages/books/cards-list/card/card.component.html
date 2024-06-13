@@ -40,7 +40,7 @@
             <h3 class="name">{{ book.name.en }}</h3>
         </div>
     </div>
-    @if (cartService.hasProductInCart(book.id)()) {
+    @if (cartService.hasProductInCart(book.id) | async) {
         <div class="btn-add">
             <button mat-menu-item class="btn-disable">Already in the cart</button>
         </div>
@@ -49,10 +49,7 @@
             <button
                 mat-menu-item
                 class="btn-activ"
-                (click)="
-                    cartService.updateCart('addLineItem', { productId: book.id });
-                    $event.stopPropagation()
-                "
+                (click)="cartService.updateCart('addLineItem', book.id); $event.stopPropagation()"
             >
                 Add to cart
             </button>

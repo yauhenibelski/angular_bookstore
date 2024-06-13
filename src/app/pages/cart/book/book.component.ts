@@ -51,11 +51,8 @@ export class BookComponent implements OnInit {
 
         this.counter.setValue(this.product.quantity);
 
-        this.counter.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(quantity => {
-            this.cartService.updateCart('changeLineItemQuantity', {
-                productId: this.product?.id,
-                quantity,
-            });
+        this.counter.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(count => {
+            this.cartService.updateCart('changeLineItemQuantity', this.product?.id, count);
         });
     }
 }

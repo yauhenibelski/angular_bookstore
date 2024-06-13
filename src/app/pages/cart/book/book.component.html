@@ -10,6 +10,8 @@
         </div>
     </div>
 
+    <app-counter-input [formControl]="counter" />
+
     <div class="prices">
         @if (product?.variant?.prices?.at(0)?.discounted) {
             <div class="discounted">
@@ -38,7 +40,6 @@
                 }}
             </span>
         }
-        <app-counter-input [formControl]="counter" />
     </div>
 </div>
 
@@ -46,7 +47,7 @@
     <button
         mat-menu-item
         class="btn-delete"
-        (click)="cartService.updateCart('removeLineItem', { productId: product?.id })"
+        (click)="cartService.updateCart('removeLineItem', product?.id)"
     >
         <mat-icon class="icon">delete</mat-icon>
     </button>

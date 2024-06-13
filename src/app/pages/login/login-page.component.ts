@@ -13,7 +13,7 @@ import { CheckUniqueEmail } from 'src/app/shared/validators/async-email-check';
 import { isEmail } from 'src/app/shared/validators/email';
 import { hasSpace } from 'src/app/shared/validators/has-space';
 import { passwordValidators } from 'src/app/shared/validators/password';
-import { CartService } from 'src/app/shared/services/cart/cart.service';
+import { ApiService } from 'src/app/shared/services/api/api.service';
 import { GetErrorMassagePipe } from '../../shared/pipes/get-error-massage/get-error-massage.pipe';
 
 @Component({
@@ -36,8 +36,8 @@ import { GetErrorMassagePipe } from '../../shared/pipes/get-error-massage/get-er
 })
 export class LoginPageComponent {
     private readonly authService = inject(AuthService);
+    private readonly apiService = inject(ApiService);
     private readonly customerService = inject(CustomerService);
-    private readonly cartService = inject(CartService);
     private readonly router = inject(Router);
 
     isPasswordHide = true;
@@ -82,7 +82,7 @@ export class LoginPageComponent {
                                 setAccessTokenInCookie(passwordFlowToken, false);
                             }),
                         ),
-                        this.cartService.getCartByPasswordFlowToken(),
+                        this.apiService.getCartByPasswordFlowToken(),
                     ]),
                 ),
                 concatAll(),

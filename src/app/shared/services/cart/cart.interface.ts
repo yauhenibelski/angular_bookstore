@@ -36,9 +36,3 @@ export interface CartResponseDto {
     results: Cart[];
     total: number;
 }
-
-export interface UpdatePayload {
-    removeAll?: boolean;
-    productId?: string;
-    quantity?: number;
-}
