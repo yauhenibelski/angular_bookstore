@@ -1,6 +1,6 @@
 /* eslint-disable no-use-before-define */
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -21,35 +21,29 @@ import { MatIconModule } from '@angular/material/icon';
     ],
 })
 export class CounterInputComponent implements ControlValueAccessor {
-    isDisabled = false;
-    counter = 0;
-
-    constructor(private readonly changeDetectorRef: ChangeDetectorRef) {}
+    readonly isDisabled = signal(false);
+    readonly counter = signal(0);
 
     writeValue(value: number): void {
-        this.counter = value;
-
-        this.changeDetectorRef.markForCheck();
+        this.counter.set(value);
     }
 
     setDisabledState(isDisabled: boolean): void {
-        this.isDisabled = isDisabled;
-
-        this.changeDetectorRef.markForCheck();
+        this.isDisabled.set(isDisabled);
     }
 
     increase(): void {
-        this.counter += 1;
+        this.counter.update(oldValue => oldValue + 1);
 
-        this.onChange(this.counter);
+        this.onChange(this.counter());
         this.onTouched();
     }
 
     decrease(): void {
-        if (this.counter > 1) {
-            this.counter -= 1;
+        if (this.counter() > 1) {
+            this.counter.update(oldValue => oldValue - 1);
 
-            this.onChange(this.counter);
+            this.onChange(this.counter());
             this.onTouched();
         }
     }
@@ -63,10 +57,10 @@ export class CounterInputComponent implements ControlValueAccessor {
     }
 
     private onTouched: () => void = () => {
-        // onTouched
+        // ---
     };
 
     private onChange: (value: number) => void = () => {
-        // onChange
+        // ---
     };
 }

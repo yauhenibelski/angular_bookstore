@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { MatAnchor, MatButtonModule } from '@angular/material/button';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from 'src/app/shared/services/auth/auth.service';
@@ -10,7 +10,6 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { LoaderService } from 'src/app/shared/services/loader/loader.service';
 import { MatBadgeModule } from '@angular/material/badge';
 import { CartService } from 'src/app/shared/services/cart/cart.service';
-import { filter, map } from 'rxjs';
 
 @UntilDestroy()
 @Component({
@@ -33,19 +32,18 @@ import { filter, map } from 'rxjs';
 })
 export class HeaderComponent {
     private readonly authService = inject(AuthService);
+    readonly cartService = inject(CartService);
 
     readonly isLoading$ = inject(LoaderService).isLoading$;
     readonly isLogined$ = this.authService.isLogined$;
-    readonly cartLength$ = inject(CartService).cart$.pipe(
-        filter(Boolean),
-        map(cart => {
-            const cartLength = cart.lineItems.length;
 
-            this.matBadgeHidden = !cartLength;
+    readonly cartLength = computed(() => {
+        const length = this.cartService.cart()?.lineItems.length;
 
-            return cartLength;
-        }),
-    );
+        this.matBadgeHidden = !length;
+
+        return length;
+    });
 
     matBadgeHidden = true;
 
