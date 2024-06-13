@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, AfterViewInit } from '@angular/core';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    ElementRef,
+    OnInit,
+    Renderer2,
+    ViewChild,
+    inject,
+} from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 @Component({
@@ -9,15 +17,16 @@ import { RouterLink } from '@angular/router';
     styleUrl: './main.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MainComponent implements AfterViewInit {
-    ngAfterViewInit() {
-        const video = document.getElementById('video') as HTMLVideoElement;
+export class MainComponent implements OnInit {
+    @ViewChild('video', { static: true }) video!: ElementRef;
 
-        if (video) {
-            video.muted = true;
-            video.play().catch(error => {
-                console.error('Video autoplay was prevented:', error);
-            });
-        }
+    private readonly renderer = inject(Renderer2);
+
+    ngOnInit(): void {
+        const { nativeElement: video } = this.video;
+
+        this.renderer.setProperty(video, 'muted', true);
+
+        (<HTMLVideoElement>video).play();
     }
 }
