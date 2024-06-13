@@ -10,8 +10,6 @@
         </div>
     </div>
 
-    <app-counter-input [formControl]="counter" />
-
     <div class="prices">
         @if (product?.variant?.prices?.at(0)?.discounted) {
             <div class="discounted">
@@ -40,6 +38,7 @@
                 }}
             </span>
         }
+        <app-counter-input [formControl]="counter" />
     </div>
 </div>
 

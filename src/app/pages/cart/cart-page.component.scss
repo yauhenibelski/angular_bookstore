@@ -51,7 +51,16 @@
     font-size: 20px;
     text-align: center;
 }
-
+.btn-delete {
+    width: max-content;
+    display: flex;
+    align-self: flex-end;
+    background-color: rgba(222, 71, 71, 0.167);
+    transition: 0.5s;
+    &:hover {
+        background-color: rgba(222, 71, 71, 0.249);
+    }
+}
 @media (max-width: 617px) {
     .promo-code {
         flex-direction: column;

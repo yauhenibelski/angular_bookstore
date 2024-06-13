@@ -1,9 +1,9 @@
-<button mat-icon-button type="button" [disabled]="isDisabled()" (click)="increase()">
-    <mat-icon>add</mat-icon>
+<button mat-icon-button type="button" [disabled]="isDisabled()" (click)="decrease()">
+    <mat-icon>remove</mat-icon>
 </button>
 
 <span>{{ counter() }}</span>
 
-<button mat-icon-button type="button" [disabled]="isDisabled()" (click)="decrease()">
-    <mat-icon>remove</mat-icon>
+<button mat-icon-button type="button" [disabled]="isDisabled()" (click)="increase()">
+    <mat-icon>add</mat-icon>
 </button>

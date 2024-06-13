@@ -4,6 +4,7 @@ import { CartService } from 'src/app/shared/services/cart/cart.service';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { RouterLink } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
 import { CentsToEurosPipe } from '../../shared/pipes/cents-to-euros/cents-to-euros.pipe';
 import { BookComponent } from './book/book.component';
 
@@ -20,6 +21,7 @@ import { BookComponent } from './book/book.component';
         MatCardModule,
         RouterLink,
         BookComponent,
+        MatButtonModule,
     ],
 })
 export class CartPageComponent {

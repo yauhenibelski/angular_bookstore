@@ -1,3 +1,12 @@
+@if (products()?.length) {
+    <button
+        mat-raised-button
+        class="btn-delete"
+        (click)="cartService.updateCart('removeLineItem', { removeAll: true })"
+    >
+        Clear cart
+    </button>
+}
 @for (product of products(); track product.id) {
     <app-book [product]="product"></app-book>
 } @empty {
@@ -8,10 +17,6 @@
 }
 
 @if (products()?.length) {
-    <button (click)="cartService.updateCart('removeLineItem', { removeAll: true })">
-        Clear cart
-    </button>
-
     <div class="promo-code">
         <div>Do you have a promo code?</div>
         <input class="input-promo-code" />
