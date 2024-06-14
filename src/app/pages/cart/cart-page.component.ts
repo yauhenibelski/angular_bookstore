@@ -1,5 +1,5 @@
 import { CurrencyPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Inject, effect } from '@angular/core';
 import { CartService } from 'src/app/shared/services/cart/cart.service';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
@@ -12,6 +12,7 @@ import { CentsToEurosPipe } from '../../shared/pipes/cents-to-euros/cents-to-eur
 import { BookComponent } from './book/book.component';
 import { ClearCartMessageComponent } from './clear-cart-message/clear-cart-message.component';
 import { CLEAR_CART_MASSAGE } from './clear-cart-message/clear-cart-message-config.token';
+import { GetTotalPriceAfterDiscountPipe } from './pipes/get-total-price-after-discount.pipe';
 
 @Component({
     selector: 'app-cart-page',
@@ -29,6 +30,7 @@ import { CLEAR_CART_MASSAGE } from './clear-cart-message/clear-cart-message-conf
         MatButtonModule,
         MatDialogModule,
         ReactiveFormsModule,
+        GetTotalPriceAfterDiscountPipe,
     ],
 })
 export class CartPageComponent {
@@ -39,7 +41,13 @@ export class CartPageComponent {
         private readonly cartService: CartService,
         private readonly dialog: MatDialog,
         private readonly snackBar: MatSnackBar,
-    ) {}
+    ) {
+        effect(() => {
+            if (this.cart()?.discountOnTotalPrice) {
+                this.openSnackBar();
+            }
+        });
+    }
 
     readonly discountInput = new FormControl('', { nonNullable: true });
 
@@ -54,16 +62,15 @@ export class CartPageComponent {
             const errorMessage = err?.error['message'];
 
             this.openSnackBar(errorMessage);
-            console.info(errorMessage);
         });
     }
 
-    openSnackBar(error?: string): void {
-        const massage = error || 'You have successfully applied the discount';
+    openSnackBar(errorMessage?: string): void {
+        const message = errorMessage || 'You have successfully applied the discount';
 
-        this.snackBar.open(`${massage}`, undefined, {
+        this.snackBar.open(`${message}`, undefined, {
             duration: 3000,
-            panelClass: error ? 'snack-bar-err' : 'snack-bar-success',
+            panelClass: errorMessage ? 'snack-bar-err' : 'snack-bar-success',
         });
     }
 }

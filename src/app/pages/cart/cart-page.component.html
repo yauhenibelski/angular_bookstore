@@ -21,15 +21,10 @@
             <div>The total cost</div>
             <div class="total">
                 {{ cart()?.totalPrice?.centAmount | centsToEuros | currency: 'EUR' }}
+
                 @if (cart()?.discountOnTotalPrice) {
-                    {{ openSnackBar() }}
                     <div class="total-old">
-                        {{
-                            (cart()?.discountOnTotalPrice)!.discountedAmount.centAmount +
-                                (cart()?.totalPrice)!.centAmount
-                                | centsToEuros
-                                | currency: 'EUR'
-                        }}
+                        {{ cart() | getTotalPriceAfterDiscount | centsToEuros | currency: 'EUR' }}
                     </div>
                 }
             </div>
