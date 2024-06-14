@@ -16,6 +16,7 @@ import { ProductStoreService } from 'src/app/shared/services/product-store/produ
 import { AsyncPipe } from '@angular/common';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { SortProductService } from 'src/app/shared/services/sort-product/sort-product.service';
+import { Category } from 'src/app/interfaces/category';
 import { CategoryService } from '../category/service/category.service';
 import { CardComponent } from './card/card.component';
 
@@ -59,7 +60,7 @@ export class CardsListComponent implements OnDestroy {
         );
     }
 
-    private handleActivatedRoute(): Observable<unknown> {
+    private handleActivatedRoute(): Observable<Category | Category[]> {
         return this.activatedRoute.paramMap.pipe(
             concatMap(params => {
                 const category = params.get('category')?.toLowerCase();
@@ -67,42 +68,15 @@ export class CardsListComponent implements OnDestroy {
 
                 return iif(
                     () => Boolean(category),
-                    defer(() =>
-                        subcategory
-                            ? this.categoryService.getCategoryByKey(category!).pipe(
-                                  switchMap(({ id }) =>
-                                      from([
-                                          this.categoryService.loadChildrenCategory(id),
-                                          this.categoryService.getCategoryByKey(subcategory).pipe(
-                                              tap({
-                                                  next: ({ id }) => {
-                                                      this.sortProductService.categoryID = id;
-                                                      this.productStoreService.loadProducts();
-                                                  },
-                                                  error: () => {
-                                                      this.router.navigateByUrl('/404');
-                                                  },
-                                              }),
-                                          ),
-                                      ]),
-                                  ),
-                                  concatAll(),
-                              )
-                            : this.categoryService.getCategoryByKey(category!).pipe(
-                                  switchMap(({ id }) => {
-                                      this.sortProductService.categoryID = id;
-                                      this.productStoreService.loadProducts();
 
-                                      return this.categoryService.loadChildrenCategory(id).pipe(
-                                          tap({
-                                              error: () => {
-                                                  this.router.navigateByUrl('/404');
-                                              },
-                                          }),
-                                      );
-                                  }),
-                              ),
-                    ),
+                    subcategory
+                        ? this.categoryService
+                              .getCategoryByKey(category!)
+                              .pipe(this.loadProductsBySubcategory(subcategory))
+                        : this.categoryService
+                              .getCategoryByKey(category!)
+                              .pipe(this.loadProductsByCategory()),
+
                     defer(() => {
                         this.sortProductService.categoryID = null;
                         this.productStoreService.loadProducts();
@@ -113,6 +87,38 @@ export class CardsListComponent implements OnDestroy {
             }),
         );
     }
+
+    private readonly loadProductsByCategory = () =>
+        switchMap(({ id }: Category) => {
+            this.sortProductService.categoryID = id;
+            this.productStoreService.loadProducts();
+
+            return this.categoryService.loadChildrenCategory(id).pipe(
+                tap({
+                    error: () => {
+                        this.router.navigateByUrl('/404');
+                    },
+                }),
+            );
+        });
+
+    private readonly loadProductsBySubcategory = (subcategory: string) =>
+        switchMap(({ id }: Category) =>
+            from([
+                this.categoryService.loadChildrenCategory(id),
+                this.categoryService.getCategoryByKey(subcategory).pipe(
+                    tap({
+                        next: ({ id }) => {
+                            this.sortProductService.categoryID = id;
+                            this.productStoreService.loadProducts();
+                        },
+                        error: () => {
+                            this.router.navigateByUrl('/404');
+                        },
+                    }),
+                ),
+            ]).pipe(concatAll()),
+        );
 
     ngOnDestroy(): void {
         this.sortProductService.categoryID = null;
