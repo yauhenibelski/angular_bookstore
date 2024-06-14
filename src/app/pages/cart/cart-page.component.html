@@ -1,7 +1,7 @@
-@if (products()?.length) {
+@if (cart()?.lineItems?.length) {
     <button mat-raised-button class="btn-delete" (click)="openDialog()">Clear cart</button>
 }
-@for (product of products(); track product.id) {
+@for (product of cart()?.lineItems; track product.id) {
     <app-book [product]="product" />
 } @empty {
     <p class="empty">
@@ -10,18 +10,23 @@
     </p>
 }
 
-@if (products()?.length) {
+@if (cart()?.lineItems?.length) {
     <div class="promo-code">
         <div>Do you have a promo code?</div>
-        <input class="input-promo-code" />
-        <button mat-menu-item class="btn-promo-code">Apply</button>
+        <input class="input-promo-code" [formControl]="discountInput" />
+        <button mat-raised-button class="btn-promo-code" (click)="applyDiscount()">Apply</button>
     </div>
-
     <div class="total-cost-wrap">
         <div class="cost">
             <div>The total cost</div>
             <div class="total">
-                {{ totalCount() | centsToEuros | currency: 'EUR' }}
+                {{ cart()?.totalPrice?.centAmount | centsToEuros | currency: 'EUR' }}
+
+                @if (cart()?.discountOnTotalPrice) {
+                    <div class="total-old">
+                        {{ cart() | getTotalPriceAfterDiscount | centsToEuros | currency: 'EUR' }}
+                    </div>
+                }
             </div>
         </div>
     </div>

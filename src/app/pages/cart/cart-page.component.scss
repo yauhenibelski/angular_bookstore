@@ -6,7 +6,6 @@
 }
 
 .total-cost-wrap {
-    // border-top: 3px solid gray;
     padding: 10px;
     display: flex;
     justify-content: end;
@@ -21,7 +20,15 @@
     flex-direction: column;
     gap: 10px;
 }
-
+.total {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+.total-old {
+    text-decoration: line-through;
+    color: rgba(125, 123, 123, 0.716);
+}
 .prices {
     display: flex;
     flex-wrap: wrap;
@@ -33,11 +40,12 @@
     text-align: center;
     border-top: 3px solid gray;
     padding: 10px;
+    padding-bottom: 0;
     gap: 10px;
 }
 
 .input-promo-code {
-    font-size: 18px;
+    font-size: 16px;
     height: min-content;
 }
 
@@ -61,6 +69,7 @@
         background-color: rgba(222, 71, 71, 0.249);
     }
 }
+
 @media (max-width: 617px) {
     .promo-code {
         flex-direction: column;

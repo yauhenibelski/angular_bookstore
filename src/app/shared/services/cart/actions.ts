@@ -1,1 +1,5 @@
-export type Action = 'addLineItem' | 'removeLineItem' | 'changeLineItemQuantity';
+export type Action =
+    | 'addLineItem'
+    | 'removeLineItem'
+    | 'changeLineItemQuantity'
+    | 'addDiscountCode';
