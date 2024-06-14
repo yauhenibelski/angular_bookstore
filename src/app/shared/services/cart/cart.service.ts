@@ -1,6 +1,6 @@
 import { Injectable, Signal, computed, signal } from '@angular/core';
 import { Observable, Subscription, tap } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { v4 as uuidv4 } from 'uuid';
 import { Cart, CartResponseDto, UpdatePayload } from './cart.interface';
 import { Action } from './actions';
@@ -9,7 +9,11 @@ import { Action } from './actions';
     providedIn: 'root',
 })
 export class CartService {
-    readonly cart = signal<Cart | null>(null);
+    private readonly cartSignal = signal<Cart | null>(null);
+
+    get cart(): Signal<Cart | null> {
+        return computed(() => this.cartSignal());
+    }
 
     private updateCartSubscription: Subscription | null = null;
 
@@ -20,13 +24,20 @@ export class CartService {
     }
 
     hasProductInCart(productId: string): Signal<boolean> {
-        const product = this.cart()?.lineItems.find(product => product.productId === productId);
+        const product = this.cartSignal()?.lineItems.find(
+            product => product.productId === productId,
+        );
 
         return computed(() => !!product);
     }
 
-    updateCart(action: Action, { productId, quantity, removeAll }: UpdatePayload): void {
-        const cart = this.cart();
+    updateCart(
+        action: Action,
+        payload: UpdatePayload,
+        reject?: (err?: HttpErrorResponse) => void,
+    ): void {
+        const { productId, quantity, removeAll, code } = payload;
+        const cart = this.cartSignal();
 
         if (!cart) {
             return;
@@ -54,6 +65,10 @@ export class CartService {
             actions.push({ action, quantity, lineItemId: productId });
         }
 
+        if (action === 'addDiscountCode' && code) {
+            actions.push({ action, code });
+        }
+
         this.updateCartSubscription = this.httpClient
             .post<Cart>(`/carts/${this.cartId}`, {
                 version: cart.version,
@@ -61,10 +76,17 @@ export class CartService {
             })
             .subscribe({
                 next: cart => {
-                    this.cart.set(cart);
+                    this.cartSignal.set(cart);
+                    // eslint-disable-next-line no-console
+                    console.log(cart);
                 },
                 complete: () => {
                     this.updateCartSubscription = null;
+                },
+                error: (error: unknown) => {
+                    if (error instanceof HttpErrorResponse && reject) {
+                        reject(error);
+                    }
                 },
             });
     }
@@ -82,7 +104,7 @@ export class CartService {
             )
             .pipe(
                 tap(cart => {
-                    this.cart.set(cart);
+                    this.cartSignal.set(cart);
                 }),
             );
     }
@@ -98,7 +120,7 @@ export class CartService {
                 tap(cartRes => {
                     const cart = cartRes.results[0] ?? null;
 
-                    this.cart.set(cart);
+                    this.cartSignal.set(cart);
                 }),
             );
     }
