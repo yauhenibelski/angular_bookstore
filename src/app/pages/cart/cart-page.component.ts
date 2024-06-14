@@ -6,6 +6,7 @@ import { MatCardModule } from '@angular/material/card';
 import { RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogConfig, MatDialogModule } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { CentsToEurosPipe } from '../../shared/pipes/cents-to-euros/cents-to-euros.pipe';
 import { BookComponent } from './book/book.component';
@@ -37,6 +38,7 @@ export class CartPageComponent {
         @Inject(CLEAR_CART_MASSAGE) private readonly matDialogConfig: MatDialogConfig<unknown>,
         private readonly cartService: CartService,
         private readonly dialog: MatDialog,
+        private readonly snackBar: MatSnackBar,
     ) {}
 
     readonly discountInput = new FormControl('', { nonNullable: true });
@@ -51,8 +53,17 @@ export class CartPageComponent {
         this.cartService.updateCart('addDiscountCode', code, err => {
             const errorMessage = err?.error['message'];
 
-            // todo: need handle error
+            this.openSnackBar(errorMessage);
             console.info(errorMessage);
+        });
+    }
+
+    openSnackBar(error?: string): void {
+        const massage = error || 'You have successfully applied the discount';
+
+        this.snackBar.open(`${massage}`, undefined, {
+            duration: 3000,
+            panelClass: error ? 'snack-bar-err' : 'snack-bar-success',
         });
     }
 }

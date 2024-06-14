@@ -14,15 +14,24 @@
     <div class="promo-code">
         <div>Do you have a promo code?</div>
         <input class="input-promo-code" [formControl]="discountInput" />
-        <button mat-menu-item class="btn-promo-code" (click)="applyDiscount()">Apply</button>
+        <button mat-raised-button class="btn-promo-code" (click)="applyDiscount()">Apply</button>
     </div>
-
     <div class="total-cost-wrap">
         <div class="cost">
             <div>The total cost</div>
-
             <div class="total">
                 {{ cart()?.totalPrice?.centAmount | centsToEuros | currency: 'EUR' }}
+                @if (cart()?.discountOnTotalPrice) {
+                    {{ openSnackBar() }}
+                    <div class="total-old">
+                        {{
+                            (cart()?.discountOnTotalPrice)!.discountedAmount.centAmount +
+                                (cart()?.totalPrice)!.centAmount
+                                | centsToEuros
+                                | currency: 'EUR'
+                        }}
+                    </div>
+                }
             </div>
         </div>
     </div>
