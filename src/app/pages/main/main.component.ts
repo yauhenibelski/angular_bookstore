@@ -26,7 +26,6 @@ export class MainComponent implements OnInit {
         const { nativeElement: video } = this.video;
 
         this.renderer.setProperty(video, 'muted', true);
-
-        (<HTMLVideoElement>video).play();
+        this.renderer.setProperty(video, 'autoplay', true);
     }
 }

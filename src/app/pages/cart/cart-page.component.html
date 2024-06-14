@@ -1,14 +1,8 @@
 @if (products()?.length) {
-    <button
-        mat-raised-button
-        class="btn-delete"
-        (click)="cartService.updateCart('removeLineItem', { removeAll: true })"
-    >
-        Clear cart
-    </button>
+    <button mat-raised-button class="btn-delete" (click)="openDialog()">Clear cart</button>
 }
 @for (product of products(); track product.id) {
-    <app-book [product]="product"></app-book>
+    <app-book [product]="product" />
 } @empty {
     <p class="empty">
         The cart is empty. To start shopping, go to the
