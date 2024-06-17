@@ -76,7 +76,7 @@ export interface UpdatePayload {
     removeAll?: boolean;
     productId?: string;
     quantity?: number;
-    code?: string;
+    discountCodeId?: string;
 }
 
 interface DiscountCode {

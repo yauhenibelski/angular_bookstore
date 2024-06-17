@@ -5,6 +5,7 @@ import { GalleryModule, GalleryItem, ImageItem } from 'ng-gallery';
 import { LightboxModule } from 'ng-gallery/lightbox';
 import { filter, tap } from 'rxjs';
 import { CentsToEurosPipe } from 'src/app/shared/pipes/cents-to-euros/cents-to-euros.pipe';
+import { CartService } from 'src/app/shared/services/cart/cart.service';
 
 @Component({
     selector: 'app-card-detailed',
@@ -16,6 +17,7 @@ import { CentsToEurosPipe } from 'src/app/shared/pipes/cents-to-euros/cents-to-e
 })
 export class CardDetailedComponent {
     private readonly productStoreService = inject(ProductStoreService);
+    readonly cartService = inject(CartService);
 
     @Input() set key(key: string | undefined) {
         this.productStoreService.loadProductByKey(`${key}`);
@@ -24,7 +26,7 @@ export class CardDetailedComponent {
     readonly book$ = this.productStoreService.currentProduct$.pipe(
         filter(Boolean),
         tap(book => {
-            const { images } = book.masterVariant;
+            const { images } = book.masterData.current.masterVariant;
 
             this.images = [...images].map(img => new ImageItem({ src: img.url, thumb: img.url }));
         }),

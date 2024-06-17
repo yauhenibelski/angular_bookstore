@@ -13,9 +13,11 @@ import { DiscountCode, DiscountDto } from './discount.interface';
 export class CartService {
     private readonly cartSignal = signal<Cart | null>(null);
     private readonly discountCodesSignal = signal<DiscountCode[] | null>(null);
+    private readonly appliedDiscountSignal = signal<DiscountCode | null>(null);
 
     readonly cart = computed(() => this.cartSignal());
     readonly discountCodes = computed(() => this.discountCodesSignal());
+    readonly appliedDiscount = computed(() => this.appliedDiscountSignal());
 
     private updateCartSubscription: Subscription | null = null;
     private loadDiscountCodesSubscription: Subscription | null = null;
@@ -24,6 +26,20 @@ export class CartService {
 
     private get cartId(): string {
         return `${this.cart()?.id}`;
+    }
+
+    setCart(cart: Cart): void {
+        this.cartSignal.set(cart);
+
+        const discountId = cart.discountOnTotalPrice?.includedDiscounts.at(0)?.discount.id;
+
+        if (discountId) {
+            this.loadDiscountCodeById(discountId);
+
+            return;
+        }
+
+        this.appliedDiscountSignal.set(null);
     }
 
     quantityOfProducts(): Signal<number> {
@@ -64,12 +80,39 @@ export class CartService {
         return `${product?.id}`;
     }
 
+    getDiscountIdByKey(key: string): string {
+        const discountCodes = this.discountCodesSignal();
+
+        if (!discountCodes) {
+            return '';
+        }
+
+        const discount = discountCodes.find(discount => discount.key === key);
+
+        return `${discount?.id}`;
+    }
+
+    loadDiscountCodeById(id: string): void {
+        if (this.loadDiscountCodesSubscription) {
+            this.loadDiscountCodesSubscription.unsubscribe();
+        }
+
+        this.httpClient.get<DiscountCode>(`/cart-discounts/${id}`).subscribe({
+            next: discount => {
+                this.appliedDiscountSignal.set(discount);
+            },
+            complete: () => {
+                this.updateCartSubscription = null;
+            },
+        });
+    }
+
     updateCart(
         action: Action,
         payload: UpdatePayload,
         reject?: (err?: HttpErrorResponse) => void,
     ): void {
-        const { productId, quantity, removeAll, code } = payload;
+        const { productId, quantity, removeAll, discountCodeId } = payload;
         const cart = this.cartSignal();
 
         if (!cart) {
@@ -98,8 +141,14 @@ export class CartService {
             actions.push({ action, quantity, lineItemId: productId });
         }
 
-        if (action === 'addDiscountCode' && code) {
-            actions.push({ action, code });
+        if (action === 'removeDiscountCode' && discountCodeId) {
+            actions.push({
+                action,
+                discountCode: {
+                    typeId: 'discount-code',
+                    id: discountCodeId,
+                },
+            });
         }
 
         this.updateCartSubscription = this.httpClient
@@ -109,9 +158,7 @@ export class CartService {
             })
             .subscribe({
                 next: cart => {
-                    this.cartSignal.set(cart);
-                    // eslint-disable-next-line no-console
-                    console.log(cart);
+                    this.setCart(cart);
                 },
                 complete: () => {
                     this.updateCartSubscription = null;
@@ -137,7 +184,7 @@ export class CartService {
             )
             .pipe(
                 tap(cart => {
-                    this.cartSignal.set(cart);
+                    this.setCart(cart);
                 }),
             );
     }
@@ -153,7 +200,7 @@ export class CartService {
                 tap(cartRes => {
                     const cart = cartRes.results[0] ?? null;
 
-                    this.cartSignal.set(cart);
+                    this.setCart(cart);
                 }),
             );
     }
@@ -171,6 +218,42 @@ export class CartService {
                 },
                 complete: () => {
                     this.loadDiscountCodesSubscription = null;
+                },
+            });
+    }
+
+    addDiscountCode(
+        code: string,
+        cb: { fulfilled: () => void; reject: (error: HttpErrorResponse) => void },
+    ): void {
+        const cart = this.cartSignal();
+
+        if (!cart) {
+            return;
+        }
+
+        if (this.updateCartSubscription) {
+            this.updateCartSubscription.unsubscribe();
+        }
+
+        this.updateCartSubscription = this.httpClient
+            .post<Cart>(`/carts/${this.cartId}`, {
+                version: cart.version,
+                actions: [{ action: 'addDiscountCode', code }],
+            })
+            .subscribe({
+                next: cart => {
+                    this.setCart(cart);
+
+                    cb.fulfilled();
+                },
+                complete: () => {
+                    this.updateCartSubscription = null;
+                },
+                error: (error: unknown) => {
+                    if (error instanceof HttpErrorResponse) {
+                        cb.reject(error);
+                    }
                 },
             });
     }
