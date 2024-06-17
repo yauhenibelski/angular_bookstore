@@ -40,10 +40,23 @@
             <h3 class="name">{{ book.name.en }}</h3>
         </div>
     </div>
+
     @if (cartService.hasProductInCart(book.id)()) {
         <div class="btn-add">
             <button mat-menu-item class="btn-disable">Already in the cart</button>
         </div>
+        <button
+            mat-menu-item
+            class="btn-activ"
+            (click)="
+                cartService.updateCart('removeLineItem', {
+                    productId: cartService.getProductCartIdByProductId(book.id)
+                });
+                $event.stopPropagation()
+            "
+        >
+            Remove from cart
+        </button>
     } @else {
         <div class="btn-add">
             <button

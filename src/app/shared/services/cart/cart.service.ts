@@ -2,25 +2,46 @@ import { Injectable, Signal, computed, signal } from '@angular/core';
 import { Observable, Subscription, tap } from 'rxjs';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { v4 as uuidv4 } from 'uuid';
+import { Product } from 'src/app/interfaces/product';
 import { Cart, CartResponseDto, UpdatePayload } from './cart.interface';
 import { Action } from './actions';
+import { DiscountCode, DiscountDto } from './discount.interface';
 
 @Injectable({
     providedIn: 'root',
 })
 export class CartService {
     private readonly cartSignal = signal<Cart | null>(null);
+    private readonly discountCodesSignal = signal<DiscountCode[] | null>(null);
 
-    get cart(): Signal<Cart | null> {
-        return computed(() => this.cartSignal());
-    }
+    readonly cart = computed(() => this.cartSignal());
+    readonly discountCodes = computed(() => this.discountCodesSignal());
 
     private updateCartSubscription: Subscription | null = null;
+    private loadDiscountCodesSubscription: Subscription | null = null;
 
     constructor(private readonly httpClient: HttpClient) {}
 
     private get cartId(): string {
         return `${this.cart()?.id}`;
+    }
+
+    quantityOfProducts(): Signal<number> {
+        return computed(() => {
+            const cart = this.cartSignal();
+
+            if (!cart) {
+                return 0;
+            }
+
+            const quantity = cart.lineItems.reduce((acc: number, product: Product) => {
+                acc += Number(product.quantity);
+
+                return acc;
+            }, 0);
+
+            return quantity;
+        });
     }
 
     hasProductInCart(productId: string): Signal<boolean> {
@@ -29,6 +50,18 @@ export class CartService {
         );
 
         return computed(() => !!product);
+    }
+
+    getProductCartIdByProductId(id: string): string {
+        const cart = this.cartSignal();
+
+        if (!cart || !cart.lineItems.length) {
+            return '';
+        }
+
+        const product = cart.lineItems.find(product => product.productId === id);
+
+        return `${product?.id}`;
     }
 
     updateCart(
@@ -123,5 +156,22 @@ export class CartService {
                     this.cartSignal.set(cart);
                 }),
             );
+    }
+
+    loadDiscountCodes(): void {
+        if (this.loadDiscountCodesSubscription) {
+            this.loadDiscountCodesSubscription.unsubscribe();
+        }
+
+        this.loadDiscountCodesSubscription = this.httpClient
+            .get<DiscountDto>('/discount-codes')
+            .subscribe({
+                next: response => {
+                    this.discountCodesSignal.set(response.results);
+                },
+                complete: () => {
+                    this.loadDiscountCodesSubscription = null;
+                },
+            });
     }
 }

@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject } from '@angular/core';
 import { MatAnchor, MatButtonModule } from '@angular/material/button';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from 'src/app/shared/services/auth/auth.service';
@@ -31,21 +31,20 @@ import { CartService } from 'src/app/shared/services/cart/cart.service';
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HeaderComponent {
-    private readonly authService = inject(AuthService);
-    readonly cartService = inject(CartService);
-
     readonly isLoading$ = inject(LoaderService).isLoading$;
     readonly isLogined$ = this.authService.isLogined$;
-
-    readonly cartLength = computed(() => {
-        const length = this.cartService.cart()?.lineItems.length;
-
-        this.matBadgeHidden = !length;
-
-        return length;
-    });
+    readonly quantityOfProducts = this.cartService.quantityOfProducts();
 
     matBadgeHidden = true;
+
+    constructor(
+        private readonly authService: AuthService,
+        private readonly cartService: CartService,
+    ) {
+        effect(() => {
+            this.matBadgeHidden = Boolean(!this.quantityOfProducts());
+        });
+    }
 
     logOut(): void {
         if (this.authService.isLogined) {
