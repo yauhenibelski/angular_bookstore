@@ -38,21 +38,21 @@
         <p class="description">{{ book.masterData.current.description.en }}</p>
 
         @if (cartService.hasProductInCart(book.id)()) {
-            <div class="btn-add">
-                <button mat-menu-item class="btn-disable">Already in the cart</button>
+            <div class="btn-remove">
+                <p mat-menu-item class="btn-disable">Already in the cart</p>
+                <button
+                    mat-menu-item
+                    class="btn-activ-remove"
+                    (click)="
+                        cartService.updateCart('removeLineItem', {
+                            productId: cartService.getProductCartIdByProductId(book.id)
+                        });
+                        $event.stopPropagation()
+                    "
+                >
+                    Remove
+                </button>
             </div>
-            <button
-                mat-menu-item
-                class="btn-activ"
-                (click)="
-                    cartService.updateCart('removeLineItem', {
-                        productId: cartService.getProductCartIdByProductId(book.id)
-                    });
-                    $event.stopPropagation()
-                "
-            >
-                Remove from cart
-            </button>
         } @else {
             <div class="btn-add">
                 <button
