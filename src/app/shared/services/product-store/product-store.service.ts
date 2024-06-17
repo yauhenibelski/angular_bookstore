@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
-import { BehaviorSubject, Subscription, map } from 'rxjs';
-import { Product } from 'src/app/interfaces/product';
+import { BehaviorSubject, Subscription } from 'rxjs';
+import { Product, ProductDto } from 'src/app/interfaces/product';
 import { Router } from '@angular/router';
 import { ApiService } from '../api/api.service';
 import { SortProductService } from '../sort-product/sort-product.service';
@@ -12,7 +12,7 @@ export class ProductStoreService {
     private readonly sortProductService = inject(SortProductService);
 
     private readonly productsSubject = new BehaviorSubject<Product[] | null>(null);
-    private readonly productSubject = new BehaviorSubject<Product | null>(null);
+    private readonly productSubject = new BehaviorSubject<ProductDto | null>(null);
 
     private isLoadAdditionalProducts = false;
     private totalProducts = 0;
@@ -40,17 +40,14 @@ export class ProductStoreService {
 
         this.productSubject.next(null);
 
-        this.activeSubscription = this.apiService
-            .getProductByKey(id)
-            .pipe(map(productDto => productDto.masterData.current))
-            .subscribe({
-                next: product => {
-                    this.productSubject.next(product);
-                },
-                error: () => {
-                    this.router.navigateByUrl('404');
-                },
-            });
+        this.activeSubscription = this.apiService.getProductByKey(id).subscribe({
+            next: product => {
+                this.productSubject.next(product);
+            },
+            error: () => {
+                this.router.navigateByUrl('404');
+            },
+        });
     }
 
     loadProducts(): void {

@@ -1,5 +1,6 @@
 import { CurrencyPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, Inject, effect } from '@angular/core';
+import { COMMA, ENTER } from '@angular/cdk/keycodes';
+import { ChangeDetectionStrategy, Component, Inject, computed } from '@angular/core';
 import { CartService } from 'src/app/shared/services/cart/cart.service';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
@@ -8,6 +9,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogConfig, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatChipsModule } from '@angular/material/chips';
 import { CentsToEurosPipe } from '../../shared/pipes/cents-to-euros/cents-to-euros.pipe';
 import { BookComponent } from './book/book.component';
 import { ClearCartMessageComponent } from './clear-cart-message/clear-cart-message.component';
@@ -31,10 +34,23 @@ import { GetTotalPriceAfterDiscountPipe } from './pipes/get-total-price-after-di
         MatDialogModule,
         ReactiveFormsModule,
         GetTotalPriceAfterDiscountPipe,
+        MatChipsModule,
+        MatFormFieldModule,
     ],
 })
 export class CartPageComponent {
     readonly cart = this.cartService.cart;
+    readonly separatorKeysCodes = [ENTER, COMMA] as const;
+
+    readonly discountCode = computed(() => {
+        const discount = this.cartService.appliedDiscount();
+
+        const value = discount ? { name: discount.key } : null;
+
+        this.discountInput.setValue('');
+
+        return value;
+    });
 
     constructor(
         @Inject(CLEAR_CART_MASSAGE) private readonly matDialogConfig: MatDialogConfig<unknown>,
@@ -42,12 +58,6 @@ export class CartPageComponent {
         private readonly dialog: MatDialog,
         private readonly snackBar: MatSnackBar,
     ) {
-        effect(() => {
-            if (this.cart()?.discountOnTotalPrice) {
-                this.openSnackBar();
-            }
-        });
-
         this.cartService.loadDiscountCodes();
     }
 
@@ -58,12 +68,15 @@ export class CartPageComponent {
     }
 
     applyDiscount(): void {
-        const code = { code: this.discountInput.getRawValue() };
+        const code = this.discountInput.getRawValue();
 
-        this.cartService.updateCart('addDiscountCode', code, err => {
-            const errorMessage = err?.error['message'];
+        this.cartService.addDiscountCode(code, {
+            fulfilled: () => this.openSnackBar(),
+            reject: err => {
+                const errorMessage = err?.error['message'];
 
-            this.openSnackBar(errorMessage);
+                this.openSnackBar(errorMessage);
+            },
         });
     }
 
@@ -73,6 +86,12 @@ export class CartPageComponent {
         this.snackBar.open(`${message}`, undefined, {
             duration: 3000,
             panelClass: errorMessage ? 'snack-bar-err' : 'snack-bar-success',
+        });
+    }
+
+    remove(): void {
+        this.cartService.updateCart('removeDiscountCode', {
+            discountCodeId: this.cartService.getDiscountIdByKey(`${this.discountCode()?.name}`),
         });
     }
 }
