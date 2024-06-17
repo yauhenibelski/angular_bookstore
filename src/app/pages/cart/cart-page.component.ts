@@ -47,6 +47,8 @@ export class CartPageComponent {
                 this.openSnackBar();
             }
         });
+
+        this.cartService.loadDiscountCodes();
     }
 
     readonly discountInput = new FormControl('', { nonNullable: true });
