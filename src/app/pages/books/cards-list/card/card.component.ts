@@ -7,7 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
 import { CentsToEurosPipe } from 'src/app/shared/pipes/cents-to-euros/cents-to-euros.pipe';
 import { CartService } from 'src/app/shared/services/cart/cart.service';
-import { concatMap, iif } from 'rxjs';
+import { exhaustMap, iif } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
@@ -37,9 +37,9 @@ export class CardComponent {
         this.eventEmitter
             .pipe(
                 takeUntilDestroyed(destroyRef),
-                concatMap(productId => {
+                exhaustMap(productId => {
                     return iif(
-                        () => cartService.hasProductInCart(productId)(),
+                        cartService.hasProductInCart(productId),
 
                         cartService.updateCart('removeLineItem', {
                             productId: cartService.getProductCartIdByProductId(productId),

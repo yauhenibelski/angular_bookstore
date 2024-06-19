@@ -45,6 +45,13 @@ export class BookComponent implements OnInit {
         this.handleCounterValue();
     }
 
+    removeItem(): void {
+        this.cartService
+            .updateCart('removeLineItem', { productId: this.product?.id })
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe();
+    }
+
     handleCounterValue(): void {
         if (!this.product?.quantity) {
             return;

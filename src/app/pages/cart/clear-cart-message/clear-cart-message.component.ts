@@ -23,7 +23,7 @@ export class ClearCartMessageComponent {
         const matDialog = this.dialog.getDialogById(`${this.matDialogConfig.id}`);
 
         if (confirm) {
-            this.cartService.updateCart('removeLineItem', { removeAll: true });
+            this.cartService.updateCart('removeLineItem', { removeAll: true }).subscribe();
         }
 
         matDialog?.close();

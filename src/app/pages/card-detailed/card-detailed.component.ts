@@ -42,7 +42,7 @@ export class CardDetailedComponent {
                 takeUntilDestroyed(destroyRef),
                 concatMap(productId => {
                     return iif(
-                        () => cartService.hasProductInCart(productId)(),
+                        cartService.hasProductInCart(productId),
 
                         cartService.updateCart('removeLineItem', {
                             productId: cartService.getProductCartIdByProductId(productId),

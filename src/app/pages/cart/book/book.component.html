@@ -43,11 +43,7 @@
 </div>
 
 <div>
-    <button
-        mat-menu-item
-        class="btn-delete"
-        (click)="cartService.updateCart('removeLineItem', { productId: product?.id })"
-    >
+    <button mat-menu-item class="btn-delete" (click)="removeItem()">
         <mat-icon class="icon">delete</mat-icon>
     </button>
 </div>
