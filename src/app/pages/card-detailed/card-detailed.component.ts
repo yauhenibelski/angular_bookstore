@@ -1,11 +1,12 @@
-import { ChangeDetectionStrategy, Component, Input, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, EventEmitter, Input } from '@angular/core';
 import { AsyncPipe, CurrencyPipe } from '@angular/common';
 import { ProductStoreService } from 'src/app/shared/services/product-store/product-store.service';
 import { GalleryModule, GalleryItem, ImageItem } from 'ng-gallery';
 import { LightboxModule } from 'ng-gallery/lightbox';
-import { filter, tap } from 'rxjs';
+import { concatMap, filter, iif, tap } from 'rxjs';
 import { CentsToEurosPipe } from 'src/app/shared/pipes/cents-to-euros/cents-to-euros.pipe';
 import { CartService } from 'src/app/shared/services/cart/cart.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
     selector: 'app-card-detailed',
@@ -16,12 +17,11 @@ import { CartService } from 'src/app/shared/services/cart/cart.service';
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CardDetailedComponent {
-    private readonly productStoreService = inject(ProductStoreService);
-    readonly cartService = inject(CartService);
-
     @Input() set key(key: string | undefined) {
         this.productStoreService.loadProductByKey(`${key}`);
     }
+
+    readonly eventEmitter = new EventEmitter<string>();
 
     readonly book$ = this.productStoreService.currentProduct$.pipe(
         filter(Boolean),
@@ -31,6 +31,29 @@ export class CardDetailedComponent {
             this.images = [...images].map(img => new ImageItem({ src: img.url, thumb: img.url }));
         }),
     );
+
+    constructor(
+        private readonly productStoreService: ProductStoreService,
+        readonly cartService: CartService,
+        destroyRef: DestroyRef,
+    ) {
+        this.eventEmitter
+            .pipe(
+                takeUntilDestroyed(destroyRef),
+                concatMap(productId => {
+                    return iif(
+                        () => cartService.hasProductInCart(productId)(),
+
+                        cartService.updateCart('removeLineItem', {
+                            productId: cartService.getProductCartIdByProductId(productId),
+                        }),
+
+                        cartService.updateCart('addLineItem', { productId }),
+                    );
+                }),
+            )
+            .subscribe();
+    }
 
     images: GalleryItem[] = [];
 }

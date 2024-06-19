@@ -47,12 +47,7 @@
             <button
                 mat-menu-item
                 class="btn-activ-remove"
-                (click)="
-                    cartService.updateCart('removeLineItem', {
-                        productId: cartService.getProductCartIdByProductId(book.id)
-                    });
-                    $event.stopPropagation()
-                "
+                (click)="eventEmitter.emit(book.id); $event.stopPropagation()"
             >
                 Remove
             </button>
@@ -62,10 +57,7 @@
             <button
                 mat-menu-item
                 class="btn-activ"
-                (click)="
-                    cartService.updateCart('addLineItem', { productId: book.id });
-                    $event.stopPropagation()
-                "
+                (click)="eventEmitter.emit(book.id); $event.stopPropagation()"
             >
                 Add to cart
             </button>
