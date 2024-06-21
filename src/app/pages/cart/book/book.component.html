@@ -1,0 +1,53 @@
+<div class="book-details">
+    <div class="book-description">
+        <img
+            [alt]="product?.variant?.images?.at(0)?.label"
+            [src]="product?.variant?.images?.at(0)?.url"
+        />
+        <div class="description">
+            <p class="name">{{ product?.name?.en }}</p>
+            <p class="author">{{ product?.variant?.attributes?.at(0)?.value }}</p>
+        </div>
+    </div>
+
+    <div class="prices">
+        @if (product?.variant?.prices?.at(0)?.discounted) {
+            <div class="discounted">
+                <p class="price-discounted">
+                    {{
+                        product?.variant?.prices?.at(0)?.discounted?.value?.centAmount
+                            | centsToEuros
+                            | currency: 'EUR'
+                    }}
+                </p>
+
+                <p class="old-price-discounted">
+                    {{
+                        product?.variant?.prices?.at(0)?.value?.centAmount
+                            | centsToEuros
+                            | currency: 'EUR'
+                    }}
+                </p>
+            </div>
+        } @else {
+            <span class="price">
+                {{
+                    product?.variant?.prices?.at(0)?.value?.centAmount
+                        | centsToEuros
+                        | currency: 'EUR'
+                }}
+            </span>
+        }
+        <app-counter-input [formControl]="counter" />
+    </div>
+</div>
+
+<div>
+    <button
+        mat-menu-item
+        class="btn-delete"
+        (click)="cartService.updateCart('removeLineItem', { productId: product?.id })"
+    >
+        <mat-icon class="icon">delete</mat-icon>
+    </button>
+</div>

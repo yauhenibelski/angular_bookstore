@@ -17,6 +17,7 @@ import { updateTokenInterceptor } from './core/interceptors/update-token/update-
 import { setUrlInterceptor } from './core/interceptors/set-url/set-url.interceptor';
 import { handleInvalidRefreshTokenInterceptor } from './core/interceptors/handle-invalid-refresh-token/handle-invalid-refresh-token.interceptor';
 import { setFilterValueInterceptor } from './core/interceptors/set-filter-value/set-filter-value.interceptor';
+import { CartService } from './shared/services/cart/cart.service';
 
 export const appConfig: ApplicationConfig = {
     providers: [
@@ -39,7 +40,7 @@ export const appConfig: ApplicationConfig = {
         {
             provide: APP_INITIALIZER,
             useFactory: getAccessToken,
-            deps: [ApiService, AuthService],
+            deps: [ApiService, AuthService, CartService],
             multi: true,
         },
     ],

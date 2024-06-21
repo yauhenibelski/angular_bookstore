@@ -50,13 +50,13 @@ interface Attribute {
     value: string;
 }
 
-interface MasterVariant {
+interface Variant {
     id: number;
     key: string;
     prices: Price[];
-    images: Image[];
     attributes: Attribute[];
     assets: unknown[];
+    images: Image[];
 }
 
 export interface Product {
@@ -67,9 +67,12 @@ export interface Product {
     categoryOrderHints: unknown;
     variants: unknown[];
     searchKeywords: unknown;
-    masterVariant: MasterVariant;
+    masterVariant: Variant;
     id: string;
     key: string;
+    productId?: string;
+    variant?: Variant;
+    quantity?: number;
 }
 
 interface MasterData {

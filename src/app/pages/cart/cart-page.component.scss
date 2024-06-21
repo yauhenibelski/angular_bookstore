@@ -1,3 +1,84 @@
 :host {
-    display: block;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 30px;
+}
+
+.total-cost-wrap {
+    padding: 10px;
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    text-align: center;
+    background-color: #ebebeba7;
+    font-size: 21px;
+}
+
+.cost {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.total {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+.total-old {
+    text-decoration: line-through;
+    color: rgba(125, 123, 123, 0.716);
+}
+.prices {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.promo-code {
+    font-size: 18px;
+    display: flex;
+    text-align: center;
+    border-top: 3px solid gray;
+    padding: 10px;
+    padding-bottom: 0;
+    gap: 10px;
+
+    mat-form-field {
+        flex-grow: 1;
+    }
+}
+
+.input-promo-code {
+    font-size: 16px;
+    height: min-content;
+}
+
+.btn-promo-code {
+    cursor: pointer;
+    height: 26px;
+    width: 50px;
+}
+
+.empty {
+    font-size: 20px;
+    text-align: center;
+}
+
+.btn-delete {
+    width: max-content;
+    display: flex;
+    align-self: flex-end;
+}
+
+@media (max-width: 617px) {
+    .promo-code {
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        font-size: 17px;
+    }
+
+    .total-cost {
+        font-size: 19px;
+    }
 }

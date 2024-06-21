@@ -1,8 +1,44 @@
+import { Product } from 'src/app/interfaces/product';
+
 interface TotalPrice {
     type: string;
     currencyCode: string;
     centAmount: number;
     fractionDigits: number;
+}
+
+interface DiscountedAmount {
+    type: string;
+    currencyCode: string;
+    centAmount: number;
+    fractionDigits: number;
+}
+
+interface IncludedDiscount {
+    discount: {
+        typeId: string;
+        id: string;
+    };
+
+    discountedAmount: {
+        type: string;
+        currencyCode: string;
+        centAmount: number;
+        fractionDigits: number;
+    };
+}
+
+interface DiscountOnTotalPrice {
+    discountedAmount: DiscountedAmount;
+    includedDiscounts: IncludedDiscount[];
+}
+
+interface DiscountCode {
+    discountCode: {
+        typeId: string;
+        id: string;
+    };
+    state: string;
 }
 
 export interface Cart {
@@ -11,13 +47,13 @@ export interface Cart {
     version: number;
     createdAt: string;
     lastModifiedAt: string;
-    lineItems: unknown[];
+    lineItems: Product[];
     cartState: string;
     totalPrice: TotalPrice;
     shippingMode: string;
     shipping: unknown[];
     customLineItems: unknown[];
-    discountCodes: unknown[];
+    discountCodes: DiscountCode[];
     directDiscounts: unknown[];
     inventoryMode: string;
     taxMode: string;
@@ -26,6 +62,7 @@ export interface Cart {
     refusedGifts: unknown[];
     origin: string;
     itemShippingAddresses: unknown[];
+    discountOnTotalPrice?: DiscountOnTotalPrice;
 }
 export interface CartResponseDto {
     count: number;
@@ -33,4 +70,19 @@ export interface CartResponseDto {
     offset: number;
     results: Cart[];
     total: number;
+}
+
+export interface UpdatePayload {
+    removeAll?: boolean;
+    productId?: string;
+    quantity?: number;
+    discountCodeId?: string;
+}
+
+interface DiscountCode {
+    discountCode: {
+        typeId: string;
+        id: string;
+    };
+    state: string;
 }

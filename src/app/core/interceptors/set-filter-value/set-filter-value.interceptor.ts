@@ -9,7 +9,10 @@ export const setFilterValueInterceptor: HttpInterceptorFn = (req, next) => {
     const hasFilterDisabledContext = req.context.has(IS_FILTER_DISABLED);
 
     if (isFilterRequest && !hasFilterDisabledContext) {
-        const params: { [key: string]: string } = {};
+        const params: { [key: string]: string } = {
+            limit: '15',
+            offset: `${sortProductService.offset}`,
+        };
 
         if (sortProductService.params.sort) {
             params['sort'] = sortProductService.params.sort;

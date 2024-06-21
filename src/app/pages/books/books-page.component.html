@@ -30,7 +30,7 @@
             </button>
         </div>
         <form [formGroup]="form">
-            <mat-form-field>
+            <mat-form-field [appearance]="'outline'">
                 <mat-label>Sort books by:</mat-label>
                 <mat-select formControlName="sort" [(value)]="sortParams.sort">
                     <mat-option />

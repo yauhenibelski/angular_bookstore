@@ -4,21 +4,22 @@
     </div>
 
     <div class="main-detailed">
-        <h3 class="name">{{ book.name.en }}</h3>
-        <p class="author">{{ book.masterVariant.attributes.at(0)?.value }}</p>
+        <h3 class="name">{{ book.masterData.current.name.en }}</h3>
+        <p class="author">{{ book.masterData.current.masterVariant.attributes.at(0)?.value }}</p>
 
-        @if (book.masterVariant.prices.at(0)?.discounted) {
+        @if (book.masterData.current.masterVariant.prices.at(0)?.discounted) {
             <div class="discounted">
                 <p class="price-discounted">
                     {{
-                        book.masterVariant.prices.at(0)?.discounted?.value?.centAmount
+                        book.masterData.current.masterVariant.prices.at(0)?.discounted?.value
+                            ?.centAmount
                             | centsToEuros
                             | currency: 'EUR'
                     }}
                 </p>
                 <p class="old-price-discounted">
                     {{
-                        book.masterVariant.prices.at(0)?.value?.centAmount
+                        book.masterData.current.masterVariant.prices.at(0)?.value?.centAmount
                             | centsToEuros
                             | currency: 'EUR'
                     }}
@@ -27,13 +28,44 @@
         } @else {
             <p class="price">
                 {{
-                    book.masterVariant.prices.at(0)?.value?.centAmount
+                    book.masterData.current.masterVariant.prices.at(0)?.value?.centAmount
                         | centsToEuros
                         | currency: 'EUR'
                 }}
             </p>
         }
 
-        <p class="description">{{ book.description.en }}</p>
+        <p class="description">{{ book.masterData.current.description.en }}</p>
+
+        @if (cartService.hasProductInCart(book.id)()) {
+            <div class="btn-remove">
+                <p mat-menu-item class="btn-disable">Already in the cart</p>
+                <button
+                    mat-menu-item
+                    class="btn-activ-remove"
+                    (click)="
+                        cartService.updateCart('removeLineItem', {
+                            productId: cartService.getProductCartIdByProductId(book.id)
+                        });
+                        $event.stopPropagation()
+                    "
+                >
+                    Remove
+                </button>
+            </div>
+        } @else {
+            <div class="btn-add">
+                <button
+                    mat-menu-item
+                    class="btn-activ"
+                    (click)="
+                        cartService.updateCart('addLineItem', { productId: book.id });
+                        $event.stopPropagation()
+                    "
+                >
+                    Add to cart
+                </button>
+            </div>
+        }
     </div>
 }

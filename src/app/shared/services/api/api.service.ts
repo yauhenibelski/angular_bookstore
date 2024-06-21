@@ -2,14 +2,11 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpContext } from '@angular/common/http';
 import { ProjectSettings } from 'src/app/shared/services/project-settings/project-settings.interface';
 import { Customer } from 'src/app/interfaces/customer-response-dto';
-import { Observable, map, tap } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 import { environment } from 'src/app/environment/environment';
-import { v4 as uuidv4 } from 'uuid';
 import { Category, CategoryDto } from 'src/app/interfaces/category';
-import { Product, ProductDto, ProductsDto } from 'src/app/interfaces/product';
+import { ProductDto, ProductsDto } from 'src/app/interfaces/product';
 import { ProjectSettingsService } from '../project-settings/project-settings.service';
-import { CartService } from '../cart/cart.service';
-import { Cart, CartResponseDto } from '../cart/cart.interface';
 import { CustomerService } from '../customer/customer.service';
 import { Action } from './action.type';
 import { IS_FILTER_DISABLED } from './http-context-token';
@@ -20,7 +17,6 @@ import { IS_FILTER_DISABLED } from './http-context-token';
 export class ApiService {
     private readonly projectSettingsService = inject(ProjectSettingsService);
     private readonly customerService = inject(CustomerService);
-    private readonly cartService = inject(CartService);
     private readonly httpClient = inject(HttpClient);
 
     updateCustomer(
@@ -44,24 +40,6 @@ export class ApiService {
 
     checkUserByEmail(email: string) {
         return this.httpClient.head(`/customers?where=${encodeURIComponent(`email="${email}"`)}`);
-    }
-
-    createAnonymousCart(): Observable<Cart> {
-        return this.httpClient
-            .post<Cart>(
-                '/carts',
-                { currency: 'EUR', anonymousId: uuidv4() },
-                {
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                },
-            )
-            .pipe(
-                tap(cart => {
-                    this.cartService.setCart(cart);
-                }),
-            );
     }
 
     setProjectSettings() {
@@ -88,22 +66,6 @@ export class ApiService {
             );
     }
 
-    getCartByPasswordFlowToken(): Observable<CartResponseDto> {
-        return this.httpClient
-            .get<CartResponseDto>('/me/carts', {
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            })
-            .pipe(
-                tap(cartRes => {
-                    const cart = cartRes.results.reverse()[0] ?? null;
-
-                    this.cartService.setCart(cart);
-                }),
-            );
-    }
-
     changePassword(currentPassword: string, newPassword: string): Observable<Customer> {
         return this.httpClient.post<Customer>('/customers/password', {
             id: this.customerService.customer?.id,
@@ -125,10 +87,8 @@ export class ApiService {
         return this.httpClient.get<Category>(`/categories/key=${key}`);
     }
 
-    getProducts(): Observable<Product[]> {
-        return this.httpClient
-            .get<ProductsDto>(`/product-projections/search`)
-            .pipe(map(({ results }) => results));
+    getProducts(): Observable<ProductsDto> {
+        return this.httpClient.get<ProductsDto>(`/product-projections/search`);
     }
 
     getProductByKey(key: string): Observable<ProductDto> {

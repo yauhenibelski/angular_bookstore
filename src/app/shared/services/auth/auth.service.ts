@@ -13,7 +13,6 @@ import { accessTokenName, refreshTokenName } from '../../constants/short-names';
 import { setAccessTokenInCookie } from '../../utils/set-access-token-in-cookie';
 import { Cart } from '../cart/cart.interface';
 import { CartService } from '../cart/cart.service';
-import { ApiService } from '../api/api.service';
 import { highOrderCustomTap } from '../../utils/high-order-custom-tap-operator';
 import { CustomerService } from '../customer/customer.service';
 
@@ -23,7 +22,6 @@ import { CustomerService } from '../customer/customer.service';
 export class AuthService {
     private readonly httpClient = inject(HttpClient);
     private readonly cartService = inject(CartService);
-    private readonly apiService = inject(ApiService);
     private readonly customerService = inject(CustomerService);
 
     private readonly isLoginedSubject = new BehaviorSubject<boolean>(false);
@@ -62,7 +60,7 @@ export class AuthService {
                     email,
                     password,
                     anonymousCart: {
-                        id: this.cartService.cart.id,
+                        id: this.cartService.cart()?.id,
                         typeId: 'cart',
                     },
                 },
@@ -101,11 +99,10 @@ export class AuthService {
 
                     this.setLoginStatus(false);
                     this.customerService.setCustomer(null);
-                    this.cartService.setCart(null);
 
                     setAccessTokenInCookie(response, true);
                 }),
-                highOrderCustomTap(this.apiService.createAnonymousCart()),
+                highOrderCustomTap(this.cartService.createAnonymousCart()),
             );
     }
 

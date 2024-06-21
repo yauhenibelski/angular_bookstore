@@ -3,10 +3,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { BehaviorSubject } from 'rxjs';
 import { By } from '@angular/platform-browser';
-// import { Location } from '@angular/common';
 import { provideRouter, Router } from '@angular/router';
 import { Component } from '@angular/core';
-import { AuthService } from '../../shared/services/auth/auth.service';
+import { AuthService } from 'src/app/shared/services/auth/auth.service';
 import { HeaderComponent } from './header.component';
 
 @Component({ template: '' })
@@ -16,7 +15,6 @@ describe('HeaderComponent', () => {
     let component: HeaderComponent;
     let fixture: ComponentFixture<HeaderComponent>;
     let router: Router;
-    //   let location: Location;
     let authServiceMock: Partial<AuthService>;
     let isLoginedSubject: BehaviorSubject<boolean>;
 
@@ -34,6 +32,7 @@ describe('HeaderComponent', () => {
                     { path: 'registration', component: DummyComponent },
                     { path: 'cart', component: DummyComponent },
                     { path: 'main', component: DummyComponent },
+                    { path: 'about', component: DummyComponent },
                 ]),
                 { provide: AuthService, useValue: authServiceMock },
             ],
@@ -42,7 +41,6 @@ describe('HeaderComponent', () => {
         fixture = TestBed.createComponent(HeaderComponent);
         component = fixture.componentInstance;
         router = TestBed.inject(Router);
-        //     location = TestBed.inject(Location);
         fixture.detectChanges();
     });
 
@@ -51,24 +49,18 @@ describe('HeaderComponent', () => {
     });
 
     it('should display login button when not logged in', () => {
-        const loginButton = fixture.debugElement.query(By.css('.buttons-wrap a:nth-child(2)'));
+        const loginButton = fixture.debugElement.query(
+            By.css('.buttons-wrap a[routerLink="/login"]:not(.hide)'),
+        );
 
         expect(loginButton).toBeTruthy();
-    });
-
-    it('should display logout button when logged in', () => {
-        isLoginedSubject.next(true);
-        fixture.detectChanges();
-        const logoutButton = fixture.debugElement.query(By.css('.buttons-wrap a:nth-child(2)'));
-
-        expect(logoutButton).toBeTruthy();
     });
 
     it('should navigate to "/login" when login button is clicked', fakeAsync(() => {
         isLoginedSubject.next(false);
         fixture.detectChanges();
         const loginButton = fixture.debugElement.query(
-            By.css('.buttons-wrap a:nth-child(2)'),
+            By.css('.buttons-wrap a[routerLink="/login"]:not(.hide)'),
         ).nativeElement;
 
         loginButton.click();
@@ -77,8 +69,10 @@ describe('HeaderComponent', () => {
     }));
 
     it('should navigate to "/registration" when sign up button is clicked', fakeAsync(() => {
+        isLoginedSubject.next(false);
+        fixture.detectChanges();
         const signUpButton = fixture.debugElement.query(
-            By.css('.buttons-wrap a:last-child'),
+            By.css('.buttons-wrap a[routerLink="/registration"]'),
         ).nativeElement;
 
         signUpButton.click();

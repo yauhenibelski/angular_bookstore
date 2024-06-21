@@ -4,6 +4,13 @@
     flex-direction: column;
     gap: 10px;
 }
+h2 {
+    margin: 0;
+    text-shadow:
+        -1px -1px 1px silver,
+        1px -1px 1px silver;
+    font-size: 22px;
+}
 .video-flowers-main {
     position: relative;
 }
@@ -28,24 +35,12 @@
     justify-content: center;
     align-items: center;
     gap: 15px;
-
-    // width: 100%;
-    // display: flex;
-    // justify-content: center;
-    // align-items: center;
-    // flex-wrap: wrap;
-    // gap: 10px;
 }
 .main {
     position: relative;
-    // padding: 10px;
     cursor: pointer;
-    // width: 20%;
     &:hover {
         transform: scale(1.02);
-        //   .main-title{
-        //     transform: scale(1.14);
-        // }
     }
 }
 .main-img {
@@ -74,6 +69,16 @@
 .main-title-4 {
     background-color: rgba(120, 188, 212, 0.623);
 }
-
-@media (max-width: 617px) {
+.about-promo-codes {
+    padding: 0 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 17px;
+    gap: 10px;
+    text-align: center;
+}
+span {
+    background-color: rgba(191, 160, 20, 0.244);
 }

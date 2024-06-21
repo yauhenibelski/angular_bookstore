@@ -1,7 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
 import { of } from 'rxjs';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { Product } from 'src/app/interfaces/product';
+import { CartService } from 'src/app/shared/services/cart/cart.service';
 import { CardComponent } from './card.component';
 
 describe('CardComponent', () => {
@@ -10,8 +12,9 @@ describe('CardComponent', () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            imports: [CardComponent],
+            imports: [HttpClientTestingModule, CardComponent],
             providers: [
+                CartService,
                 {
                     provide: ActivatedRoute,
                     useValue: {

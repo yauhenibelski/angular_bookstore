@@ -5,12 +5,13 @@ import { SortProduct } from './sort-product.interface';
     providedIn: 'root',
 })
 export class SortProductService {
+    private sortParams: SortProduct = {};
     private readonly minMaxPriceRange = {
         min: 1000,
         max: 4000,
     };
 
-    private sortParams: SortProduct = {};
+    offset = 0;
 
     priceRange = this.minMaxPriceRange;
 

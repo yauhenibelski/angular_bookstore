@@ -1,1 +1,62 @@
-<p>cart-page</p>
+@if (cart()?.lineItems?.length) {
+    <button mat-stroked-button color="warn" class="btn-delete" (click)="openDialog()">
+        Clear cart
+    </button>
+}
+
+@for (product of cart()?.lineItems; track product.id) {
+    <app-book [product]="product" />
+} @empty {
+    <p class="empty">
+        The cart is empty. To start shopping, go to the
+        <a routerLink="/books">catalog</a>
+    </p>
+}
+
+@if (cart()?.lineItems?.length) {
+    <div class="promo-code">
+        <mat-form-field>
+            <mat-label>Discount</mat-label>
+            <mat-chip-grid #chipGrid aria-label="Enter fruits">
+                @if (discountCode(); as discountCode) {
+                    <mat-chip-row (removed)="remove()">
+                        {{ discountCode.name }}
+                        <button matChipRemove>
+                            <mat-icon>cancel</mat-icon>
+                        </button>
+                    </mat-chip-row>
+                }
+
+                <input
+                    placeholder="Discount code. . ."
+                    [formControl]="discountInput"
+                    [matChipInputFor]="chipGrid"
+                    [disabled]="!!discountCode()"
+                />
+                <button
+                    mat-stroked-button
+                    color="primary"
+                    [disabled]="discountCode()"
+                    (click)="applyDiscount(); $event.stopPropagation()"
+                >
+                    Apply
+                </button>
+            </mat-chip-grid>
+        </mat-form-field>
+    </div>
+
+    <div class="total-cost-wrap">
+        <div class="cost">
+            <div>The total cost</div>
+            <div class="total">
+                {{ cart()?.totalPrice?.centAmount | centsToEuros | currency: 'EUR' }}
+
+                @if (cart()?.discountOnTotalPrice) {
+                    <div class="total-old">
+                        {{ cart() | getTotalPriceAfterDiscount | centsToEuros | currency: 'EUR' }}
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+}
