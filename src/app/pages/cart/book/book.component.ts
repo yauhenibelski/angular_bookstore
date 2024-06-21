@@ -14,6 +14,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { CounterInputComponent } from 'src/app/shared/components/counter-input/counter-input.component';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { concatMap, debounceTime } from 'rxjs';
 import { CentsToEurosPipe } from '../../../shared/pipes/cents-to-euros/cents-to-euros.pipe';
 
 @Component({
@@ -44,6 +45,13 @@ export class BookComponent implements OnInit {
         this.handleCounterValue();
     }
 
+    removeItem(): void {
+        this.cartService
+            .updateCart('removeLineItem', { productId: this.product?.id })
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe();
+    }
+
     handleCounterValue(): void {
         if (!this.product?.quantity) {
             return;
@@ -51,11 +59,17 @@ export class BookComponent implements OnInit {
 
         this.counter.setValue(this.product.quantity);
 
-        this.counter.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(quantity => {
-            this.cartService.updateCart('changeLineItemQuantity', {
-                productId: this.product?.id,
-                quantity,
-            });
-        });
+        this.counter.valueChanges
+            .pipe(
+                takeUntilDestroyed(this.destroyRef),
+                debounceTime(300),
+                concatMap(quantity => {
+                    return this.cartService.updateCart('changeLineItemQuantity', {
+                        productId: this.product?.id,
+                        quantity,
+                    });
+                }),
+            )
+            .subscribe();
     }
 }

@@ -1,6 +1,5 @@
 import { CurrencyPipe } from '@angular/common';
-import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import { ChangeDetectionStrategy, Component, Inject, computed } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, Inject, computed } from '@angular/core';
 import { CartService } from 'src/app/shared/services/cart/cart.service';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
@@ -11,6 +10,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatChipsModule } from '@angular/material/chips';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CentsToEurosPipe } from '../../shared/pipes/cents-to-euros/cents-to-euros.pipe';
 import { BookComponent } from './book/book.component';
 import { ClearCartMessageComponent } from './clear-cart-message/clear-cart-message.component';
@@ -39,8 +39,9 @@ import { GetTotalPriceAfterDiscountPipe } from './pipes/get-total-price-after-di
     ],
 })
 export class CartPageComponent {
+    readonly discountInput = new FormControl('', { nonNullable: true });
+
     readonly cart = this.cartService.cart;
-    readonly separatorKeysCodes = [ENTER, COMMA] as const;
 
     readonly discountCode = computed(() => {
         const discount = this.cartService.appliedDiscount();
@@ -57,11 +58,10 @@ export class CartPageComponent {
         private readonly cartService: CartService,
         private readonly dialog: MatDialog,
         private readonly snackBar: MatSnackBar,
+        private readonly destroyRef: DestroyRef,
     ) {
         this.cartService.loadDiscountCodes();
     }
-
-    readonly discountInput = new FormControl('', { nonNullable: true });
 
     openDialog(): void {
         this.dialog.open(ClearCartMessageComponent, this.matDialogConfig);
@@ -90,8 +90,11 @@ export class CartPageComponent {
     }
 
     remove(): void {
-        this.cartService.updateCart('removeDiscountCode', {
-            discountCodeId: this.cartService.getDiscountIdByKey(`${this.discountCode()?.name}`),
-        });
+        this.cartService
+            .updateCart('removeDiscountCode', {
+                discountCodeId: this.cartService.getDiscountIdByKey(`${this.discountCode()?.name}`),
+            })
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe();
     }
 }

@@ -1,5 +1,5 @@
 import { Injectable, Signal, computed, signal } from '@angular/core';
-import { Observable, Subscription, tap } from 'rxjs';
+import { EMPTY, Observable, Subscription, tap } from 'rxjs';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { v4 as uuidv4 } from 'uuid';
 import { Product } from 'src/app/interfaces/product';
@@ -111,12 +111,12 @@ export class CartService {
         action: Action,
         payload: UpdatePayload,
         reject?: (err?: HttpErrorResponse) => void,
-    ): void {
+    ): Observable<Cart> {
         const { productId, quantity, removeAll, discountCodeId } = payload;
         const cart = this.cartSignal();
 
         if (!cart) {
-            return;
+            return EMPTY;
         }
 
         if (this.updateCartSubscription) {
@@ -151,24 +151,23 @@ export class CartService {
             });
         }
 
-        this.updateCartSubscription = this.httpClient
+        return this.httpClient
             .post<Cart>(`/carts/${this.cartId}`, {
-                version: cart.version,
+                version: this.cart()?.version,
                 actions,
             })
-            .subscribe({
-                next: cart => {
-                    this.setCart(cart);
-                },
-                complete: () => {
-                    this.updateCartSubscription = null;
-                },
-                error: (error: unknown) => {
-                    if (error instanceof HttpErrorResponse && reject) {
-                        reject(error);
-                    }
-                },
-            });
+            .pipe(
+                tap({
+                    next: cart => {
+                        this.setCart(cart);
+                    },
+                    error: (error: unknown) => {
+                        if (error instanceof HttpErrorResponse && reject) {
+                            reject(error);
+                        }
+                    },
+                }),
+            );
     }
 
     createAnonymousCart(): Observable<Cart> {
