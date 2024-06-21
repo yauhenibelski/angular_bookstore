@@ -1,5 +1,4 @@
 import { CurrencyPipe } from '@angular/common';
-import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { ChangeDetectionStrategy, Component, DestroyRef, Inject, computed } from '@angular/core';
 import { CartService } from 'src/app/shared/services/cart/cart.service';
 import { MatIconModule } from '@angular/material/icon';
@@ -40,8 +39,9 @@ import { GetTotalPriceAfterDiscountPipe } from './pipes/get-total-price-after-di
     ],
 })
 export class CartPageComponent {
+    readonly discountInput = new FormControl('', { nonNullable: true });
+
     readonly cart = this.cartService.cart;
-    readonly separatorKeysCodes = [ENTER, COMMA] as const;
 
     readonly discountCode = computed(() => {
         const discount = this.cartService.appliedDiscount();
@@ -62,8 +62,6 @@ export class CartPageComponent {
     ) {
         this.cartService.loadDiscountCodes();
     }
-
-    readonly discountInput = new FormControl('', { nonNullable: true });
 
     openDialog(): void {
         this.dialog.open(ClearCartMessageComponent, this.matDialogConfig);
